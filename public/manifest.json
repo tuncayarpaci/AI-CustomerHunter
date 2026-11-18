@@ -1,0 +1,9 @@
+{
+  "name": "ReplyPulse AI — Social Buyer-Intent Radar",
+  "short_name": "ReplyPulse AI",
+  "description": "Autonomous Social Buyer-Intent Radar & Anti-Spam Reply Engine for Reddit, HackerNews, X, and GitHub",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#090D16",
+  "theme_color": "#6366F1"
+}

@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ReplyPulse AI (AI-CustomerHunter) — Autonomous Social Buyer-Intent Radar</title>
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <!-- TOP NAVIGATION -->
+  <header class="top-navbar">
+    <div class="brand-wrap" onclick="switchTopMode('landing')">
+      <div class="brand-logo">⚡</div>
+      <div>
+        <div style="display:flex; align-items:center; gap:0.5rem;">
+          <span class="brand-title">ReplyPulse AI</span>
+          <span class="brand-badge" data-i18n="nav_badge">LIVE INTENT v3.4</span>
+        </div>
+        <div style="font-size:0.72rem; color:var(--text-secondary);" data-i18n="nav_sub">
+          Autonomous Social Buyer-Intent & Lead Radar
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-center">
+      <button id="topTabLanding" class="mode-tab" onclick="switchTopMode('landing')" data-i18n="mode_landing">
+        🌍 Global SaaS Landing
+      </button>
+      <button id="topTabApp" class="mode-tab active" onclick="switchTopMode('app')" data-i18n="mode_app">
+        📡 Live Radar Workspace
+      </button>
+    </div>
+
+    <div class="nav-actions">
+      <div class="lang-switch">
+        <button id="langEn" class="lang-btn active" onclick="setLanguage('en')">🇺🇸 EN</button>
+        <button id="langTr" class="lang-btn" onclick="setLanguage('tr')">🇹🇷 TR</button>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="triggerLiveScan()" id="topScanBtn">
+        <span>🔄</span> <span data-i18n="btn_live_scan">Scan Live Intent Now</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- =================================================================== -->
+  <!-- 1. GLOBAL SAAS LANDING PAGE VIEW                                    -->
+  <!-- =================================================================== -->
+  <section id="landingView" class="landing-container hidden">
+    <div class="hero-section">
+      <div class="hero-pill" data-i18n="hero_pill">
+        🚀 Replace $149/mo noisy trackers & dead cold emails with 24/7 Buyer-Intent Radar
+      </div>
+      <h1 class="hero-title">
+        <span data-i18n="hero_h1_1">Find People Actively Asking to</span>
+        <span class="gradient-text" data-i18n="hero_h1_2"> Buy Your Product Right Now</span>
+      </h1>
+      <p class="hero-subtitle" data-i18n="hero_sub">
+        ReplyPulse AI monitors Reddit, Hacker News, X, and GitHub in real time, filters out 95% of keyword noise with AI Buyer-Intent Scoring (0–100), and writes authentic, ban-safe replies that win customers.
+      </p>
+
+      <div class="hero-url-box">
+        <input
+          type="text"
+          id="heroUrlInput"
+          class="hero-url-input"
+          placeholder="Enter your product URL (e.g. https://linear.app or https://yourproduct.com)"
+          value="https://replypulse.ai"
+        />
+        <button class="btn btn-primary" onclick="runHeroUrlAnalysis()">
+          <span>⚡</span> <span data-i18n="hero_cta">Auto-Find My Buyers</span>
+        </button>
+      </div>
+
+      <div class="hero-trust-row">
+        <span>✅ <strong data-i18n="trust_1">60-Second URL Setup</strong></span>
+        <span>🛡️ <strong data-i18n="trust_2">Anti-Shadowban Reply Engine</strong></span>
+        <span>📡 <strong data-i18n="trust_3">Live Reddit + HN + GitHub + X</strong></span>
+        <span>💳 <strong data-i18n="trust_4">Starts at $19/mo (No Enterprise Bloat)</strong></span>
+      </div>
+    </div>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🎯</div>
+        <h3 style="margin-bottom:0.5rem;" data-i18n="feat1_t">Semantic Buyer-Intent Filter (0-100)</h3>
+        <p style="color:var(--text-secondary); font-size:0.9rem;" data-i18n="feat1_d">
+          Stop drowning in F5Bot email noise. Our engine detects "Competitor Churn", "Budget Ready", and "Active Tool Requests" with 94% precision.
+        </p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🛡️</div>
+        <h3 style="margin-bottom:0.5rem;" data-i18n="feat2_t">Anti-Ban Human Reply Studio</h3>
+        <p style="color:var(--text-secondary); font-size:0.9rem;" data-i18n="feat2_d">
+          Auto-posting bots get your domain banned on Reddit. Generate 3 community-approved reply angles (Helpful Peer, Transparent Founder, Objective Comparison).
+        </p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📈</div>
+        <h3 style="margin-bottom:0.5rem;" data-i18n="feat3_t">1-Click URL Onboarding & ROI CRM</h3>
+        <p style="color:var(--text-secondary); font-size:0.9rem;" data-i18n="feat3_d">
+          Paste your website URL. ReplyPulse AI extracts your value proposition, competitors, target subreddits, and tracks every reply to paying customer ROI.
+        </p>
+      </div>
+    </div>
+
+    <!-- PRICING SECTION -->
+    <div class="pricing-section">
+      <div class="section-header">
+        <h2 style="font-size:2rem; font-weight:800;" data-i18n="price_title">Simple, Founder-Friendly Global Pricing</h2>
+        <p style="color:var(--text-secondary); margin-top:0.4rem;" data-i18n="price_sub">
+          10x cheaper than Brand24 ($149/mo). One single converted lead pays for your entire year.
+        </p>
+      </div>
+
+      <div class="pricing-grid">
+        <div class="price-card">
+          <div style="font-weight:700; color:var(--text-secondary);">STARTER (INDIE)</div>
+          <div class="price-amount">$19<span>/mo</span></div>
+          <div style="font-size:0.84rem; color:var(--text-muted);">Perfect for solo founders validating & getting their first 100 customers.</div>
+          <ul class="price-features">
+            <li>✅ 1 Product URL Campaign</li>
+            <li>✅ 15 High-Intent Buyer Keywords</li>
+            <li>✅ Live Reddit + Hacker News Radar</li>
+            <li>✅ 100 AI Anti-Spam Reply Drafts / mo</li>
+            <li>✅ Daily Email & Instant Radar Feed</li>
+          </ul>
+          <button class="btn btn-secondary" onclick="selectPlan('Starter ($19/mo)')">Start Starter Plan →</button>
+        </div>
+
+        <div class="price-card popular">
+          <div class="popular-ribbon">MOST POPULAR • BEST ROI</div>
+          <div style="font-weight:700; color:#818cf8;">GROWTH (SAAS TEAMS)</div>
+          <div class="price-amount">$49<span>/mo</span></div>
+          <div style="font-size:0.84rem; color:var(--text-muted);">For growing SaaS products capturing competitor churn 24/7.</div>
+          <ul class="price-features">
+            <li>✅ 5 Product URL Campaigns</li>
+            <li>✅ 50 Buyer-Intent Keywords & Competitor Watch</li>
+            <li>✅ Reddit + Hacker News + X (Twitter) + GitHub</li>
+            <li>✅ Unlimited AI Anti-Spam Reply Studio</li>
+            <li>✅ Real-Time Slack & Discord Webhook Alerts (90+ Score)</li>
+          </ul>
+          <button class="btn btn-primary" onclick="selectPlan('Growth ($49/mo)')">Launch Growth Radar →</button>
+        </div>
+
+        <div class="price-card">
+          <div style="font-weight:700; color:var(--emerald);">SCALE (AGENCY / MULTI-SAAS)</div>
+          <div class="price-amount">$99<span>/mo</span></div>
+          <div style="font-size:0.84rem; color:var(--text-muted);">For growth agencies & multi-product studios managing client pipelines.</div>
+          <ul class="price-features">
+            <li>✅ Unlimited Product Campaigns</li>
+            <li>✅ 200+ Keywords & Full Competitor Intelligence</li>
+            <li>✅ All Channels + Custom Webhook / CRM Export</li>
+            <li>✅ Custom Brand Voice & Multi-Seat Team Access</li>
+            <li>✅ White-Label PDF & CSV Client ROI Reports</li>
+          </ul>
+          <button class="btn btn-emerald" onclick="selectPlan('Scale ($99/mo)')">Activate Scale Plan →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================================================================== -->
+  <!-- 2. LIVE SAAS APPLICATION WORKSPACE                                  -->
+  <!-- =================================================================== -->
+  <section id="appView" class="workspace-layout">
+    <!-- LEFT SIDEBAR -->
+    <aside class="sidebar">
+      <div>
+        <div class="side-nav">
+          <button class="side-link active" id="navRadar" onclick="switchWorkspaceTab('radar')">
+            <span>📡 <span data-i18n="side_radar">Live Buyer-Intent Radar</span></span>
+            <span class="side-badge" id="sideHotCount">6</span>
+          </button>
+          <button class="side-link" id="navOnboard" onclick="switchWorkspaceTab('onboard')">
+            <span>⚡ <span data-i18n="side_onboard">1-Click URL Onboarding</span></span>
+          </button>
+          <button class="side-link" id="navCrm" onclick="switchWorkspaceTab('crm')">
+            <span>📊 <span data-i18n="side_crm">Lead CRM & ROI Funnel</span></span>
+          </button>
+          <button class="side-link" id="navCompetitors" onclick="switchWorkspaceTab('competitors')">
+            <span>🔥 <span data-i18n="side_comp">Competitor Churn Watch</span></span>
+          </button>
+          <button class="side-link" id="navSettings" onclick="switchWorkspaceTab('settings')">
+            <span>⚙️ <span data-i18n="side_settings">Webhooks & Plan Billing</span></span>
+          </button>
+        </div>
+
+        <div class="campaign-box">
+          <div style="font-size:0.74rem; font-weight:700; color:var(--text-secondary); text-transform:uppercase;" data-i18n="active_campaign">
+            Active Product Radar
+          </div>
+          <select id="campaignSelect" class="campaign-select" onchange="onCampaignChange(this.value)"></select>
+          <div id="campaignMetaInfo" style="margin-top:0.55rem; font-size:0.75rem; color:var(--text-muted);"></div>
+          <button class="btn btn-secondary btn-sm" style="width:100%; margin-top:0.65rem;" onclick="switchWorkspaceTab('onboard')">
+            + <span data-i18n="btn_add_product">Add Product URL</span>
+          </button>
+        </div>
+      </div>
+
+      <div style="padding:0.85rem; background:rgba(99,102,241,0.1); border:1px solid rgba(99,102,241,0.3); border-radius:10px; font-size:0.78rem;">
+        <div style="font-weight:700; color:#a5b4fc; margin-bottom:0.25rem;">💎 <span id="currentPlanBadge">Growth ($49/mo)</span></div>
+        <div style="color:var(--text-secondary); margin-bottom:0.5rem;" data-i18n="plan_status_sub">
+          24/7 Live Reddit, HN, GitHub & X Intent Engine Active
+        </div>
+        <button class="btn btn-primary btn-sm" style="width:100%;" onclick="switchTopMode('landing')" data-i18n="btn_upgrade">
+          Upgrade / View Plans
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="main-content">
+      <!-- KPI METRICS ROW -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label" data-i18n="kpi_1">High-Intent Buyers (85+ Score)</div>
+          <div class="kpi-value">
+            <span id="kpiHotLeads">0</span>
+            <span class="kpi-trend" data-i18n="kpi_1_sub">Live Ready-to-Buy</span>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label" data-i18n="kpi_2">Competitor Churn Signals</div>
+          <div class="kpi-value">
+            <span id="kpiChurnCount">0</span>
+            <span class="kpi-trend" style="color:var(--amber);" data-i18n="kpi_2_sub">Switching Now</span>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label" data-i18n="kpi_3">Replies Sent / Converted</div>
+          <div class="kpi-value">
+            <span id="kpiConvertedCount">0</span>
+            <span class="kpi-trend" data-i18n="kpi_3_sub">38% Close Rate</span>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label" data-i18n="kpi_4">Estimated Pipeline ROI</div>
+          <div class="kpi-value">
+            <span id="kpiPipelineValue" style="color:var(--emerald);">$0</span>
+            <span class="kpi-trend" data-i18n="kpi_4_sub">ARR Attribution</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 1: LIVE BUYER-INTENT RADAR -->
+      <div id="tabRadar">
+        <div class="radar-toolbar">
+          <div class="filter-pills">
+            <button class="filter-pill active" data-platform="all" onclick="setPlatformFilter('all')" data-i18n="flt_all">All Channels</button>
+            <button class="filter-pill" data-platform="reddit" onclick="setPlatformFilter('reddit')">🟠 Reddit</button>
+            <button class="filter-pill" data-platform="hackernews" onclick="setPlatformFilter('hackernews')">🟧 Hacker News</button>
+            <button class="filter-pill" data-platform="x" onclick="setPlatformFilter('x')">𝕏 Twitter/X</button>
+            <button class="filter-pill" data-platform="github" onclick="setPlatformFilter('github')">🟣 GitHub</button>
+          </div>
+
+          <div class="filter-pills">
+            <button class="filter-pill active" data-intent="all" onclick="setIntentFilter('all')" data-i18n="int_all">All Intent Types</button>
+            <button class="filter-pill" data-intent="competitor_churn" onclick="setIntentFilter('competitor_churn')">🔥 Competitor Churn</button>
+            <button class="filter-pill" data-intent="active_buyer" onclick="setIntentFilter('active_buyer')">🎯 Active Buyer</button>
+            <button class="filter-pill" data-intent="budget_ready" onclick="setIntentFilter('budget_ready')">💳 Budget Ready</button>
+          </div>
+        </div>
+
+        <div class="radar-split">
+          <!-- LEFT: STREAM OF HIGH-INTENT LEADS -->
+          <div id="leadsListContainer" class="leads-list"></div>
+
+          <!-- RIGHT: ANTI-SPAM AI REPLY STUDIO -->
+          <div class="reply-studio" id="replyStudioBox">
+            <div class="studio-header">
+              <div style="display:flex; align-items:center; justify-content:space-between;">
+                <span style="font-size:0.75rem; font-weight:800; color:#818cf8; text-transform:uppercase;" data-i18n="studio_tag">
+                  🛡️ Anti-Spam Reply Studio
+                </span>
+                <span id="studioScoreBadge" class="intent-badge intent-hot">98/100 Intent</span>
+              </div>
+              <h3 id="studioLeadTitle" style="font-size:0.98rem; margin-top:0.4rem;">Select a buyer signal to craft a reply</h3>
+              <div id="studioLeadMeta" style="font-size:0.76rem; color:var(--text-secondary); margin-top:0.25rem;"></div>
+            </div>
+
+            <div class="why-hot-box" id="studioWhyHot"></div>
+
+            <div style="font-size:0.76rem; font-weight:700; color:var(--text-secondary); margin-bottom:0.45rem;" data-i18n="choose_tone">
+              Select Community-Safe Reply Angle:
+            </div>
+            <div class="tone-tabs">
+              <button class="tone-btn active" id="toneHelpful" onclick="selectReplyTone('helpful')">
+                🤝 Helpful Peer (95% Value)
+              </button>
+              <button class="tone-btn" id="toneFounder" onclick="selectReplyTone('founder')">
+                👋 Transparent Founder
+              </button>
+              <button class="tone-btn" id="toneComparison" onclick="selectReplyTone('comparison')">
+                ⚖️ Objective Comparison
+              </button>
+            </div>
+
+            <textarea id="studioReplyText" class="reply-textarea"></textarea>
+
+            <div class="safety-bar">
+              <span>🛡️ <strong data-i18n="ban_risk_lbl">Subreddit Ban Risk:</strong> <span id="studioBanRisk" style="color:var(--emerald); font-weight:700;">Low (4% - Safe)</span></span>
+              <span>💰 <strong data-i18n="est_deal_lbl">Est. Value:</strong> <span id="studioDealVal" style="color:var(--emerald); font-weight:700;">$588/yr</span></span>
+            </div>
+
+            <div class="studio-actions">
+              <button class="btn btn-primary" style="flex:1;" onclick="copyAndOpenThread()">
+                <span>📋</span> <span data-i18n="btn_copy_open">Copy Reply & Open Thread ↗</span>
+              </button>
+              <button class="btn btn-emerald" onclick="markLeadStatus('replied')">
+                <span>✅</span> <span data-i18n="btn_mark_replied">Mark Replied</span>
+              </button>
+              <button class="btn btn-secondary" onclick="markLeadStatus('converted')">
+                <span>💰</span> <span data-i18n="btn_mark_won">Won Deal</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: 1-CLICK AI URL ONBOARDING -->
+      <div id="tabOnboard" class="hidden">
+        <div class="panel-card">
+          <h2 style="font-size:1.35rem; margin-bottom:0.35rem;" data-i18n="onboard_title">⚡ 1-Click AI Product URL Analyzer</h2>
+          <p style="color:var(--text-secondary); font-size:0.9rem; margin-bottom:1.2rem;" data-i18n="onboard_sub">
+            Paste any SaaS, mobile app, agency, or devtool URL. Our engine crawls the landing page and automatically configures high-intent buyer keywords, competitor churn watches, and target communities.
+          </p>
+
+          <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+            <input
+              type="text"
+              id="onboardUrlInput"
+              class="form-input"
+              style="flex:1; min-width:260px;"
+              placeholder="https://supabase.com or https://your-saas.com"
+              value="https://linear.app"
+            />
+            <button class="btn btn-primary" onclick="analyzeUrlInWorkspace()" id="btnAnalyzeUrl">
+              <span>🔍</span> <span data-i18n="btn_analyze_url">Extract Buyer-Intent Profile</span>
+            </button>
+          </div>
+
+          <div class="form-grid" style="margin-top:1.5rem;">
+            <div class="form-group">
+              <label>Product / SaaS Name</label>
+              <input type="text" id="campName" class="form-input" placeholder="e.g. Linear" />
+            </div>
+            <div class="form-group">
+              <label>Industry / Category</label>
+              <input type="text" id="campCategory" class="form-input" placeholder="e.g. B2B SaaS / Issue Tracking" />
+            </div>
+            <div class="form-group">
+              <label>Target Buyer Persona</label>
+              <input type="text" id="campAudience" class="form-input" placeholder="e.g. CTOs, Product Managers, SaaS Founders" />
+            </div>
+            <div class="form-group">
+              <label>Average Annual Customer Value ($ ARR)</label>
+              <input type="number" id="campDealValue" class="form-input" value="580" />
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-top:1rem;">
+            <label>Core Value Proposition (Used by AI Reply Studio)</label>
+            <textarea id="campValueProp" class="form-textarea" rows="2"></textarea>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label>High-Intent Buyer Keywords (comma-separated)</label>
+              <textarea id="campKeywords" class="form-textarea" rows="3"></textarea>
+            </div>
+            <div class="form-group">
+              <label>Competitors to Poach Churn From (comma-separated)</label>
+              <textarea id="campCompetitors" class="form-textarea" rows="3"></textarea>
+            </div>
+            <div class="form-group">
+              <label>Target Subreddits & Communities (comma-separated)</label>
+              <textarea id="campSubreddits" class="form-textarea" rows="3"></textarea>
+            </div>
+          </div>
+
+          <div style="margin-top:1.35rem; display:flex; justify-content:flex-end; gap:0.75rem;">
+            <button class="btn btn-emerald" onclick="saveNewCampaignAndScan()">
+              <span>🚀</span> <span data-i18n="btn_launch_campaign">Save Campaign & Launch Live Buyer Scan</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: LEAD CRM & ROI FUNNEL -->
+      <div id="tabCrm" class="hidden">
+        <div class="panel-card">
+          <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; margin-bottom:1.2rem;">
+            <div>
+              <h2 style="font-size:1.3rem;" data-i18n="crm_title">📊 Social Lead Pipeline & Revenue Attribution</h2>
+              <p style="color:var(--text-secondary); font-size:0.86rem;" data-i18n="crm_sub">
+                Track every high-intent social conversation from discovery to replied and paying customer.
+              </p>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="exportLeadsCsv()">
+              ⬇️ Export Leads CSV
+            </button>
+          </div>
+
+          <div style="overflow-x:auto;">
+            <table class="crm-table">
+              <thead>
+                <tr>
+                  <th>Platform</th>
+                  <th>Intent Score</th>
+                  <th>Buyer Thread & Signal</th>
+                  <th>Competitor Mentioned</th>
+                  <th>Est. ARR</th>
+                  <th>Pipeline Stage</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="crmTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: COMPETITOR CHURN WATCH -->
+      <div id="tabCompetitors" class="hidden">
+        <div class="panel-card">
+          <h2 style="font-size:1.3rem; margin-bottom:0.35rem;">🔥 Live Competitor Churn & Pricing Backlash Radar</h2>
+          <p style="color:var(--text-secondary); font-size:0.88rem; margin-bottom:1.25rem;">
+            The highest-converting leads in SaaS (35%+ close rate) are users complaining about a competitor's price hike, downtime, or missing features.
+          </p>
+          <div id="competitorCardsGrid" class="feature-grid" style="margin-bottom:0;"></div>
+        </div>
+      </div>
+
+      <!-- TAB 5: SETTINGS, WEBHOOKS & BILLING -->
+      <div id="tabSettings" class="hidden">
+        <div class="panel-card">
+          <h2 style="font-size:1.3rem; margin-bottom:0.4rem;">⚙️ Real-Time Alerts, AI Engine & Subscription</h2>
+          <p style="color:var(--text-secondary); font-size:0.88rem; margin-bottom:1.25rem;">
+            Configure instant Slack/Discord webhooks whenever a 90+ buyer-intent thread drops.
+          </p>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Current SaaS Plan</label>
+              <select id="setPlan" class="form-input">
+                <option value="Starter ($19/mo)">Starter — $19/mo (1 Product, 15 Keywords)</option>
+                <option value="Growth ($49/mo)">Growth — $49/mo (5 Products, 50 Keywords, Webhooks)</option>
+                <option value="Scale ($99/mo)">Scale — $99/mo (Unlimited Products, White-Label)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Semantic Intent Scoring Model</label>
+              <select id="setModel" class="form-input">
+                <option value="gpt-4o-mini (Semantic Intent v3)">GPT-4o-mini (Fast Semantic Intent v3)</option>
+                <option value="claude-3-7-sonnet (Deep Context)">Claude 3.7 Sonnet (Anti-Spam Founder Tone)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Slack Incoming Webhook URL (Instant 90+ Alerts)</label>
+              <input type="text" id="setSlack" class="form-input" placeholder="https://hooks.slack.com/services/T000/B000/XXXX" />
+            </div>
+            <div class="form-group">
+              <label>Discord Webhook URL</label>
+              <input type="text" id="setDiscord" class="form-input" placeholder="https://discord.com/api/webhooks/..." />
+            </div>
+          </div>
+
+          <div style="margin-top:1.25rem; display:flex; gap:0.75rem;">
+            <button class="btn btn-primary" onclick="saveSettings()">💾 Save Workspace Configuration</button>
+            <button class="btn btn-secondary" onclick="testWebhookAlert()">🔔 Send Test 98-Score Lead Alert</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </section>
+
+  <div id="toastBox" class="toast"></div>
+  <script src="/app.js"></script>
+</body>
+</html>

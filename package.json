@@ -1,0 +1,20 @@
+{
+  "name": "ai-customer-hunter",
+  "version": "1.0.0",
+  "description": "AI-CustomerHunter (ReplyPulse AI) — Autonomous Social Buyer-Intent Radar & Anti-Spam Reply Engine for Reddit, HackerNews, X, and GitHub",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "social-listening",
+    "buyer-intent",
+    "lead-generation",
+    "reddit-leads",
+    "hackernews",
+    "saas-growth",
+    "ai-sales-agent"
+  ],
+  "license": "MIT"
+}
