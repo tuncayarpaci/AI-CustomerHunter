@@ -1,0 +1,44 @@
+# Sunucu kurulumu: sunucu platformunda (SunucuPlatformu deposu), ortak Caddy'nin arkasında çalışır.
+# deploy/sunucu_kur.sh tarafından kullanılır:
+#   docker compose -p customerhunter -f /opt/customerhunter/deploy/compose.sunucu.yml ...
+#
+# - Port yayınlanmaz; ortak Caddy uygulamaya "platform" ağından "customerhunter" adıyla ulaşır.
+# - Kaynak sınırları diğer uygulamaları korur: 256 MB RAM, 1.0 CPU, 128 PID.
+name: customerhunter
+
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    image: ai-customerhunter:latest
+    container_name: customerhunter-app-1
+    restart: unless-stopped
+    environment:
+      PORT: "3090"
+      DATA_DIR: "/data"
+      NODE_ENV: "production"
+    volumes:
+      - veri:/data
+    expose:
+      - "3090"
+    mem_limit: 256m
+    cpus: 1.0
+    pids_limit: 128
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      platform:
+        aliases:
+          - customerhunter
+
+volumes:
+  veri: {}
+
+networks:
+  platform:
+    external: true
+    name: platform

@@ -4,7 +4,7 @@ const path = require('path');
 const { URL } = require('url');
 
 const PORT = process.env.PORT || 3090;
-const DATA_DIR = path.join(__dirname, 'data');
+const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, 'data');
 const DB_FILE = path.join(DATA_DIR, 'db.json');
 const PUBLIC_DIR = path.join(__dirname, 'public');
 
@@ -608,6 +608,10 @@ const server = http.createServer(async (req, res) => {
   const pathname = parsedUrl.pathname;
 
   // API Routes
+  if (pathname === '/api/health' && req.method === 'GET') {
+    return sendJson(res, 200, { ok: true, status: 'healthy' });
+  }
+
   if (pathname === '/api/state' && req.method === 'GET') {
     const db = loadDb();
     return sendJson(res, 200, db);
@@ -724,7 +728,7 @@ const server = http.createServer(async (req, res) => {
   });
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`\n==================================================================`);
   console.log(`🎯 AI-CustomerHunter (ReplyPulse AI) SaaS Server Running`);
   console.log(`🌍 Local URL: http://localhost:${PORT}`);
