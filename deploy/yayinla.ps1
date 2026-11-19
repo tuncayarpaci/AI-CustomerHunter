@@ -21,7 +21,7 @@ $arsiv = Join-Path $env:TEMP "customerhunter-yayin.tar"
 
 try {
     Write-Host "== Dosyalar paketleniyor" -ForegroundColor Cyan
-    tar -cf $arsiv package.json server.js public Dockerfile .dockerignore deploy
+    tar -cf $arsiv package.json package-lock.json server.js lib public Dockerfile .dockerignore deploy
     if ($LASTEXITCODE -ne 0) { throw "Arşiv oluşturulamadı (tar)." }
 
     Write-Host "== Sunucuya yükleniyor: $hedef" -ForegroundColor Cyan
@@ -29,7 +29,7 @@ try {
     if ($LASTEXITCODE -ne 0) { throw "Dosyalar sunucuya kopyalanamadı (scp)." }
 
     $uzak = "set -e; mkdir -p /opt/customerhunter && cd /opt/customerhunter && " +
-            "rm -rf package.json server.js public Dockerfile .dockerignore deploy && " +
+            "rm -rf package.json package-lock.json server.js lib public Dockerfile .dockerignore deploy && " +
             "tar --no-same-owner -xf /tmp/customerhunter-yayin.tar && rm /tmp/customerhunter-yayin.tar && " +
             "sed -i 's/\r$//' deploy/sunucu_kur.sh deploy/compose.sunucu.yml Dockerfile .dockerignore && " +
             "bash deploy/sunucu_kur.sh $AlanAdi $Sunucu 2>&1"
