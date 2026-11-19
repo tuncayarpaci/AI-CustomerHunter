@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="tr" data-tema="acik">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Yönetim · AI-CustomerHunter</title>
+  <link rel="stylesheet" href="/appcook-tema.css" />
+  <style>
+    :root { --uygulama: #d95d12; }
+    .y-ust {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: color-mix(in srgb, var(--yuzey) 88%, transparent);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--cizgi);
+    }
+    .y-ust-ic {
+      max-width: 1200px;
+      margin: 0 auto;
+      min-height: 60px;
+      padding: 8px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .y-ust-sol, .y-ust-sag {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .y-marka {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 750;
+      font-size: 16px;
+      color: var(--metin);
+      text-decoration: none;
+    }
+    .y-marka-isaret {
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #d95d12, #cf346e);
+      color: #fff;
+    }
+    .y-marka b { color: var(--uygulama); }
+    .y-kabuk {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px 20px 64px;
+      display: grid;
+      grid-template-columns: 240px minmax(0, 1fr);
+      gap: 24px;
+      align-items: start;
+    }
+    .y-menu {
+      position: sticky;
+      top: 84px;
+      background: var(--yuzey);
+      border: 1px solid var(--cizgi);
+      border-radius: var(--r-lg);
+      padding: 14px 10px;
+      box-shadow: var(--golge);
+    }
+    .y-menu-bas {
+      font-size: 11.5px;
+      font-weight: 750;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--cok-soluk);
+      padding: 4px 12px 10px;
+    }
+    .y-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .y-nav a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 40px;
+      padding: 0 12px;
+      border-radius: 10px;
+      color: var(--soluk);
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background-color 0.15s ease, color 0.15s ease;
+    }
+    .y-nav a svg {
+      width: 17px;
+      height: 17px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex: none;
+    }
+    .y-nav a:hover {
+      background: var(--yuzey-2);
+      color: var(--metin);
+      text-decoration: none;
+    }
+    .y-nav a[aria-current="page"] {
+      background: color-mix(in srgb, var(--uygulama) 12%, transparent);
+      color: var(--uygulama);
+      font-weight: 700;
+    }
+    .y-sayac {
+      margin-left: auto;
+      padding: 1px 7px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 750;
+      background: var(--uyari-zemin);
+      color: var(--uyari);
+    }
+    .y-ayrac {
+      height: 1px;
+      background: var(--cizgi);
+      margin: 10px 8px;
+    }
+    .y-icerik {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .y-baslik h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 750;
+      letter-spacing: -0.02em;
+    }
+    .y-baslik p {
+      margin: 4px 0 0;
+      color: var(--soluk);
+      font-size: 14.5px;
+    }
+    .y-kart-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+    }
+    .y-stat {
+      background: var(--yuzey);
+      border: 1px solid var(--cizgi);
+      border-radius: var(--r-lg);
+      padding: 16px 18px;
+      box-shadow: var(--golge);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .y-stat:hover { border-color: var(--cizgi-guclu); text-decoration: none; }
+    .y-stat span { font-size: 12.5px; color: var(--soluk); font-weight: 600; }
+    .y-stat strong { font-size: 26px; font-weight: 800; font-variant-numeric: tabular-nums; }
+    .y-stat.dikkat { border-color: var(--uyari); }
+    .y-panel {
+      background: var(--yuzey);
+      border: 1px solid var(--cizgi);
+      border-radius: var(--r-lg);
+      padding: 20px;
+      box-shadow: var(--golge);
+    }
+    .y-tablo-sar { overflow-x: auto; }
+    .y-tablo {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 560px;
+    }
+    .y-tablo th, .y-tablo td {
+      padding: 12px 10px;
+      text-align: left;
+      border-bottom: 1px solid var(--cizgi);
+      font-size: 13.5px;
+      vertical-align: middle;
+    }
+    .y-tablo th {
+      font-size: 11.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--cok-soluk);
+      font-weight: 700;
+    }
+    .y-tablo tr:last-child td { border-bottom: 0; }
+    .y-rozet {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .y-rozet.ok { background: var(--ok-zemin); color: var(--ok); }
+    .y-rozet.uyari { background: var(--uyari-zemin); color: var(--uyari); }
+    .y-rozet.hata { background: var(--hata-zemin); color: var(--hata); }
+    .y-rozet.notr { background: var(--yuzey-2); color: var(--soluk); border: 1px solid var(--cizgi); }
+    .y-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .y-alan-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .y-alan {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .y-alan.tam { grid-column: 1 / -1; }
+    .y-alan label {
+      font-size: 13px;
+      font-weight: 650;
+      color: var(--metin);
+    }
+    .y-girdi {
+      min-height: 42px;
+      padding: 8px 12px;
+      border-radius: var(--r-sm);
+      border: 1px solid var(--cizgi-guclu);
+      background: var(--yuzey-2);
+      color: var(--metin);
+      font: inherit;
+      font-size: 14px;
+      width: 100%;
+    }
+    .y-gizli-satir {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .y-gizli-satir .y-girdi { flex: 1; }
+    .y-ipucu {
+      font-size: 12px;
+      color: var(--cok-soluk);
+    }
+    .y-kopyala-kutu {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      background: var(--yuzey-2);
+      border: 1px solid var(--cizgi-guclu);
+      border-radius: var(--r-sm);
+      padding: 6px 8px 6px 12px;
+    }
+    .y-kopyala-kutu code {
+      flex: 1;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      word-break: break-all;
+      color: var(--metin);
+    }
+    .y-form-alt {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding-top: 8px;
+      border-top: 1px solid var(--cizgi);
+    }
+    .y-durum {
+      font-size: 13.5px;
+      font-weight: 600;
+      margin: 0;
+    }
+    .y-durum.ok { color: var(--ok); }
+    .y-durum.hata { color: var(--hata); }
+    .y-aksiyonlar {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .y-btn {
+      min-height: 38px;
+      padding: 0 14px;
+      border-radius: 10px;
+      border: 1px solid var(--cizgi-guclu);
+      background: var(--yuzey);
+      color: var(--metin);
+      font: inherit;
+      font-size: 13.5px;
+      font-weight: 650;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .y-btn:hover { border-color: var(--soluk); text-decoration: none; }
+    .y-btn.birincil {
+      background: linear-gradient(125deg, #d95d12, #cf346e);
+      border-color: transparent;
+      color: #fff;
+    }
+    .y-btn.ok {
+      background: var(--ok);
+      border-color: transparent;
+      color: #fff;
+    }
+    .y-btn.tehlike {
+      border-color: color-mix(in srgb, var(--hata) 45%, transparent);
+      color: var(--hata);
+    }
+    .y-btn.kucuk { min-height: 32px; padding: 0 10px; font-size: 12.5px; border-radius: 8px; }
+    .y-test-sonuc {
+      padding: 12px 14px;
+      border-radius: var(--r-md);
+      background: var(--yuzey-2);
+      border: 1px solid var(--cizgi-guclu);
+      font-size: 13.5px;
+      line-height: 1.5;
+    }
+    @media (max-width: 860px) {
+      .y-kabuk {
+        grid-template-columns: 1fr;
+        padding: 16px 12px 48px;
+      }
+      .y-menu { position: static; }
+      .y-nav { flex-direction: row; flex-wrap: wrap; gap: 4px; }
+      .y-ayrac { display: none; }
+      .y-alan-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="y-ust">
+    <div class="y-ust-ic">
+      <div class="y-ust-sol">
+        <div data-appcook-switcher></div>
+        <a class="y-marka" href="/yonetim">
+          <span class="y-marka-isaret" aria-hidden="true">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="3" x2="12" y2="6"/>
+            </svg>
+          </span>
+          <span>AI-<b>CustomerHunter</b> · Yönetim</span>
+        </a>
+      </div>
+      <div class="y-ust-sag">
+        <button type="button" class="y-btn kucuk" data-tema-dugme title="Temayı değiştir">◐ Tema</button>
+        <a class="y-btn kucuk" href="/">← Uygulama</a>
+        <button type="button" class="y-btn kucuk" id="logoutBtn">Çıkış</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="y-kabuk">
+    <aside class="y-menu" aria-label="Yönetim menüsü">
+      <div class="y-menu-bas">Yönetim</div>
+      <nav class="y-nav" id="yonetimNav">
+        <a href="/yonetim" data-sayfa="genel">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+          <span>Genel bakış</span>
+        </a>
+        <a href="/yonetim/kullanicilar" data-sayfa="kullanicilar">
+          <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span>Kullanıcılar</span>
+          <span class="y-sayac" id="navPendingBadge" hidden>0</span>
+        </a>
+        <a href="/yonetim/giris" data-sayfa="giris">
+          <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <span>Giriş yöntemleri</span>
+        </a>
+        <a href="/yonetim/eposta" data-sayfa="eposta">
+          <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>
+          <span>E-posta</span>
+        </a>
+        <a href="/yonetim/yapay-zeka" data-sayfa="yapay-zeka">
+          <svg viewBox="0 0 24 24"><path d="M12 3l1.8 4.6L18.5 9l-4.7 1.4L12 15l-1.8-4.6L5.5 9l4.7-1.4L12 3z"/></svg>
+          <span>Yapay zekâ / Çeviri</span>
+        </a>
+        <div class="y-ayrac"></div>
+        <a href="/yonetim/webhook" data-sayfa="webhook">
+          <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span>Bildirimler (Webhook)</span>
+        </a>
+        <div class="y-ayrac"></div>
+        <a href="/">
+          <svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          <span>Uygulamaya dön</span>
+        </a>
+      </nav>
+    </aside>
+
+    <section class="y-icerik" id="yonetimIcerik">
+      <div class="y-panel">Yükleniyor…</div>
+    </section>
+  </main>
+
+  <script src="/appcook-kabuk.js"></script>
+  <script src="/yonetim.js"></script>
+</body>
+</html>

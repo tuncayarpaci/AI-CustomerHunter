@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI-CustomerHunter — Arayüz Tasarım Seçenekleri</title>
+  <style>
+    :root {
+      --zemin: #f4f3f0;
+      --yuzey: #ffffff;
+      --cizgi: rgba(20, 18, 40, 0.12);
+      --metin: #16151d;
+      --soluk: #504f62;
+      --vurgu: #d95d12;
+      --ok: #146c43;
+      --ok-zemin: #dcfce7;
+      --font: "Inter Tight", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--zemin);
+      color: var(--metin);
+      font-family: var(--font);
+      line-height: 1.55;
+      padding: 32px 20px 64px;
+    }
+    .kap { max-width: 1020px; margin: 0 auto; }
+    h1 { margin: 0 0 8px; font-size: clamp(24px, 3vw, 32px); letter-spacing: -0.025em; }
+    .alt { color: var(--soluk); margin: 0 0 28px; max-width: 68ch; }
+    .izgara {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+    }
+    .kart {
+      background: var(--yuzey);
+      border: 1px solid var(--cizgi);
+      border-radius: 16px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 12px 28px -22px rgba(20, 18, 40, 0.25);
+    }
+    .kart.oneri { border: 2px solid var(--vurgu); }
+    .etiket {
+      display: inline-flex;
+      align-self: flex-start;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      background: var(--ok-zemin);
+      color: var(--ok);
+    }
+    .kart h2 { margin: 0; font-size: 20px; }
+    .kart p { margin: 0; color: var(--soluk); font-size: 14.5px; }
+    ul { margin: 4px 0 8px; padding-left: 18px; color: var(--soluk); font-size: 14px; }
+    li { margin-bottom: 5px; }
+    .btn {
+      margin-top: auto;
+      min-height: 44px;
+      padding: 0 16px;
+      border-radius: 10px;
+      background: linear-gradient(125deg, #d95d12, #cf346e);
+      color: #fff;
+      font-weight: 700;
+      font-size: 14.5px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn:hover { filter: brightness(1.06); }
+    .btn.ikincil { background: #16151d; }
+    .not {
+      margin-top: 24px;
+      padding: 16px 18px;
+      border-radius: 12px;
+      background: var(--yuzey);
+      border: 1px solid var(--cizgi);
+      font-size: 14px;
+      color: var(--soluk);
+    }
+  </style>
+</head>
+<body>
+  <div class="kap">
+    <h1>AI-CustomerHunter — Yeni Arayüz Tasarım Seçenekleri</h1>
+    <p class="alt">
+      Satışçılar, KOBİ sahipleri ve iş geliştirme ekipleri için teknik jargondan arındırılmış, yalnızca <strong>TR / EN</strong> destekli, 4 sade sekmeli iki farklı görsel yön. Her iki şablon da tek başına tarayıcıda açılır, açık/koyu tema ve mobil/masaüstü uyumludur.
+    </p>
+
+    <div class="izgara">
+      <article class="kart oneri">
+        <span class="etiket">Önerilen · KOBİ &amp; Satış Odaklı</span>
+        <h2>Seçenek 1: Sade Kartlı Satış Masası</h2>
+        <p>Açık/aydınlık AppCook v2 teması. Sol menüsüz, ferah tek sütun akış; her fırsat kartının altında hazır yanıt kutusu ve Türkçe anlam önizlemesi doğrudan görünür.</p>
+        <ul>
+          <li><strong>Gezinme:</strong> Masaüstünde üstte 4 sekme + ürün seçici; mobilde alt gezinme barı.</li>
+          <li><strong>Güçlü yanı:</strong> Sıfır karmaşa, ilk bakışta anlaşılır, KOBİ/kurucu için en düşük öğrenme eğrisi.</li>
+          <li><strong>Zayıf yanı:</strong> Günde 40+ fırsatı art arda işlerken daha fazla kaydırma gerektirir.</li>
+        </ul>
+        <a class="btn" href="secenek-1.html">Seçenek 1’i Aç ve Dene →</a>
+      </article>
+
+      <article class="kart">
+        <span class="etiket" style="background:#ede9fe; color:#5b21b6;">Yüksek Hız · Ekip Odaklı</span>
+        <h2>Seçenek 2: İki Sütunlu Fırsat + Yanıt Stüdyosu</h2>
+        <p>AppCook standart sol menü + Front/Attio tarzı bölünmüş ekran (sol liste, sağ sabit yanıt stüdyosu). Varsayılan koyu stüdyo atmosferi (tek tıkla açık temaya geçilebilir).</p>
+        <ul>
+          <li><strong>Gezinme:</strong> Sol kenar çubuğunda 4 sekme, ürün seçici ve <code>/yonetim</code>; mobilde alt bar + tam ekran yanıt çekmecesi.</li>
+          <li><strong>Güçlü yanı:</strong> Tek ekranda 4–6 fırsatı hızla tarayıp sağdaki sabit stüdyoda seri yanıt üretme.</li>
+          <li><strong>Zayıf yanı:</strong> Küçük dizüstü ekranlarda bilgi yoğunluğu Seçenek 1’e göre daha yüksektir.</li>
+        </ul>
+        <a class="btn ikincil" href="secenek-2.html">Seçenek 2’yi Aç ve Dene →</a>
+      </article>
+    </div>
+
+    <div class="not">
+      <strong>Her iki seçenekte de deneyebilecekleriniz:</strong> Üst çubuktan <strong>TR / EN</strong> geçişi (başlık, özet, "Neden bu kişi müşteri olabilir?" ve Türkçe yanıt önizlemesi canlı değişir), <strong>Açık / Koyu</strong> tema anahtarı, 4 ana sekme (<em>Fırsatlar, Müşteri Takibi, Rakip Şikayetleri, Ürün Ekle</em>), <em>Orijinal gönderiyi gör</em> açılırı ve <em>Yükleniyor / Boş / Hata</em> durumları.
+    </div>
+  </div>
+</body>
+</html>

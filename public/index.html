@@ -1,478 +1,279 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr" data-tema="acik">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ReplyPulse AI (AI-CustomerHunter) — Autonomous Social Buyer-Intent Radar</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>AI-CustomerHunter — Sıcak Müşteri Fırsatları</title>
   <link rel="manifest" href="/manifest.json" />
+  <link rel="stylesheet" href="/appcook-tema.css" />
   <link rel="stylesheet" href="/styles.css" />
-  <script src="/ceviri.js" defer></script>
 </head>
 <body>
-  <!-- TOP NAVIGATION -->
-  <header class="top-navbar">
-    <div class="brand-wrap" onclick="switchTopMode('landing')">
-      <div class="brand-logo">⚡</div>
-      <div>
-        <div style="display:flex; align-items:center; gap:0.5rem;">
-          <span class="brand-title">ReplyPulse AI</span>
-          <span class="brand-badge" data-i18n="nav_badge">LIVE INTENT v3.4</span>
-        </div>
-        <div style="font-size:0.72rem; color:var(--text-secondary);" data-i18n="nav_sub">
-          Autonomous Social Buyer-Intent & Lead Radar
-        </div>
+  <!-- ÜST ÇUBUK -->
+  <header class="ust">
+    <div class="ust-ic">
+      <div class="ust-sol">
+        <div data-appcook-switcher></div>
+        <a href="#radar" class="logo" id="brandLink">
+          <span class="logo-isaret" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="3" x2="12" y2="6"/>
+            </svg>
+          </span>
+          <span>AI-<b>CustomerHunter</b></span>
+        </a>
       </div>
-    </div>
 
-    <div class="nav-center">
-      <button id="topTabLanding" class="mode-tab" onclick="switchTopMode('landing')" data-i18n="mode_landing">
-        🌍 Global SaaS Landing
-      </button>
-      <button id="topTabApp" class="mode-tab active" onclick="switchTopMode('app')" data-i18n="mode_app">
-        📡 Live Radar Workspace
-      </button>
-    </div>
+      <div class="ust-sag">
+        <!-- YALNIZCA TR / EN -->
+        <div class="dil-grup" role="group" aria-label="Dil seçimi">
+          <button type="button" class="dil-btn" id="dilTr" aria-pressed="true">TR</button>
+          <button type="button" class="dil-btn" id="dilEn" aria-pressed="false">EN</button>
+        </div>
 
-    <div class="nav-actions">
-      <button class="btn btn-primary btn-sm" onclick="triggerLiveScan()" id="topScanBtn">
-        <span>🔄</span> <span data-i18n="btn_live_scan">Scan Live Intent Now</span>
-      </button>
+        <!-- Yönetici Geçişi (yalnızca admin kullanıcıya görünür) -->
+        <a href="/yonetim" class="ikon-btn" id="adminLink" hidden>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.09a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+          <span class="yonetim-yazi" data-t="nav_admin">Yönetim</span>
+          <span class="sayac" id="adminPendingBadge" hidden>0</span>
+        </a>
+
+        <!-- Kullanıcı Profili -->
+        <span class="kullanici-chip" id="userChip" hidden>
+          <span class="avatar" id="userAvatar">?</span>
+          <span class="kim-ad" id="userName">Kullanıcı</span>
+        </span>
+
+        <!-- Tema Geçişi -->
+        <button type="button" class="ikon-btn" id="temaBtn" data-tema-dugme aria-label="Temayı değiştir" data-t-title="nav_theme" title="Açık / Koyu Tema">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+
+        <!-- Çıkış -->
+        <button type="button" class="ikon-btn" id="logoutBtn" aria-label="Çıkış yap" data-t-title="nav_logout" title="Çıkış">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+        </button>
+      </div>
     </div>
   </header>
 
-  <!-- =================================================================== -->
-  <!-- 1. GLOBAL SAAS LANDING PAGE VIEW                                    -->
-  <!-- =================================================================== -->
-  <section id="landingView" class="landing-container hidden">
-    <div class="hero-section">
-      <div class="hero-pill" data-i18n="hero_pill">
-        🚀 Replace $149/mo noisy trackers & dead cold emails with 24/7 Buyer-Intent Radar
-      </div>
-      <h1 class="hero-title">
-        <span data-i18n="hero_h1_1">Find People Actively Asking to</span>
-        <span class="gradient-text" data-i18n="hero_h1_2"> Buy Your Product Right Now</span>
-      </h1>
-      <p class="hero-subtitle" data-i18n="hero_sub">
-        ReplyPulse AI monitors Reddit, Hacker News, X, and GitHub in real time, filters out 95% of keyword noise with AI Buyer-Intent Scoring (0–100), and writes authentic, ban-safe replies that win customers.
-      </p>
-
-      <div class="hero-url-box">
-        <input
-          type="text"
-          id="heroUrlInput"
-          class="hero-url-input"
-          placeholder="Enter your product URL (e.g. https://linear.app or https://yourproduct.com)"
-          value="https://replypulse.ai"
-        />
-        <button class="btn btn-primary" onclick="runHeroUrlAnalysis()">
-          <span>⚡</span> <span data-i18n="hero_cta">Auto-Find My Buyers</span>
+  <!-- 4 ANA SEKME + AKTİF ÜRÜN SEÇİCİ -->
+  <div class="sekme-serit">
+    <div class="sekme-ic">
+      <nav class="sekmeler" role="tablist" aria-label="Ana bölümler">
+        <button type="button" class="sekme-btn" role="tab" id="tab-radar" data-tab="radar" aria-selected="true">
+          <span data-t="tab_radar">Fırsatlar (Radar)</span>
+          <span class="sayac" id="radarCountBadge">0</span>
         </button>
-      </div>
-
-      <div class="hero-trust-row">
-        <span>✅ <strong data-i18n="trust_1">60-Second URL Setup</strong></span>
-        <span>🛡️ <strong data-i18n="trust_2">Anti-Shadowban Reply Engine</strong></span>
-        <span>📡 <strong data-i18n="trust_3">Live Reddit + HN + GitHub + X</strong></span>
-        <span>💳 <strong data-i18n="trust_4">Starts at $19/mo (No Enterprise Bloat)</strong></span>
-      </div>
-    </div>
-
-    <div class="feature-grid">
-      <div class="feature-card">
-        <div class="feature-icon">🎯</div>
-        <h3 style="margin-bottom:0.5rem;" data-i18n="feat1_t">Semantic Buyer-Intent Filter (0-100)</h3>
-        <p style="color:var(--text-secondary); font-size:0.9rem;" data-i18n="feat1_d">
-          Stop drowning in F5Bot email noise. Our engine detects "Competitor Churn", "Budget Ready", and "Active Tool Requests" with 94% precision.
-        </p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🛡️</div>
-        <h3 style="margin-bottom:0.5rem;" data-i18n="feat2_t">Anti-Ban Human Reply Studio</h3>
-        <p style="color:var(--text-secondary); font-size:0.9rem;" data-i18n="feat2_d">
-          Auto-posting bots get your domain banned on Reddit. Generate 3 community-approved reply angles (Helpful Peer, Transparent Founder, Objective Comparison).
-        </p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">📈</div>
-        <h3 style="margin-bottom:0.5rem;" data-i18n="feat3_t">1-Click URL Onboarding & ROI CRM</h3>
-        <p style="color:var(--text-secondary); font-size:0.9rem;" data-i18n="feat3_d">
-          Paste your website URL. ReplyPulse AI extracts your value proposition, competitors, target subreddits, and tracks every reply to paying customer ROI.
-        </p>
-      </div>
-    </div>
-
-    <!-- PRICING SECTION -->
-    <div class="pricing-section">
-      <div class="section-header">
-        <h2 style="font-size:2rem; font-weight:800;" data-i18n="price_title">Simple, Founder-Friendly Global Pricing</h2>
-        <p style="color:var(--text-secondary); margin-top:0.4rem;" data-i18n="price_sub">
-          10x cheaper than Brand24 ($149/mo). One single converted lead pays for your entire year.
-        </p>
-      </div>
-
-      <div class="pricing-grid">
-        <div class="price-card">
-          <div style="font-weight:700; color:var(--text-secondary);">STARTER (INDIE)</div>
-          <div class="price-amount">$19<span>/mo</span></div>
-          <div style="font-size:0.84rem; color:var(--text-muted);">Perfect for solo founders validating & getting their first 100 customers.</div>
-          <ul class="price-features">
-            <li>✅ 1 Product URL Campaign</li>
-            <li>✅ 15 High-Intent Buyer Keywords</li>
-            <li>✅ Live Reddit + Hacker News Radar</li>
-            <li>✅ 100 AI Anti-Spam Reply Drafts / mo</li>
-            <li>✅ Daily Email & Instant Radar Feed</li>
-          </ul>
-          <button class="btn btn-secondary" onclick="selectPlan('Starter ($19/mo)')">Start Starter Plan →</button>
-        </div>
-
-        <div class="price-card popular">
-          <div class="popular-ribbon">MOST POPULAR • BEST ROI</div>
-          <div style="font-weight:700; color:#818cf8;">GROWTH (SAAS TEAMS)</div>
-          <div class="price-amount">$49<span>/mo</span></div>
-          <div style="font-size:0.84rem; color:var(--text-muted);">For growing SaaS products capturing competitor churn 24/7.</div>
-          <ul class="price-features">
-            <li>✅ 5 Product URL Campaigns</li>
-            <li>✅ 50 Buyer-Intent Keywords & Competitor Watch</li>
-            <li>✅ Reddit + Hacker News + X (Twitter) + GitHub</li>
-            <li>✅ Unlimited AI Anti-Spam Reply Studio</li>
-            <li>✅ Real-Time Slack & Discord Webhook Alerts (90+ Score)</li>
-          </ul>
-          <button class="btn btn-primary" onclick="selectPlan('Growth ($49/mo)')">Launch Growth Radar →</button>
-        </div>
-
-        <div class="price-card">
-          <div style="font-weight:700; color:var(--emerald);">SCALE (AGENCY / MULTI-SAAS)</div>
-          <div class="price-amount">$99<span>/mo</span></div>
-          <div style="font-size:0.84rem; color:var(--text-muted);">For growth agencies & multi-product studios managing client pipelines.</div>
-          <ul class="price-features">
-            <li>✅ Unlimited Product Campaigns</li>
-            <li>✅ 200+ Keywords & Full Competitor Intelligence</li>
-            <li>✅ All Channels + Custom Webhook / CRM Export</li>
-            <li>✅ Custom Brand Voice & Multi-Seat Team Access</li>
-            <li>✅ White-Label PDF & CSV Client ROI Reports</li>
-          </ul>
-          <button class="btn btn-emerald" onclick="selectPlan('Scale ($99/mo)')">Activate Scale Plan →</button>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- =================================================================== -->
-  <!-- 2. LIVE SAAS APPLICATION WORKSPACE                                  -->
-  <!-- =================================================================== -->
-  <section id="appView" class="workspace-layout">
-    <!-- LEFT SIDEBAR -->
-    <aside class="sidebar">
-      <div>
-        <div class="side-nav">
-          <button class="side-link active" id="navRadar" onclick="switchWorkspaceTab('radar')">
-            <span>📡 <span data-i18n="side_radar">Live Buyer-Intent Radar</span></span>
-            <span class="side-badge" id="sideHotCount">6</span>
-          </button>
-          <button class="side-link" id="navOnboard" onclick="switchWorkspaceTab('onboard')">
-            <span>⚡ <span data-i18n="side_onboard">1-Click URL Onboarding</span></span>
-          </button>
-          <button class="side-link" id="navCrm" onclick="switchWorkspaceTab('crm')">
-            <span>📊 <span data-i18n="side_crm">Lead CRM & ROI Funnel</span></span>
-          </button>
-          <button class="side-link" id="navCompetitors" onclick="switchWorkspaceTab('competitors')">
-            <span>🔥 <span data-i18n="side_comp">Competitor Churn Watch</span></span>
-          </button>
-          <button class="side-link" id="navSettings" onclick="switchWorkspaceTab('settings')">
-            <span>⚙️ <span data-i18n="side_settings">Webhooks & Plan Billing</span></span>
-          </button>
-        </div>
-
-        <div class="campaign-box">
-          <div style="font-size:0.74rem; font-weight:700; color:var(--text-secondary); text-transform:uppercase;" data-i18n="active_campaign">
-            Active Product Radar
-          </div>
-          <select id="campaignSelect" class="campaign-select" onchange="onCampaignChange(this.value)"></select>
-          <div id="campaignMetaInfo" style="margin-top:0.55rem; font-size:0.75rem; color:var(--text-muted);"></div>
-          <button class="btn btn-secondary btn-sm" style="width:100%; margin-top:0.65rem;" onclick="switchWorkspaceTab('onboard')">
-            + <span data-i18n="btn_add_product">Add Product URL</span>
-          </button>
-        </div>
-      </div>
-
-      <div style="padding:0.85rem; background:rgba(99,102,241,0.1); border:1px solid rgba(99,102,241,0.3); border-radius:10px; font-size:0.78rem;">
-        <div style="font-weight:700; color:#a5b4fc; margin-bottom:0.25rem;">💎 <span id="currentPlanBadge">Growth ($49/mo)</span></div>
-        <div style="color:var(--text-secondary); margin-bottom:0.5rem;" data-i18n="plan_status_sub">
-          24/7 Live Reddit, HN, GitHub & X Intent Engine Active
-        </div>
-        <button class="btn btn-primary btn-sm" style="width:100%;" onclick="switchTopMode('landing')" data-i18n="btn_upgrade">
-          Upgrade / View Plans
+        <button type="button" class="sekme-btn" role="tab" id="tab-takip" data-tab="takip" aria-selected="false">
+          <span data-t="tab_track">Müşteri Takibi</span>
         </button>
-      </div>
-    </aside>
+        <button type="button" class="sekme-btn" role="tab" id="tab-rakip" data-tab="rakip" aria-selected="false">
+          <span data-t="tab_comp">Rakip Şikayetleri</span>
+        </button>
+        <button type="button" class="sekme-btn" role="tab" id="tab-urun" data-tab="urun" aria-selected="false">
+          <span data-t="tab_add">Ürün Ekle</span>
+        </button>
+      </nav>
 
-    <!-- MAIN CONTENT AREA -->
-    <main class="main-content">
-      <!-- KPI METRICS ROW -->
-      <div class="kpi-grid">
-        <div class="kpi-card">
-          <div class="kpi-label" data-i18n="kpi_1">High-Intent Buyers (85+ Score)</div>
-          <div class="kpi-value">
-            <span id="kpiHotLeads">0</span>
-            <span class="kpi-trend" data-i18n="kpi_1_sub">Live Ready-to-Buy</span>
-          </div>
+      <div class="urun-secici-sar">
+        <label for="urunSec" data-t="active_prod">Ürün:</label>
+        <select id="urunSec" class="secim"></select>
+      </div>
+    </div>
+  </div>
+
+  <!-- ANA ÇALIŞMA ALANI -->
+  <main class="ana">
+    <!-- SEKME 1: FIRSATLAR (RADAR) -->
+    <section id="panel-radar">
+      <div class="baslik-satir">
+        <div>
+          <h1 data-t="radar_h1">Sıcak Müşteri Fırsatları</h1>
+          <p data-t="radar_sub">Ürününüzün çözdüğü sorunu şu an tartışan gerçek kişiler. Hazır yanıtı kopyalayıp doğrudan yazabilirsiniz.</p>
         </div>
-        <div class="kpi-card">
-          <div class="kpi-label" data-i18n="kpi_2">Competitor Churn Signals</div>
-          <div class="kpi-value">
-            <span id="kpiChurnCount">0</span>
-            <span class="kpi-trend" style="color:var(--amber);" data-i18n="kpi_2_sub">Switching Now</span>
-          </div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label" data-i18n="kpi_3">Replies Sent / Converted</div>
-          <div class="kpi-value">
-            <span id="kpiConvertedCount">0</span>
-            <span class="kpi-trend" data-i18n="kpi_3_sub">38% Close Rate</span>
-          </div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label" data-i18n="kpi_4">Estimated Pipeline ROI</div>
-          <div class="kpi-value">
-            <span id="kpiPipelineValue" style="color:var(--emerald);">$0</span>
-            <span class="kpi-trend" data-i18n="kpi_4_sub">ARR Attribution</span>
-          </div>
-        </div>
+        <button type="button" class="btn birincil" id="scanBtn" data-t="btn_scan">Yeni Fırsatları Tara</button>
       </div>
 
-      <!-- TAB 1: LIVE BUYER-INTENT RADAR -->
-      <div id="tabRadar">
-        <div class="radar-toolbar">
-          <div class="filter-pills">
-            <button class="filter-pill active" data-platform="all" onclick="setPlatformFilter('all')" data-i18n="flt_all">All Channels</button>
-            <button class="filter-pill" data-platform="reddit" onclick="setPlatformFilter('reddit')">🟠 Reddit</button>
-            <button class="filter-pill" data-platform="hackernews" onclick="setPlatformFilter('hackernews')">🟧 Hacker News</button>
-            <button class="filter-pill" data-platform="x" onclick="setPlatformFilter('x')">𝕏 Twitter/X</button>
-            <button class="filter-pill" data-platform="github" onclick="setPlatformFilter('github')">🟣 GitHub</button>
+      <!-- 3 SADE KPI ÖZET -->
+      <div class="ozet-grid">
+        <div class="ozet-kart">
+          <div>
+            <div class="ozet-etiket" data-t="kpi_ready">Satın Almaya Hazır</div>
+            <div class="ozet-deger" id="kpiReady">0</div>
+            <div class="ozet-alt" data-t="kpi_ready_sub">%85+ yüksek ihtimal</div>
           </div>
-
-          <div class="filter-pills">
-            <button class="filter-pill active" data-intent="all" onclick="setIntentFilter('all')" data-i18n="int_all">All Intent Types</button>
-            <button class="filter-pill" data-intent="competitor_churn" onclick="setIntentFilter('competitor_churn')">🔥 Competitor Churn</button>
-            <button class="filter-pill" data-intent="active_buyer" onclick="setIntentFilter('active_buyer')">🎯 Active Buyer</button>
-            <button class="filter-pill" data-intent="budget_ready" onclick="setIntentFilter('budget_ready')">💳 Budget Ready</button>
+          <div class="ozet-rozet" style="background:var(--ok-zemin); color:var(--ok);" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
         </div>
-
-        <div class="radar-split">
-          <!-- LEFT: STREAM OF HIGH-INTENT LEADS -->
-          <div id="leadsListContainer" class="leads-list"></div>
-
-          <!-- RIGHT: ANTI-SPAM AI REPLY STUDIO -->
-          <div class="reply-studio" id="replyStudioBox">
-            <div class="studio-header">
-              <div style="display:flex; align-items:center; justify-content:space-between;">
-                <span style="font-size:0.75rem; font-weight:800; color:#818cf8; text-transform:uppercase;" data-i18n="studio_tag">
-                  🛡️ Anti-Spam Reply Studio
-                </span>
-                <span id="studioScoreBadge" class="intent-badge intent-hot">98/100 Intent</span>
-              </div>
-              <h3 id="studioLeadTitle" style="font-size:0.98rem; margin-top:0.4rem;">Select a buyer signal to craft a reply</h3>
-              <div id="studioLeadMeta" style="font-size:0.76rem; color:var(--text-secondary); margin-top:0.25rem;"></div>
-            </div>
-
-            <div class="why-hot-box" id="studioWhyHot"></div>
-
-            <div style="font-size:0.76rem; font-weight:700; color:var(--text-secondary); margin-bottom:0.45rem;" data-i18n="choose_tone">
-              Select Community-Safe Reply Angle:
-            </div>
-            <div class="tone-tabs">
-              <button class="tone-btn active" id="toneHelpful" onclick="selectReplyTone('helpful')">
-                🤝 Helpful Peer (95% Value)
-              </button>
-              <button class="tone-btn" id="toneFounder" onclick="selectReplyTone('founder')">
-                👋 Transparent Founder
-              </button>
-              <button class="tone-btn" id="toneComparison" onclick="selectReplyTone('comparison')">
-                ⚖️ Objective Comparison
-              </button>
-            </div>
-
-            <textarea id="studioReplyText" class="reply-textarea"></textarea>
-
-            <div class="safety-bar">
-              <span>🛡️ <strong data-i18n="ban_risk_lbl">Subreddit Ban Risk:</strong> <span id="studioBanRisk" style="color:var(--emerald); font-weight:700;">Low (4% - Safe)</span></span>
-              <span>💰 <strong data-i18n="est_deal_lbl">Est. Value:</strong> <span id="studioDealVal" style="color:var(--emerald); font-weight:700;">$588/yr</span></span>
-            </div>
-
-            <div class="studio-actions">
-              <button class="btn btn-primary" style="flex:1;" onclick="copyAndOpenThread()">
-                <span>📋</span> <span data-i18n="btn_copy_open">Copy Reply & Open Thread ↗</span>
-              </button>
-              <button class="btn btn-emerald" onclick="markLeadStatus('replied')">
-                <span>✅</span> <span data-i18n="btn_mark_replied">Mark Replied</span>
-              </button>
-              <button class="btn btn-secondary" onclick="markLeadStatus('converted')">
-                <span>💰</span> <span data-i18n="btn_mark_won">Won Deal</span>
-              </button>
-            </div>
+        <div class="ozet-kart">
+          <div>
+            <div class="ozet-etiket" data-t="kpi_comp">Rakip Değiştirmek İsteyen</div>
+            <div class="ozet-deger" id="kpiComp">0</div>
+            <div class="ozet-alt" data-t="kpi_comp_sub">Mevcut aracından şikayetçi</div>
+          </div>
+          <div class="ozet-rozet" style="background:var(--uygulama-yumusak); color:var(--uygulama);" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          </div>
+        </div>
+        <div class="ozet-kart">
+          <div>
+            <div class="ozet-etiket" data-t="kpi_pot">Tahmini Satış Potansiyeli</div>
+            <div class="ozet-deger" id="kpiPot">0 $</div>
+            <div class="ozet-alt" data-t="kpi_pot_sub">Yıllık abonelik tahmini</div>
+          </div>
+          <div class="ozet-rozet" style="background:var(--bilgi-zemin); color:var(--bilgi);" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
           </div>
         </div>
       </div>
 
-      <!-- TAB 2: 1-CLICK AI URL ONBOARDING -->
-      <div id="tabOnboard" class="hidden">
-        <div class="panel-card">
-          <h2 style="font-size:1.35rem; margin-bottom:0.35rem;" data-i18n="onboard_title">⚡ 1-Click AI Product URL Analyzer</h2>
-          <p style="color:var(--text-secondary); font-size:0.9rem; margin-bottom:1.2rem;" data-i18n="onboard_sub">
-            Paste any SaaS, mobile app, agency, or devtool URL. Our engine crawls the landing page and automatically configures high-intent buyer keywords, competitor churn watches, and target communities.
-          </p>
-
-          <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
-            <input
-              type="text"
-              id="onboardUrlInput"
-              class="form-input"
-              style="flex:1; min-width:260px;"
-              placeholder="https://supabase.com or https://your-saas.com"
-              value="https://linear.app"
-            />
-            <button class="btn btn-primary" onclick="analyzeUrlInWorkspace()" id="btnAnalyzeUrl">
-              <span>🔍</span> <span data-i18n="btn_analyze_url">Extract Buyer-Intent Profile</span>
-            </button>
-          </div>
-
-          <div class="form-grid" style="margin-top:1.5rem;">
-            <div class="form-group">
-              <label>Product / SaaS Name</label>
-              <input type="text" id="campName" class="form-input" placeholder="e.g. Linear" />
-            </div>
-            <div class="form-group">
-              <label>Industry / Category</label>
-              <input type="text" id="campCategory" class="form-input" placeholder="e.g. B2B SaaS / Issue Tracking" />
-            </div>
-            <div class="form-group">
-              <label>Target Buyer Persona</label>
-              <input type="text" id="campAudience" class="form-input" placeholder="e.g. CTOs, Product Managers, SaaS Founders" />
-            </div>
-            <div class="form-group">
-              <label>Average Annual Customer Value ($ ARR)</label>
-              <input type="number" id="campDealValue" class="form-input" value="580" />
-            </div>
-          </div>
-
-          <div class="form-group" style="margin-top:1rem;">
-            <label>Core Value Proposition (Used by AI Reply Studio)</label>
-            <textarea id="campValueProp" class="form-textarea" rows="2"></textarea>
-          </div>
-
-          <div class="form-grid">
-            <div class="form-group">
-              <label>High-Intent Buyer Keywords (comma-separated)</label>
-              <textarea id="campKeywords" class="form-textarea" rows="3"></textarea>
-            </div>
-            <div class="form-group">
-              <label>Competitors to Poach Churn From (comma-separated)</label>
-              <textarea id="campCompetitors" class="form-textarea" rows="3"></textarea>
-            </div>
-            <div class="form-group">
-              <label>Target Subreddits & Communities (comma-separated)</label>
-              <textarea id="campSubreddits" class="form-textarea" rows="3"></textarea>
-            </div>
-          </div>
-
-          <div style="margin-top:1.35rem; display:flex; justify-content:flex-end; gap:0.75rem;">
-            <button class="btn btn-emerald" onclick="saveNewCampaignAndScan()">
-              <span>🚀</span> <span data-i18n="btn_launch_campaign">Save Campaign & Launch Live Buyer Scan</span>
-            </button>
-          </div>
+      <!-- KAYNAK FİLTRESİ (Reddit / HackerNews / GitHub) -->
+      <div class="filtre-bar">
+        <div class="cip-grup" id="sourceFilterGroup" role="group" aria-label="Kaynak filtresi">
+          <button type="button" class="cip" data-src="all" aria-pressed="true" id="fltAllBtn">Tümü (0)</button>
+          <button type="button" class="cip" data-src="reddit" aria-pressed="false">Reddit</button>
+          <button type="button" class="cip" data-src="hackernews" aria-pressed="false">HackerNews</button>
+          <button type="button" class="cip" data-src="github" aria-pressed="false">GitHub</button>
         </div>
       </div>
 
-      <!-- TAB 3: LEAD CRM & ROI FUNNEL -->
-      <div id="tabCrm" class="hidden">
-        <div class="panel-card">
-          <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; margin-bottom:1.2rem;">
-            <div>
-              <h2 style="font-size:1.3rem;" data-i18n="crm_title">📊 Social Lead Pipeline & Revenue Attribution</h2>
-              <p style="color:var(--text-secondary); font-size:0.86rem;" data-i18n="crm_sub">
-                Track every high-intent social conversation from discovery to replied and paying customer.
-              </p>
-            </div>
-            <button class="btn btn-secondary btn-sm" onclick="exportLeadsCsv()">
-              ⬇️ Export Leads CSV
-            </button>
-          </div>
-
-          <div style="overflow-x:auto;">
-            <table class="crm-table">
-              <thead>
-                <tr>
-                  <th>Platform</th>
-                  <th>Intent Score</th>
-                  <th>Buyer Thread & Signal</th>
-                  <th>Competitor Mentioned</th>
-                  <th>Est. ARR</th>
-                  <th>Pipeline Stage</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody id="crmTableBody"></tbody>
-            </table>
-          </div>
-        </div>
+      <!-- DURUM ALANLARI -->
+      <div id="yukleniyorAlani" class="iskelet-grup" hidden>
+        <div class="iskelet"></div>
+        <div class="iskelet"></div>
+      </div>
+      <div id="bosAlani" class="durum-kutu" hidden>
+        <h3 data-t="empty_title">Bu filtreye uygun fırsat bulunamadı</h3>
+        <p style="color:var(--soluk); max-width:420px;" data-t="empty_sub">Farklı bir kaynak veya ürün seçebilir ya da yeni gönderileri bulmak için taramayı başlatabilirsiniz.</p>
+        <button type="button" class="btn birincil" id="resetFilterBtn" data-t="empty_btn">Tüm Fırsatları Göster</button>
+      </div>
+      <div id="hataAlani" class="durum-kutu" hidden style="border-color:var(--hata);">
+        <h3 style="color:var(--hata);" data-t="err_title">Veriler yüklenemedi</h3>
+        <p style="color:var(--soluk); max-width:440px;" data-t="err_sub">Bağlantı geçici olarak kesildi. Birkaç saniye sonra tekrar deneyebilirsiniz.</p>
+        <button type="button" class="btn" id="retryBtn" data-t="err_btn">Tekrar Dene</button>
       </div>
 
-      <!-- TAB 4: COMPETITOR CHURN WATCH -->
-      <div id="tabCompetitors" class="hidden">
-        <div class="panel-card">
-          <h2 style="font-size:1.3rem; margin-bottom:0.35rem;">🔥 Live Competitor Churn & Pricing Backlash Radar</h2>
-          <p style="color:var(--text-secondary); font-size:0.88rem; margin-bottom:1.25rem;">
-            The highest-converting leads in SaaS (35%+ close rate) are users complaining about a competitor's price hike, downtime, or missing features.
-          </p>
-          <div id="competitorCardsGrid" class="feature-grid" style="margin-bottom:0;"></div>
+      <!-- FIRSAT KARTLARI -->
+      <div id="firsatListe" class="firsat-liste"></div>
+    </section>
+
+    <!-- SEKME 2: MÜŞTERİ TAKİBİ -->
+    <section id="panel-takip" hidden>
+      <div class="panel">
+        <div class="baslik-satir">
+          <div>
+            <h2 data-t="track_h2">Müşteri Takip Listesi</h2>
+            <p data-t="track_sub">Yanıt gönderdiğiniz ve satışa dönen fırsatları buradan takip edin.</p>
+          </div>
+          <button type="button" class="btn kucuk" id="exportCsvBtn" data-t="btn_csv">Listeyi İndir (CSV)</button>
+        </div>
+        <div class="tablo-sar">
+          <table>
+            <thead>
+              <tr>
+                <th data-t="th_src">Kaynak</th>
+                <th data-t="th_prob">İhtimal</th>
+                <th data-t="th_topic">Konu</th>
+                <th data-t="th_prod">Ürün</th>
+                <th data-t="th_stage">Durum</th>
+                <th data-t="th_action">İşlem</th>
+              </tr>
+            </thead>
+            <tbody id="trackerTableBody"></tbody>
+          </table>
         </div>
       </div>
+    </section>
 
-      <!-- TAB 5: SETTINGS, WEBHOOKS & BILLING -->
-      <div id="tabSettings" class="hidden">
-        <div class="panel-card">
-          <h2 style="font-size:1.3rem; margin-bottom:0.4rem;">⚙️ Real-Time Alerts, AI Engine & Subscription</h2>
-          <p style="color:var(--text-secondary); font-size:0.88rem; margin-bottom:1.25rem;">
-            Configure instant Slack/Discord webhooks whenever a 90+ buyer-intent thread drops.
-          </p>
-
-          <div class="form-grid">
-            <div class="form-group">
-              <label>Current SaaS Plan</label>
-              <select id="setPlan" class="form-input">
-                <option value="Starter ($19/mo)">Starter — $19/mo (1 Product, 15 Keywords)</option>
-                <option value="Growth ($49/mo)">Growth — $49/mo (5 Products, 50 Keywords, Webhooks)</option>
-                <option value="Scale ($99/mo)">Scale — $99/mo (Unlimited Products, White-Label)</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Semantic Intent Scoring Model</label>
-              <select id="setModel" class="form-input">
-                <option value="gpt-4o-mini (Semantic Intent v3)">GPT-4o-mini (Fast Semantic Intent v3)</option>
-                <option value="claude-3-7-sonnet (Deep Context)">Claude 3.7 Sonnet (Anti-Spam Founder Tone)</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Slack Incoming Webhook URL (Instant 90+ Alerts)</label>
-              <input type="text" id="setSlack" class="form-input" placeholder="https://hooks.slack.com/services/T000/B000/XXXX" />
-            </div>
-            <div class="form-group">
-              <label>Discord Webhook URL</label>
-              <input type="text" id="setDiscord" class="form-input" placeholder="https://discord.com/api/webhooks/..." />
-            </div>
-          </div>
-
-          <div style="margin-top:1.25rem; display:flex; gap:0.75rem;">
-            <button class="btn btn-primary" onclick="saveSettings()">💾 Save Workspace Configuration</button>
-            <button class="btn btn-secondary" onclick="testWebhookAlert()">🔔 Send Test 98-Score Lead Alert</button>
-          </div>
-        </div>
+    <!-- SEKME 3: RAKİP ŞİKAYETLERİ -->
+    <section id="panel-rakip" hidden>
+      <div class="panel">
+        <h2 data-t="comp_h2">Rakipten Memnun Olmayanlar</h2>
+        <p style="color:var(--soluk); margin-top:4px;" data-t="comp_sub">Mevcut aracının fiyatından veya karmaşıklığından şikayet eden kişiler en hızlı müşteriye dönüşür.</p>
+        <div class="rakip-grid" id="competitorGrid"></div>
       </div>
-    </main>
-  </section>
+    </section>
 
-  <div id="toastBox" class="toast"></div>
+    <!-- SEKME 4: ÜRÜN EKLE -->
+    <section id="panel-urun" hidden>
+      <div class="panel">
+        <h2 data-t="add_h2">Yeni Ürün veya Web Sitesi Ekle</h2>
+        <p style="color:var(--soluk); margin-top:4px;" data-t="add_sub">Web sitenizin adresini yapıştırın; hedef müşterinizi, rakiplerinizi ve aranacak kelimeleri otomatik çıkaralım.</p>
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:16px;">
+          <input type="url" id="urlInput" class="girdi" style="flex:1; min-width:240px;" data-t-placeholder="url_placeholder" placeholder="https://urununuz.com" aria-label="Ürün web adresi" />
+          <button type="button" class="btn birincil" id="analyzeUrlBtn" data-t="btn_analyze">Siteyi Analiz Et</button>
+        </div>
+
+        <form id="addProductForm">
+          <div class="form-izgara">
+            <div class="alan">
+              <label for="uAd" data-t="f_name">Ürün Adı</label>
+              <input id="uAd" class="girdi" required />
+            </div>
+            <div class="alan">
+              <label for="uMusteri" data-t="f_aud">Hedef Müşteriniz Kim?</label>
+              <input id="uMusteri" class="girdi" />
+            </div>
+            <div class="alan tam">
+              <label for="uOzet" data-t="f_val">Ürününüz Ne İşe Yarar? (Kısa Özet)</label>
+              <textarea id="uOzet" class="girdi" rows="2"></textarea>
+            </div>
+            <div class="alan">
+              <label for="uRakip" data-t="f_comp">Rakipleriniz (virgülle ayırın)</label>
+              <input id="uRakip" class="girdi" />
+            </div>
+            <div class="alan">
+              <label for="uKelimeler" data-t="f_kw">Aranacak Kelimeler (virgülle ayırın)</label>
+              <input id="uKelimeler" class="girdi" />
+            </div>
+            <div class="alan">
+              <label for="uDeger" data-t="f_val_usd">Ortalama Yıllık Müşteri Değeri ($)</label>
+              <input id="uDeger" type="number" min="1" class="girdi" value="490" />
+            </div>
+          </div>
+          <div style="margin-top:16px; display:flex; justify-content:flex-end;">
+            <button type="submit" class="btn basari" id="saveProductBtn" data-t="btn_save">Ürünü Kaydet ve Müşteri Ara</button>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- MOBİL ALT GEZİNME (4 ANA SEKME) -->
+  <nav class="mobil-alt" role="tablist" aria-label="Mobil gezinme">
+    <button type="button" class="mobil-sekme" id="mtab-radar" data-tab="radar" aria-selected="true">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>
+      <span data-t="mtab_radar">Fırsatlar</span>
+    </button>
+    <button type="button" class="mobil-sekme" id="mtab-takip" data-tab="takip" aria-selected="false">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      <span data-t="mtab_track">Takip</span>
+    </button>
+    <button type="button" class="mobil-sekme" id="mtab-rakip" data-tab="rakip" aria-selected="false">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      <span data-t="mtab_comp">Rakipler</span>
+    </button>
+    <button type="button" class="mobil-sekme" id="mtab-urun" data-tab="urun" aria-selected="false">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      <span data-t="mtab_add">Ürün Ekle</span>
+    </button>
+  </nav>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="/appcook-kabuk.js"></script>
+  <script src="/ceviri/tr.js"></script>
+  <script src="/ceviri/en.js"></script>
+  <script src="/ceviri.js"></script>
   <script src="/app.js"></script>
 </body>
 </html>

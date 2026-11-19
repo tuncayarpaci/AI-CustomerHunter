@@ -14,10 +14,15 @@ services:
     image: ai-customerhunter:latest
     container_name: customerhunter-app-1
     restart: unless-stopped
+    env_file:
+      - path: ../.env
+        required: false
     environment:
       PORT: "3090"
       DATA_DIR: "/data"
       NODE_ENV: "production"
+      TZ: "Europe/Istanbul"
+      PUBLIC_URL: "${PUBLIC_URL:-https://customerhunter.appcook.store}"
     volumes:
       - veri:/data
     expose:

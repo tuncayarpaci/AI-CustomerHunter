@@ -1,655 +1,797 @@
-let APP_STATE = {
-  campaigns: [],
-  leads: [],
-  settings: {
-    plan: 'Growth ($49/mo)',
-    language: 'en'
-  }
-};
+(function () {
+  'use strict';
 
-let CURRENT_CAMPAIGN_ID = null;
-let CURRENT_PLATFORM_FILTER = 'all';
-let CURRENT_INTENT_FILTER = 'all';
-let SELECTED_LEAD_ID = null;
-let SELECTED_TONE = 'helpful';
-let CURRENT_LANG = 'en';
+  const i18n = window.CHI18n;
+  const t = (key, vars) => (i18n ? i18n.t(key, vars) : key);
 
-const I18N = {
-  en: {
-    nav_badge: 'LIVE INTENT v3.4',
-    nav_sub: 'Autonomous Social Buyer-Intent & Lead Radar',
-    mode_landing: '🌍 Global SaaS Landing',
-    mode_app: '📡 Live Radar Workspace',
-    btn_live_scan: 'Scan Live Intent Now',
-    hero_pill: '🚀 Replace $149/mo noisy trackers & dead cold emails with 24/7 Buyer-Intent Radar',
-    hero_h1_1: 'Find People Actively Asking to',
-    hero_h1_2: ' Buy Your Product Right Now',
-    hero_sub: 'ReplyPulse AI monitors Reddit, Hacker News, X, and GitHub in real time, filters out 95% of keyword noise with AI Buyer-Intent Scoring (0–100), and writes authentic, ban-safe replies that win customers.',
-    hero_cta: 'Auto-Find My Buyers',
-    trust_1: '60-Second URL Setup',
-    trust_2: 'Anti-Shadowban Reply Engine',
-    trust_3: 'Live Reddit + HN + GitHub + X',
-    trust_4: 'Starts at $19/mo (No Enterprise Bloat)',
-    side_radar: 'Live Buyer-Intent Radar',
-    side_onboard: '1-Click URL Onboarding',
-    side_crm: 'Lead CRM & ROI Funnel',
-    side_comp: 'Competitor Churn Watch',
-    side_settings: 'Webhooks & Plan Billing',
-    active_campaign: 'Active Product Radar',
-    btn_add_product: 'Add Product URL',
-    plan_status_sub: '24/7 Live Reddit, HN, GitHub & X Intent Engine Active',
-    btn_upgrade: 'Upgrade / View Plans',
-    kpi_1: 'High-Intent Buyers (85+ Score)',
-    kpi_1_sub: 'Live Ready-to-Buy',
-    kpi_2: 'Competitor Churn Signals',
-    kpi_2_sub: 'Switching Now',
-    kpi_3: 'Replies Sent / Converted',
-    kpi_3_sub: '38% Close Rate',
-    kpi_4: 'Estimated Pipeline ROI',
-    kpi_4_sub: 'ARR Attribution',
-    flt_all: 'All Channels',
-    int_all: 'All Intent Types',
-    studio_tag: '🛡️ Anti-Spam Reply Studio',
-    choose_tone: 'Select Community-Safe Reply Angle:',
-    ban_risk_lbl: 'Subreddit Ban Risk:',
-    est_deal_lbl: 'Est. Value:',
-    btn_copy_open: 'Copy Reply & Open Thread ↗',
-    btn_mark_replied: 'Mark Replied',
-    btn_mark_won: 'Won Deal',
-    onboard_title: '⚡ 1-Click AI Product URL Analyzer',
-    onboard_sub: 'Paste any SaaS, mobile app, agency, or devtool URL. Our engine crawls the landing page and automatically configures high-intent buyer keywords, competitor churn watches, and target communities.',
-    btn_analyze_url: 'Extract Buyer-Intent Profile',
-    btn_launch_campaign: 'Save Campaign & Launch Live Buyer Scan',
-    crm_title: '📊 Social Lead Pipeline & Revenue Attribution',
-    crm_sub: 'Track every high-intent social conversation from discovery to replied and paying customer.'
-  },
-  tr: {
-    nav_badge: 'CANLI NİYET v3.4',
-    nav_sub: 'Otonom Sosyal Medya Satın Alma Niyeti & Müşteri Radarı',
-    mode_landing: '🌍 Global SaaS Vitrin',
-    mode_app: '📡 Canlı Radar Paneli',
-    btn_live_scan: 'Canlı Niyet Taraması Yap',
-    hero_pill: '🚀 Aylık $149 gürültülü araçları ve ölü soğuk e-postaları 7/24 Alıcı Radarıyla değiştirin',
-    hero_h1_1: 'Ürününüzü Şu Anda Satın Almak İsteyen',
-    hero_h1_2: ' Hazır Müşterileri Yakalayın',
-    hero_sub: 'ReplyPulse AI; Reddit, Hacker News, X ve GitHub üzerindeki konuşmaları gerçek zamanlı tarar, 0-100 Satın Alma Niyeti Puanı ile gürültüyü %95 eler ve ban riski olmayan doğal yanıtlar hazırlar.',
-    hero_cta: 'Müşterilerimi Otomatik Bul',
-    trust_1: '60 Saniyede URL Kurulumu',
-    trust_2: 'Anti-Ban Doğal Yanıt Motoru',
-    trust_3: 'Canlı Reddit + HN + GitHub + X',
-    trust_4: 'Aylık $19’dan Başlayan Fiyatlar',
-    side_radar: 'Canlı Alıcı Niyeti Radarı',
-    side_onboard: '1-Tık URL Kurulumu',
-    side_crm: 'Aday CRM & Gelir Hunisi',
-    side_comp: 'Rakip Kayıp (Churn) Radarı',
-    side_settings: 'Webhook & Paket Ayarları',
-    active_campaign: 'Aktif Ürün Radarı',
-    btn_add_product: 'Yeni Ürün URL Ekle',
-    plan_status_sub: '7/24 Canlı Reddit, HN, GitHub & X Niyet Motoru Aktif',
-    btn_upgrade: 'Paketleri Gör / Yükselt',
-    kpi_1: 'Yüksek Niyetli Alıcılar (85+)',
-    kpi_1_sub: 'Satın Almaya Hazır',
-    kpi_2: 'Rakip Terk (Churn) Sinyali',
-    kpi_2_sub: 'Alternatif Arayanlar',
-    kpi_3: 'Yanıtlanan / Müşteri Olan',
-    kpi_3_sub: '%38 Kapanış Oranı',
-    kpi_4: 'Tahmini Satış Hattı ROI',
-    kpi_4_sub: 'Yıllık Gelir Etkisi',
-    flt_all: 'Tüm Kanallar',
-    int_all: 'Tüm Niyet Tipleri',
-    studio_tag: '🛡️ Anti-Spam Yanıt Stüdyosu',
-    choose_tone: 'Topluluk Dostu Yanıt Tonu Seçin:',
-    ban_risk_lbl: 'Topluluk Ban Riski:',
-    est_deal_lbl: 'Tahmini Değer:',
-    btn_copy_open: 'Yanıtı Kopyala & Konuyu Aç ↗',
-    btn_mark_replied: 'Yanıtlandı İşaretle',
-    btn_mark_won: 'Müşteri Kazanıldı',
-    onboard_title: '⚡ 1-Tık Yapay Zeka Ürün URL Analizörü',
-    onboard_sub: 'Herhangi bir SaaS, mobil uygulama veya hizmet URL’si yapıştırın. Motorumuz hedef kitleyi, yüksek niyetli anahtar kelimeleri, rakipleri ve hedef subreddit’leri otomatik çıkarır.',
-    btn_analyze_url: 'Alıcı Niyeti Profilini Çıkar',
-    btn_launch_campaign: 'Kampanyayı Kaydet & Canlı Taramayı Başlat',
-    crm_title: '📊 Sosyal Satış Hattı & Gelir Atıf Tablosu',
-    crm_sub: 'Keşfedilen her yüksek niyetli sosyal medya konuşmasını yanıttan ödeme yapan müşteriye kadar takip edin.'
-  }
-};
-
-function showToast(msg) {
-  const box = document.getElementById('toastBox');
-  box.textContent = msg;
-  box.style.display = 'block';
-  clearTimeout(window._toastTimer);
-  window._toastTimer = setTimeout(() => {
-    box.style.display = 'none';
-  }, 3600);
-}
-
-function setLanguage(lang) {
-  CURRENT_LANG = lang === 'tr' ? 'tr' : 'en';
-  const langEnBtn = document.getElementById('langEn');
-  const langTrBtn = document.getElementById('langTr');
-  if (langEnBtn) langEnBtn.classList.toggle('active', CURRENT_LANG === 'en');
-  if (langTrBtn) langTrBtn.classList.toggle('active', CURRENT_LANG === 'tr');
-
-  const dict = I18N[CURRENT_LANG];
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.getAttribute('data-i18n');
-    if (dict[key]) {
-      el.textContent = dict[key];
-    }
-  });
-}
-
-function switchTopMode(mode) {
-  const isLanding = mode === 'landing';
-  document.getElementById('landingView').classList.toggle('hidden', !isLanding);
-  document.getElementById('appView').classList.toggle('hidden', isLanding);
-  document.getElementById('topTabLanding').classList.toggle('active', isLanding);
-  document.getElementById('topTabApp').classList.toggle('active', !isLanding);
-}
-
-function switchWorkspaceTab(tabName) {
-  const tabs = ['radar', 'onboard', 'crm', 'competitors', 'settings'];
-  tabs.forEach(t => {
-    const el = document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1));
-    const nav = document.getElementById('nav' + t.charAt(0).toUpperCase() + t.slice(1));
-    if (el) el.classList.toggle('hidden', t !== tabName);
-    if (nav) nav.classList.toggle('active', t === tabName);
-  });
-  if (tabName === 'crm') renderCrmTable();
-  if (tabName === 'competitors') renderCompetitorWatch();
-}
-
-async function fetchInitialState() {
-  try {
-    const res = await fetch('/api/state');
-    const data = await res.json();
-    APP_STATE = data;
-    const activeCamp = APP_STATE.campaigns.find(c => c.active) || APP_STATE.campaigns[0];
-    CURRENT_CAMPAIGN_ID = activeCamp ? activeCamp.id : null;
-    renderAll();
-  } catch (err) {
-    console.error('Failed to load initial state:', err);
-  }
-}
-
-function getFilteredLeads() {
-  return (APP_STATE.leads || []).filter(lead => {
-    if (CURRENT_CAMPAIGN_ID && lead.campaignId && lead.campaignId !== CURRENT_CAMPAIGN_ID) {
-      return false;
-    }
-    if (CURRENT_PLATFORM_FILTER !== 'all' && lead.platform !== CURRENT_PLATFORM_FILTER) {
-      return false;
-    }
-    if (CURRENT_INTENT_FILTER !== 'all' && lead.intentType !== CURRENT_INTENT_FILTER) {
-      return false;
-    }
-    return true;
-  });
-}
-
-function renderAll() {
-  renderCampaignSelector();
-  renderKpis();
-  renderLeadsList();
-  renderCrmTable();
-  renderCompetitorWatch();
-  populateSettings();
-}
-
-function renderCampaignSelector() {
-  const select = document.getElementById('campaignSelect');
-  select.innerHTML = '';
-  (APP_STATE.campaigns || []).forEach(c => {
-    const opt = document.createElement('option');
-    opt.value = c.id;
-    opt.textContent = `${c.name}`;
-    if (c.id === CURRENT_CAMPAIGN_ID) opt.selected = true;
-    select.appendChild(opt);
-  });
-
-  const currentCamp = (APP_STATE.campaigns || []).find(c => c.id === CURRENT_CAMPAIGN_ID) || APP_STATE.campaigns[0];
-  const metaEl = document.getElementById('campaignMetaInfo');
-  if (currentCamp && metaEl) {
-    metaEl.innerHTML = `
-      <div>🔗 <strong>${currentCamp.url}</strong></div>
-      <div style="margin-top:0.25rem;">🎯 ${(currentCamp.keywords || []).length} keywords • 🔥 ${(currentCamp.competitors || []).join(', ')}</div>
-    `;
-  }
-  if (APP_STATE.settings && APP_STATE.settings.plan) {
-    document.getElementById('currentPlanBadge').textContent = APP_STATE.settings.plan;
-  }
-}
-
-function onCampaignChange(campId) {
-  CURRENT_CAMPAIGN_ID = campId;
-  SELECTED_LEAD_ID = null;
-  renderAll();
-}
-
-function renderKpis() {
-  const campLeads = (APP_STATE.leads || []).filter(l => !CURRENT_CAMPAIGN_ID || l.campaignId === CURRENT_CAMPAIGN_ID);
-  const hotLeads = campLeads.filter(l => l.intentScore >= 85);
-  const churnLeads = campLeads.filter(l => l.intentType === 'competitor_churn');
-  const repliedOrWon = campLeads.filter(l => l.status === 'replied' || l.status === 'converted');
-  const pipelineVal = campLeads.reduce((acc, l) => acc + (Number(l.estimatedValue) || 490), 0);
-
-  document.getElementById('kpiHotLeads').textContent = hotLeads.length;
-  document.getElementById('sideHotCount').textContent = hotLeads.length;
-  document.getElementById('kpiChurnCount').textContent = churnLeads.length;
-  document.getElementById('kpiConvertedCount').textContent = `${repliedOrWon.length} / ${campLeads.filter(l => l.status === 'converted').length} Won`;
-  document.getElementById('kpiPipelineValue').textContent = `$${pipelineVal.toLocaleString()}`;
-}
-
-function getPlatformBadgeHtml(platform, community) {
-  const map = {
-    reddit: { cls: 'platform-reddit', icon: '🟠 Reddit' },
-    hackernews: { cls: 'platform-hackernews', icon: '🟧 Hacker News' },
-    x: { cls: 'platform-x', icon: '𝕏 Twitter/X' },
-    github: { cls: 'platform-github', icon: '🟣 GitHub' }
-  };
-  const info = map[platform] || map.reddit;
-  return `<span class="platform-tag ${info.cls}">${info.icon} • ${escapeHtml(community || '')}</span>`;
-}
-
-function escapeHtml(str) {
-  return String(str || '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-}
-
-function renderLeadsList() {
-  const container = document.getElementById('leadsListContainer');
-  const leads = getFilteredLeads();
-
-  if (leads.length === 0) {
-    container.innerHTML = `
-      <div class="panel-card" style="text-align:center; padding:2.5rem;">
-        <div style="font-size:2rem; margin-bottom:0.5rem;">📡</div>
-        <h3>No buyer signals match this filter yet</h3>
-        <p style="color:var(--text-secondary); font-size:0.88rem; margin:0.5rem 0 1rem;">
-          Click "Scan Live Intent Now" to query Reddit, Hacker News, and GitHub in real time.
-        </p>
-        <button class="btn btn-primary" onclick="triggerLiveScan()">🔄 Scan Live Sources Now</button>
-      </div>
-    `;
-    return;
-  }
-
-  if (!SELECTED_LEAD_ID || !leads.some(l => l.id === SELECTED_LEAD_ID)) {
-    SELECTED_LEAD_ID = leads[0].id;
-  }
-
-  container.innerHTML = leads.map(lead => {
-    const isSelected = lead.id === SELECTED_LEAD_ID;
-    const scoreClass = lead.intentScore >= 90 ? 'intent-hot' : 'intent-warm';
-    const statusPill = lead.status === 'converted'
-      ? '<span style="color:var(--emerald); font-weight:700;">💰 Won Customer</span>'
-      : lead.status === 'replied'
-      ? '<span style="color:#818cf8; font-weight:700;">✅ Replied</span>'
-      : '<span style="color:var(--amber); font-weight:700;">⚡ Ready to Reply</span>';
-
-    return `
-      <div class="lead-card ${isSelected ? 'selected' : ''}" onclick="selectLead('${lead.id}')">
-        <div class="lead-top">
-          ${getPlatformBadgeHtml(lead.platform, lead.community)}
-          <span class="intent-badge ${scoreClass}">🎯 ${lead.intentScore}/100 • ${escapeHtml(lead.intentLabel)}</span>
-        </div>
-        <div class="lead-title">${escapeHtml(lead.title)}</div>
-        <div class="lead-snippet">${escapeHtml(lead.snippet)}</div>
-        <div class="lead-meta">
-          <span>👤 ${escapeHtml(lead.author)} • 🕒 ${escapeHtml(lead.postedAt)}</span>
-          <span>🔥 vs. <strong>${escapeHtml(lead.competitorMentioned || 'Manual')}</strong> • ${statusPill}</span>
-        </div>
-      </div>
-    `;
-  }).join('');
-
-  renderReplyStudio();
-}
-
-function selectLead(leadId) {
-  SELECTED_LEAD_ID = leadId;
-  renderLeadsList();
-}
-
-function selectReplyTone(tone) {
-  SELECTED_TONE = tone;
-  document.getElementById('toneHelpful').classList.toggle('active', tone === 'helpful');
-  document.getElementById('toneFounder').classList.toggle('active', tone === 'founder');
-  document.getElementById('toneComparison').classList.toggle('active', tone === 'comparison');
-  renderReplyStudio();
-}
-
-function renderReplyStudio() {
-  const lead = (APP_STATE.leads || []).find(l => l.id === SELECTED_LEAD_ID);
-  if (!lead) return;
-
-  document.getElementById('studioScoreBadge').textContent = `${lead.intentScore}/100 Intent`;
-  document.getElementById('studioLeadTitle').textContent = lead.title;
-  document.getElementById('studioLeadMeta').innerHTML = `
-    <strong>${escapeHtml(lead.community)}</strong> • Posted by <strong>${escapeHtml(lead.author)}</strong> (${escapeHtml(lead.postedAt)}) •
-    <a href="${escapeHtml(lead.url)}" target="_blank" rel="noopener" style="color:#818cf8;">Open Original Thread ↗</a>
-  `;
-  document.getElementById('studioWhyHot').innerHTML = `
-    <strong>🧠 Why AI Flagged This Buyer Signal:</strong><br/>
-    ${escapeHtml(lead.whyHot || 'High buyer intent detected with explicit tool comparison signal.')}
-  `;
-
-  const replyDraft = (lead.replies && lead.replies[SELECTED_TONE]) || '';
-  document.getElementById('studioReplyText').value = replyDraft;
-  document.getElementById('studioBanRisk').textContent = lead.banRisk || 'Low (3% - Safe)';
-  document.getElementById('studioDealVal').textContent = `$${(lead.estimatedValue || 490)}/yr`;
-}
-
-function setPlatformFilter(platform) {
-  CURRENT_PLATFORM_FILTER = platform;
-  document.querySelectorAll('[data-platform]').forEach(btn => {
-    btn.classList.toggle('active', btn.getAttribute('data-platform') === platform);
-  });
-  renderLeadsList();
-}
-
-function setIntentFilter(intent) {
-  CURRENT_INTENT_FILTER = intent;
-  document.querySelectorAll('[data-intent]').forEach(btn => {
-    btn.classList.toggle('active', btn.getAttribute('data-intent') === intent);
-  });
-  renderLeadsList();
-}
-
-async function copyAndOpenThread() {
-  const lead = (APP_STATE.leads || []).find(l => l.id === SELECTED_LEAD_ID);
-  if (!lead) return;
-  const text = document.getElementById('studioReplyText').value;
-  try {
-    await navigator.clipboard.writeText(text);
-  } catch (e) {
-    // Fallback copy
-  }
-  showToast('✅ Anti-Spam Reply copied to clipboard! Opening thread...');
-  window.open(lead.url, '_blank', 'noopener');
-}
-
-async function markLeadStatus(newStatus) {
-  if (!SELECTED_LEAD_ID) return;
-  const customReply = document.getElementById('studioReplyText').value;
-  try {
-    const res = await fetch(`/api/leads/${SELECTED_LEAD_ID}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: newStatus, tone: SELECTED_TONE, customReply })
-    });
-    const data = await res.json();
-    if (data.ok) {
-      APP_STATE = data.state;
-      renderAll();
-      showToast(newStatus === 'converted' ? '💰 Deal marked as Converted Customer! ROI updated.' : '✅ Lead marked as Replied!');
-    }
-  } catch (e) {
-    showToast('⚠️ Could not update lead status');
-  }
-}
-
-async function triggerLiveScan() {
-  const btn = document.getElementById('topScanBtn');
-  const origHtml = btn.innerHTML;
-  btn.innerHTML = '<span>⏳</span> <span>Scanning Reddit, HN & GitHub...</span>';
-  btn.disabled = true;
-
-  try {
-    const res = await fetch('/api/scan', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ campaignId: CURRENT_CAMPAIGN_ID })
-    });
-    const data = await res.json();
-    if (data.ok) {
-      APP_STATE = data.state;
-      SELECTED_LEAD_ID = data.leads && data.leads[0] ? data.leads[0].id : SELECTED_LEAD_ID;
-      switchTopMode('app');
-      switchWorkspaceTab('radar');
-      renderAll();
-      showToast(`📡 Live Scan Complete: Found ${data.addedCount} fresh buyer-intent signals across Reddit, HN & GitHub!`);
-    }
-  } catch (e) {
-    showToast('⚠️ Live scan error');
-  } finally {
-    btn.innerHTML = origHtml;
-    btn.disabled = false;
-  }
-}
-
-async function runHeroUrlAnalysis() {
-  const urlVal = document.getElementById('heroUrlInput').value.trim() || 'https://replypulse.ai';
-  document.getElementById('onboardUrlInput').value = urlVal;
-  switchTopMode('app');
-  switchWorkspaceTab('onboard');
-  await analyzeUrlInWorkspace();
-}
-
-async function analyzeUrlInWorkspace() {
-  const urlVal = document.getElementById('onboardUrlInput').value.trim();
-  const btn = document.getElementById('btnAnalyzeUrl');
-  const orig = btn.innerHTML;
-  btn.innerHTML = '<span>⏳</span> <span>Crawling URL & Extracting Buyer Persona...</span>';
-  btn.disabled = true;
-
-  try {
-    const res = await fetch('/api/analyze-url', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url: urlVal })
-    });
-    const data = await res.json();
-    if (data.ok && data.analysis) {
-      const a = data.analysis;
-      document.getElementById('campName').value = a.name || '';
-      document.getElementById('campCategory').value = a.category || '';
-      document.getElementById('campAudience').value = a.audience || '';
-      document.getElementById('campDealValue').value = a.suggestedDealValue || 490;
-      document.getElementById('campValueProp').value = a.valueProp || '';
-      document.getElementById('campKeywords').value = (a.keywords || []).join(', ');
-      document.getElementById('campCompetitors').value = (a.competitors || []).join(', ');
-      document.getElementById('campSubreddits').value = (a.subreddits || []).join(', ');
-      showToast(`⚡ Extracted buyer profile for ${a.name}! Click "Save Campaign & Launch Live Buyer Scan".`);
-    }
-  } catch (e) {
-    showToast('⚠️ Failed to analyze URL');
-  } finally {
-    btn.innerHTML = orig;
-    btn.disabled = false;
-  }
-}
-
-async function saveNewCampaignAndScan() {
-  const payload = {
-    url: document.getElementById('onboardUrlInput').value.trim(),
-    name: document.getElementById('campName').value.trim() || 'My SaaS Product',
-    category: document.getElementById('campCategory').value.trim(),
-    audience: document.getElementById('campAudience').value.trim(),
-    dealValue: Number(document.getElementById('campDealValue').value) || 490,
-    valueProp: document.getElementById('campValueProp').value.trim(),
-    keywords: document.getElementById('campKeywords').value.split(',').map(s => s.trim()).filter(Boolean),
-    competitors: document.getElementById('campCompetitors').value.split(',').map(s => s.trim()).filter(Boolean),
-    subreddits: document.getElementById('campSubreddits').value.split(',').map(s => s.trim()).filter(Boolean)
+  const state = {
+    user: null,
+    campaigns: [],
+    leads: [],
+    activeTab: 'radar',
+    activeProduct: 'all',
+    activeSource: 'all',
+    lang: i18n ? i18n.getLang() : 'tr',
+    cardUi: new Map(), // leadId -> { tone: 'helpful', replyLang: 'en' }
+    translatingIds: new Set(),
+    highlightedLeadId: null,
+    loading: false
   };
 
-  showToast('🚀 Launching live buyer-intent scan for ' + payload.name + '...');
-  try {
-    const res = await fetch('/api/campaigns', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+  function escapeHtml(str) {
+    return String(str == null ? '' : str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function safeUrl(raw) {
+    try {
+      const u = new URL(String(raw || '').trim());
+      if (u.protocol === 'http:' || u.protocol === 'https:') {
+        return u.href;
+      }
+    } catch {}
+    return '';
+  }
+
+  let toastTimer = null;
+  function showToast(msg) {
+    const el = document.getElementById('toast');
+    if (!el) return;
+    el.textContent = msg;
+    el.classList.add('acik');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove('acik'), 2800);
+  }
+
+  async function apiFetch(url, options = {}) {
+    const res = await fetch(url, {
+      credentials: 'same-origin',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        ...(options.headers || {})
+      },
+      ...options
     });
-    const data = await res.json();
-    if (data.ok) {
-      APP_STATE = data.state;
-      CURRENT_CAMPAIGN_ID = data.campaign.id;
-      SELECTED_LEAD_ID = null;
-      switchWorkspaceTab('radar');
-      renderAll();
-      showToast(`🎯 Campaign "${data.campaign.name}" active with ${data.addedLeads} live buyer signals!`);
+    if (res.status === 401) {
+      window.location.href = '/giris';
+      throw new Error('Unauthorized');
     }
-  } catch (e) {
-    showToast('⚠️ Failed to save campaign');
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || data.ok === false) {
+      throw new Error(data.error || t('toast_err_generic'));
+    }
+    return data;
   }
-}
 
-function renderCrmTable() {
-  const tbody = document.getElementById('crmTableBody');
-  if (!tbody) return;
-  const leads = (APP_STATE.leads || []).filter(l => !CURRENT_CAMPAIGN_ID || l.campaignId === CURRENT_CAMPAIGN_ID);
-
-  tbody.innerHTML = leads.map(l => `
-    <tr>
-      <td>${getPlatformBadgeHtml(l.platform, l.community)}</td>
-      <td><span class="intent-badge intent-hot">${l.intentScore}/100</span></td>
-      <td style="max-width:340px;">
-        <div style="font-weight:700;">${escapeHtml(l.title)}</div>
-        <div style="font-size:0.75rem; color:var(--text-muted);">${escapeHtml(l.author)} • ${escapeHtml(l.postedAt)}</div>
-      </td>
-      <td><strong>${escapeHtml(l.competitorMentioned || 'Manual')}</strong></td>
-      <td style="color:var(--emerald); font-weight:700;">$${l.estimatedValue || 490}</td>
-      <td>
-        <select class="form-input" style="padding:0.3rem 0.5rem; font-size:0.78rem;" onchange="updateLeadStageFromCrm('${l.id}', this.value)">
-          <option value="new" ${l.status === 'new' ? 'selected' : ''}>⚡ New Signal</option>
-          <option value="saved" ${l.status === 'saved' ? 'selected' : ''}>📌 Saved</option>
-          <option value="replied" ${l.status === 'replied' ? 'selected' : ''}>✅ Replied</option>
-          <option value="converted" ${l.status === 'converted' ? 'selected' : ''}>💰 Converted Won</option>
-        </select>
-      </td>
-      <td>
-        <button class="btn btn-secondary btn-sm" onclick="openLeadInStudio('${l.id}')">Reply Studio →</button>
-      </td>
-    </tr>
-  `).join('');
-}
-
-async function updateLeadStageFromCrm(leadId, status) {
-  const res = await fetch(`/api/leads/${leadId}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ status })
-  });
-  const data = await res.json();
-  if (data.ok) {
-    APP_STATE = data.state;
-    renderAll();
-    showToast('✅ Pipeline stage updated!');
+  function getCardUi(leadId) {
+    if (!state.cardUi.has(leadId)) {
+      state.cardUi.set(leadId, { tone: 'helpful', replyLang: 'en' });
+    }
+    return state.cardUi.get(leadId);
   }
-}
 
-function openLeadInStudio(leadId) {
-  SELECTED_LEAD_ID = leadId;
-  switchWorkspaceTab('radar');
-  renderLeadsList();
-}
+  function getCampaignName(campaignId) {
+    const c = state.campaigns.find(x => x.id === campaignId);
+    return c ? c.name : 'AppCook';
+  }
 
-function renderCompetitorWatch() {
-  const grid = document.getElementById('competitorCardsGrid');
-  if (!grid) return;
-  const camp = (APP_STATE.campaigns || []).find(c => c.id === CURRENT_CAMPAIGN_ID) || APP_STATE.campaigns[0];
-  const competitors = (camp && camp.competitors) || ['F5Bot', 'Brand24', 'Syften'];
+  function platformLabel(platform) {
+    if (platform === 'reddit') return 'Reddit';
+    if (platform === 'hackernews') return 'HackerNews';
+    if (platform === 'github') return 'GitHub';
+    return String(platform || 'Web');
+  }
 
-  grid.innerHTML = competitors.map((comp, idx) => {
-    const count = (APP_STATE.leads || []).filter(l => (l.competitorMentioned || '').toLowerCase().includes(comp.toLowerCase())).length || (idx + 1);
-    return `
-      <div class="feature-card">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
-          <span style="font-size:1.1rem; font-weight:800;">🔥 vs. ${escapeHtml(comp)}</span>
-          <span class="intent-badge intent-hot">${count} Churn Signals</span>
+  function platformBadgeClass(platform) {
+    if (platform === 'reddit') return 'rozet-reddit';
+    if (platform === 'hackernews') return 'rozet-hn';
+    return 'rozet-github';
+  }
+
+  function formatProbability(score) {
+    const n = Number(score) || 0;
+    let label = t('prob_medium');
+    let cls = 'rozet-ihtimal-orta';
+    if (n >= 92) {
+      label = t('prob_very_high');
+      cls = 'rozet-ihtimal-yuksek';
+    } else if (n >= 85) {
+      label = t('prob_high');
+      cls = 'rozet-ihtimal-yuksek';
+    }
+    const text = state.lang === 'tr' ? `%${n} · ${label}` : `${n}% · ${label}`;
+    return { text, cls };
+  }
+
+  function stageInfo(status) {
+    if (status === 'replied') return { label: t('stage_replied'), cls: 'rozet-bilgi' };
+    if (status === 'converted') return { label: t('stage_converted'), cls: 'rozet-ihtimal-yuksek' };
+    if (status === 'ignored') return { label: t('stage_ignored'), cls: 'rozet-urun' };
+    return { label: t('stage_new'), cls: 'rozet-ihtimal-orta' };
+  }
+
+  function getLocalizedLead(lead) {
+    const lang = state.lang;
+    const entry = lead.i18n && lead.i18n[lang];
+    const hasEntry = Boolean(entry && entry.title);
+    return {
+      title: hasEntry ? entry.title : (lead.title || ''),
+      snippet: hasEntry ? (entry.snippet || lead.snippet || '') : (lead.snippet || ''),
+      whyHot: hasEntry ? (entry.whyHot || lead.whyHot || '') : (lead.whyHot || ''),
+      intentLabel: (entry && entry.intentLabel) || lead.intentLabel || '',
+      repliesTr: (lead.i18n && lead.i18n.tr && lead.i18n.tr.replies) || null,
+      provider: (entry && entry.provider) || (hasEntry ? 'cache' : 'original'),
+      isTranslated: hasEntry && entry.provider !== 'original'
+    };
+  }
+
+  function getFilteredLeads({ includeIgnored = false } = {}) {
+    return state.leads.filter(l => {
+      if (!includeIgnored && l.status === 'ignored') return false;
+      if (state.activeProduct !== 'all' && l.campaignId !== state.activeProduct) return false;
+      if (state.activeSource !== 'all' && l.platform !== state.activeSource) return false;
+      return true;
+    });
+  }
+
+  // ---------------------------------------------------------------- Üst Çubuk & Kullanıcı
+  function renderUserHeader() {
+    if (!state.user) return;
+    const chip = document.getElementById('userChip');
+    const avatar = document.getElementById('userAvatar');
+    const nameEl = document.getElementById('userName');
+    const adminLink = document.getElementById('adminLink');
+
+    const name = state.user.displayName || state.user.username || 'Kullanıcı';
+    const initials = name.split(/\s+/).filter(Boolean).slice(0, 2).map(s => s[0].toUpperCase()).join('') || '?';
+
+    avatar.textContent = initials;
+    nameEl.textContent = name;
+    chip.title = `${name}${state.user.isAdmin ? ' (Yönetici)' : ''}`;
+    chip.hidden = false;
+
+    if (state.user.isAdmin) {
+      adminLink.hidden = false;
+    } else {
+      adminLink.hidden = true;
+    }
+  }
+
+  function renderProductSelector() {
+    const sel = document.getElementById('urunSec');
+    if (!sel) return;
+    const allLabel = `${t('all_products')} (${state.campaigns.length})`;
+    const opts = [`<option value="all">${escapeHtml(allLabel)}</option>`];
+    state.campaigns.forEach(c => {
+      opts.push(`<option value="${escapeHtml(c.id)}">${escapeHtml(c.name)}</option>`);
+    });
+    sel.innerHTML = opts.join('');
+    if (state.activeProduct !== 'all' && !state.campaigns.some(c => c.id === state.activeProduct)) {
+      state.activeProduct = 'all';
+    }
+    sel.value = state.activeProduct;
+  }
+
+  function renderKpisAndCounts() {
+    const productScoped = state.leads.filter(l =>
+      l.status !== 'ignored' &&
+      (state.activeProduct === 'all' || l.campaignId === state.activeProduct)
+    );
+    const filtered = getFilteredLeads();
+
+    const readyCount = productScoped.filter(l => Number(l.intentScore) >= 85).length;
+    const compCount = productScoped.filter(l =>
+      l.intentType === 'competitor_churn' ||
+      (l.competitorMentioned && l.competitorMentioned !== 'Manual Process')
+    ).length;
+    const totalVal = productScoped.reduce((sum, l) => sum + (Number(l.estimatedValue) || 0), 0);
+
+    document.getElementById('kpiReady').textContent = String(readyCount);
+    document.getElementById('kpiComp').textContent = String(compCount);
+    document.getElementById('kpiPot').textContent = state.lang === 'tr'
+      ? `${totalVal.toLocaleString('tr-TR')} $`
+      : `$${totalVal.toLocaleString('en-US')}`;
+
+    document.getElementById('radarCountBadge').textContent = String(filtered.length);
+    document.getElementById('fltAllBtn').textContent = `${t('flt_all')} (${productScoped.length})`;
+  }
+
+  // ---------------------------------------------------------------- Sekme 1: Fırsat Kartları
+  function renderLeadCards() {
+    const listEl = document.getElementById('firsatListe');
+    const emptyEl = document.getElementById('bosAlani');
+    const loadingEl = document.getElementById('yukleniyorAlani');
+    const errEl = document.getElementById('hataAlani');
+
+    if (state.loading) {
+      loadingEl.hidden = false;
+      emptyEl.hidden = true;
+      errEl.hidden = true;
+      listEl.hidden = true;
+      return;
+    }
+
+    loadingEl.hidden = true;
+    errEl.hidden = true;
+
+    const filtered = getFilteredLeads();
+    if (filtered.length === 0) {
+      listEl.innerHTML = '';
+      listEl.hidden = true;
+      emptyEl.hidden = false;
+      return;
+    }
+
+    emptyEl.hidden = true;
+    listEl.hidden = false;
+
+    listEl.innerHTML = filtered.map(lead => {
+      const ui = getCardUi(lead.id);
+      const loc = getLocalizedLead(lead);
+      const prob = formatProbability(lead.intentScore);
+      const prodName = getCampaignName(lead.campaignId);
+      const isTranslating = state.translatingIds.has(lead.id);
+      const enReply = (lead.replies && lead.replies[ui.tone]) || '';
+      const trReply = (loc.repliesTr && loc.repliesTr[ui.tone]) || '';
+      const shownReply = (ui.replyLang === 'tr' && trReply) ? trReply : enReply;
+      const showTrPreview = state.lang === 'tr' && ui.replyLang === 'en';
+      const replyHeader = ui.replyLang === 'tr' ? t('reply_title_tr') : t('reply_title_en');
+      const postUrl = safeUrl(lead.url);
+      const isHighlighted = state.highlightedLeadId === lead.id;
+
+      const trStatusBadge = isTranslating
+        ? `<span class="rozet rozet-bilgi">${escapeHtml(t('translating_badge'))}</span>`
+        : (state.lang === 'tr' && !loc.isTranslated
+          ? `<span class="rozet rozet-urun">${escapeHtml(t('original_badge'))}</span>`
+          : '');
+
+      return `
+        <article class="firsat-kart ${isHighlighted ? 'vurgulu' : ''}" id="lead-card-${escapeHtml(lead.id)}" data-lead-id="${escapeHtml(lead.id)}">
+          <div class="firsat-ust">
+            <div class="firsat-meta">
+              <div class="meta-sol">
+                <span class="rozet ${platformBadgeClass(lead.platform)}">${escapeHtml(platformLabel(lead.platform))} · ${escapeHtml(lead.community || '')}</span>
+                <span class="rozet ${prob.cls}">${escapeHtml(prob.text)}</span>
+                <span class="rozet rozet-urun">${escapeHtml(prodName)}</span>
+                ${trStatusBadge}
+              </div>
+              <span class="meta-zaman">${escapeHtml(lead.author || '')} · ${escapeHtml(lead.postedAt || '')}</span>
+            </div>
+
+            <h2 class="firsat-baslik">${escapeHtml(loc.title)}</h2>
+            <p class="firsat-ozet">${escapeHtml(loc.snippet)}</p>
+
+            <div class="neden-kutu">
+              <span class="neden-baslik">${escapeHtml(t('why_lbl'))}</span>
+              <span class="neden-metin">${escapeHtml(loc.whyHot)}</span>
+            </div>
+
+            ${state.lang === 'tr' && lead.title && lead.title !== loc.title ? `
+              <details class="orijinal-detay">
+                <summary>${escapeHtml(t('orig_btn'))}</summary>
+                <div class="orijinal-kutu" lang="en">
+                  <strong>${escapeHtml(lead.title)}</strong>
+                  ${escapeHtml(lead.snippet || '')}
+                </div>
+              </details>
+            ` : ''}
+          </div>
+
+          <div class="yanit-bolum">
+            <div class="yanit-bas">
+              <span class="yanit-etiket">${escapeHtml(replyHeader)}</span>
+              <div class="ton-satir">
+                <button type="button" class="ton-btn" data-tone="helpful" aria-pressed="${ui.tone === 'helpful'}">${escapeHtml(t('tone_helpful'))}</button>
+                <button type="button" class="ton-btn" data-tone="founder" aria-pressed="${ui.tone === 'founder'}">${escapeHtml(t('tone_founder'))}</button>
+                <button type="button" class="ton-btn" data-tone="comparison" aria-pressed="${ui.tone === 'comparison'}">${escapeHtml(t('tone_comparison'))}</button>
+                <button type="button" class="ton-btn" data-toggle-reply-lang="1" title="EN / TR">
+                  ${ui.replyLang === 'en' ? 'EN → TR' : 'TR → EN'}
+                </button>
+              </div>
+            </div>
+
+            <textarea class="yanit-alan" data-reply-textarea="1" aria-label="${escapeHtml(replyHeader)}">${escapeHtml(shownReply)}</textarea>
+
+            ${showTrPreview ? `
+              <div class="ceviri-onizleme">
+                <div class="ceviri-onizleme-bas">
+                  <span>${escapeHtml(t('tr_preview_lbl'))}</span>
+                </div>
+                <div>${escapeHtml(trReply || (isTranslating ? t('tr_preview_loading') : enReply))}</div>
+              </div>
+            ` : ''}
+
+            <div class="yanit-alt">
+              <div class="guven-bilgi">
+                <span>${escapeHtml(t('spam_lbl'))} <b>${escapeHtml(t('spam_val'))}</b></span>
+                <span>${escapeHtml(t('val_lbl'))} <strong>${escapeHtml(String(lead.estimatedValue || 0))} $${escapeHtml(t('per_year'))}</strong></span>
+              </div>
+              <div class="aksiyon-grup">
+                <button type="button" class="btn birincil" data-copy-open="${escapeHtml(postUrl)}">${escapeHtml(t('copy_btn'))}</button>
+                <button type="button" class="btn kucuk ${lead.status === 'new' ? 'aktif-durum' : ''}" data-set-status="new">${escapeHtml(t('stage_new'))}</button>
+                <button type="button" class="btn kucuk ${lead.status === 'replied' ? 'aktif-durum' : ''}" data-set-status="replied">${escapeHtml(t('stage_replied'))}</button>
+                <button type="button" class="btn kucuk ${lead.status === 'converted' ? 'aktif-durum' : ''}" data-set-status="converted">${escapeHtml(t('stage_converted'))}</button>
+                <button type="button" class="btn kucuk ${lead.status === 'ignored' ? 'aktif-durum' : ''}" data-set-status="ignored">${escapeHtml(t('stage_ignored'))}</button>
+              </div>
+            </div>
+          </div>
+        </article>
+      `;
+    }).join('');
+  }
+
+  // ---------------------------------------------------------------- Sekme 2: Müşteri Takibi
+  function renderTrackerTable() {
+    const tbody = document.getElementById('trackerTableBody');
+    if (!tbody) return;
+    const rowsData = state.leads.filter(l =>
+      state.activeProduct === 'all' || l.campaignId === state.activeProduct
+    );
+
+    if (!rowsData.length) {
+      tbody.innerHTML = `<tr><td colspan="6" style="color:var(--soluk);">${escapeHtml(t('track_empty'))}</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = rowsData.map(lead => {
+      const loc = getLocalizedLead(lead);
+      const prob = formatProbability(lead.intentScore);
+      const prodName = getCampaignName(lead.campaignId);
+      const st = stageInfo(lead.status);
+      return `
+        <tr data-lead-id="${escapeHtml(lead.id)}">
+          <td><span class="rozet ${platformBadgeClass(lead.platform)}">${escapeHtml(platformLabel(lead.platform))}</span></td>
+          <td><span class="rozet ${prob.cls}">${escapeHtml(prob.text)}</span></td>
+          <td><strong>${escapeHtml(loc.title)}</strong></td>
+          <td>${escapeHtml(prodName)}</td>
+          <td><span class="rozet ${st.cls}">${escapeHtml(st.label)}</span></td>
+          <td>
+            <select class="secim" style="min-height:32px; font-size:12.5px;" data-tracker-status="${escapeHtml(lead.id)}">
+              <option value="new" ${lead.status === 'new' ? 'selected' : ''}>${escapeHtml(t('stage_new'))}</option>
+              <option value="replied" ${lead.status === 'replied' ? 'selected' : ''}>${escapeHtml(t('stage_replied'))}</option>
+              <option value="converted" ${lead.status === 'converted' ? 'selected' : ''}>${escapeHtml(t('stage_converted'))}</option>
+              <option value="ignored" ${lead.status === 'ignored' ? 'selected' : ''}>${escapeHtml(t('stage_ignored'))}</option>
+            </select>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  // ---------------------------------------------------------------- Sekme 3: Rakip Şikayetleri
+  function renderCompetitorComplaints() {
+    const grid = document.getElementById('competitorGrid');
+    if (!grid) return;
+    const comps = state.leads.filter(l =>
+      l.status !== 'ignored' &&
+      (state.activeProduct === 'all' || l.campaignId === state.activeProduct) &&
+      (l.intentType === 'competitor_churn' || (l.competitorMentioned && l.competitorMentioned !== 'Manual Process'))
+    );
+
+    if (!comps.length) {
+      grid.innerHTML = `<p style="color:var(--soluk);">${escapeHtml(t('comp_empty'))}</p>`;
+      return;
+    }
+
+    grid.innerHTML = comps.map(lead => {
+      const loc = getLocalizedLead(lead);
+      return `
+        <div class="rakip-kart">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+            <span class="rozet ${platformBadgeClass(lead.platform)}">${escapeHtml(platformLabel(lead.platform))} · ${escapeHtml(lead.community || '')}</span>
+            <span class="rozet rozet-ihtimal-yuksek">${state.lang === 'tr' ? `%${lead.intentScore}` : `${lead.intentScore}%`}</span>
+          </div>
+          <h3>${escapeHtml(lead.competitorMentioned || 'Rakip')} — ${escapeHtml(getCampaignName(lead.campaignId))}</h3>
+          <p style="font-size:14px; color:var(--soluk);">${escapeHtml(loc.whyHot || loc.snippet)}</p>
+          <button type="button" class="btn kucuk birincil" data-jump-lead="${escapeHtml(lead.id)}">${escapeHtml(t('comp_btn'))}</button>
         </div>
-        <p style="font-size:0.86rem; color:var(--text-secondary); margin-bottom:1rem;">
-          Monitoring Reddit, HN, X & GitHub for phrases: <code>"${comp.toLowerCase()} alternative"</code>, <code>"switching from ${comp.toLowerCase()}"</code>, <code>"${comp.toLowerCase()} too expensive"</code>.
-        </p>
-        <button class="btn btn-secondary btn-sm" onclick="filterByCompetitorChurn()">View Intercept Drafts →</button>
-      </div>
-    `;
-  }).join('');
-}
-
-function filterByCompetitorChurn() {
-  switchWorkspaceTab('radar');
-  setIntentFilter('competitor_churn');
-}
-
-function populateSettings() {
-  if (!APP_STATE.settings) return;
-  document.getElementById('setPlan').value = APP_STATE.settings.plan || 'Growth ($49/mo)';
-  document.getElementById('setModel').value = APP_STATE.settings.openaiModel || 'gpt-4o-mini (Semantic Intent v3)';
-  document.getElementById('setSlack').value = APP_STATE.settings.slackWebhook || '';
-  document.getElementById('setDiscord').value = APP_STATE.settings.discordWebhook || '';
-}
-
-async function saveSettings() {
-  const payload = {
-    plan: document.getElementById('setPlan').value,
-    openaiModel: document.getElementById('setModel').value,
-    slackWebhook: document.getElementById('setSlack').value.trim(),
-    discordWebhook: document.getElementById('setDiscord').value.trim()
-  };
-  const res = await fetch('/api/settings', {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  });
-  const data = await res.json();
-  if (data.ok) {
-    APP_STATE.settings = data.settings;
-    renderCampaignSelector();
-    showToast('✅ Workspace settings & subscription plan saved!');
+      `;
+    }).join('');
   }
-}
 
-async function selectPlan(planName) {
-  await fetch('/api/settings', {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ plan: planName })
-  });
-  APP_STATE.settings.plan = planName;
-  switchTopMode('app');
-  renderAll();
-  showToast(`🎉 Activated ${planName}! Live Buyer-Intent Radar is ready.`);
-}
+  function renderAll() {
+    renderProductSelector();
+    renderKpisAndCounts();
+    renderLeadCards();
+    renderTrackerTable();
+    renderCompetitorComplaints();
+  }
 
-function testWebhookAlert() {
-  showToast('🔔 Test 98/100 Buyer-Intent Lead alert dispatched to configured webhook channel!');
-}
+  // ---------------------------------------------------------------- Arka Plan Çeviri
+  async function triggerMissingTranslations() {
+    const lang = state.lang;
+    const needReplies = lang === 'tr';
+    const missing = state.leads.filter(l => {
+      if (state.translatingIds.has(l.id)) return false;
+      const entry = l.i18n && l.i18n[lang];
+      if (!entry || !entry.title || entry.provider === 'original') return true;
+      if (needReplies && l.replies && (!entry.replies || !entry.replies.helpful)) return true;
+      return false;
+    }).slice(0, 10);
 
-function exportLeadsCsv() {
-  const leads = (APP_STATE.leads || []).filter(l => !CURRENT_CAMPAIGN_ID || l.campaignId === CURRENT_CAMPAIGN_ID);
-  const rows = [
-    ['ID', 'Platform', 'Community', 'Author', 'IntentScore', 'IntentType', 'Competitor', 'Status', 'EstimatedARR', 'Title', 'URL']
-  ];
-  leads.forEach(l => {
-    rows.push([
-      l.id,
-      l.platform,
-      l.community,
-      l.author,
-      l.intentScore,
-      l.intentType,
-      l.competitorMentioned || '',
-      l.status,
-      l.estimatedValue || 490,
-      `"${String(l.title || '').replace(/"/g, '""')}"`,
-      l.url
-    ]);
-  });
-  const csvContent = 'data:text/csv;charset=utf-8,' + rows.map(e => e.join(',')).join('\n');
-  const link = document.createElement('a');
-  link.setAttribute('href', encodeURI(csvContent));
-  link.setAttribute('download', `replypulse-buyer-intent-leads-${Date.now()}.csv`);
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  showToast('⬇️ Exported buyer-intent leads CSV!');
-}
+    if (missing.length === 0) return;
 
-window.addEventListener('DOMContentLoaded', () => {
-  fetchInitialState();
-  analyzeUrlInWorkspace();
-});
+    missing.forEach(l => state.translatingIds.add(l.id));
+    renderLeadCards();
+
+    try {
+      const res = await apiFetch('/api/translate', {
+        method: 'POST',
+        body: JSON.stringify({
+          leadIds: missing.map(l => l.id),
+          lang,
+          includeReplies: needReplies
+        })
+      });
+
+      if (Array.isArray(res.results)) {
+        const byId = new Map(state.leads.map(l => [l.id, l]));
+        res.results.forEach(item => {
+          const lead = byId.get(item.leadId);
+          if (lead && item.i18n) {
+            lead.i18n = lead.i18n || {};
+            lead.i18n[lang] = item.i18n;
+          }
+        });
+      }
+    } catch {
+      // Sessizce orijinal metinle devam et
+    } finally {
+      missing.forEach(l => state.translatingIds.delete(l.id));
+      renderAll();
+    }
+  }
+
+  // ---------------------------------------------------------------- Veri Yükleme
+  async function loadState({ showSkeleton = false } = {}) {
+    if (showSkeleton) {
+      state.loading = true;
+      renderLeadCards();
+    }
+    try {
+      const data = await apiFetch(`/api/state?lang=${encodeURIComponent(state.lang)}`);
+      state.campaigns = Array.isArray(data.campaigns) ? data.campaigns : [];
+      state.leads = Array.isArray(data.leads) ? data.leads : [];
+      state.loading = false;
+      renderAll();
+      triggerMissingTranslations();
+    } catch (err) {
+      state.loading = false;
+      document.getElementById('yukleniyorAlani').hidden = true;
+      document.getElementById('firsatListe').hidden = true;
+      document.getElementById('bosAlani').hidden = true;
+      document.getElementById('hataAlani').hidden = false;
+    }
+  }
+
+  async function loadMe() {
+    try {
+      const data = await apiFetch('/api/auth/me');
+      state.user = data.user;
+      renderUserHeader();
+      if (data.pendingCount > 0 && state.user && state.user.isAdmin) {
+        const b = document.getElementById('adminPendingBadge');
+        b.textContent = String(data.pendingCount);
+        b.hidden = false;
+      }
+    } catch {
+      // 401 zaten /giris'e yönlendirir
+    }
+  }
+
+  // ---------------------------------------------------------------- Aksiyonlar
+  function switchTab(tabName) {
+    state.activeTab = tabName;
+    ['radar', 'takip', 'rakip', 'urun'].forEach(name => {
+      const panel = document.getElementById('panel-' + name);
+      if (panel) panel.hidden = (name !== tabName);
+      const tBtn = document.getElementById('tab-' + name);
+      const mBtn = document.getElementById('mtab-' + name);
+      if (tBtn) tBtn.setAttribute('aria-selected', String(name === tabName));
+      if (mBtn) mBtn.setAttribute('aria-selected', String(name === tabName));
+    });
+  }
+
+  async function changeLanguage(nextLang) {
+    state.lang = i18n ? i18n.setLang(nextLang) : nextLang;
+    document.getElementById('dilTr').setAttribute('aria-pressed', String(state.lang === 'tr'));
+    document.getElementById('dilEn').setAttribute('aria-pressed', String(state.lang === 'en'));
+    await loadState({ showSkeleton: false });
+  }
+
+  async function updateLeadStatus(leadId, status) {
+    try {
+      const res = await apiFetch(`/api/leads/${encodeURIComponent(leadId)}`, {
+        method: 'PUT',
+        body: JSON.stringify({ status })
+      });
+      if (res.state && Array.isArray(res.state.leads)) {
+        state.leads = res.state.leads;
+      } else {
+        const l = state.leads.find(x => x.id === leadId);
+        if (l) l.status = status;
+      }
+      renderAll();
+      showToast(t('toast_stage_updated'));
+    } catch (err) {
+      showToast(err.message || t('toast_err_generic'));
+    }
+  }
+
+  async function runLiveScan() {
+    const btn = document.getElementById('scanBtn');
+    btn.disabled = true;
+    btn.textContent = t('btn_scanning');
+    try {
+      const campaignId = state.activeProduct !== 'all' ? state.activeProduct : undefined;
+      const res = await apiFetch('/api/scan', {
+        method: 'POST',
+        body: JSON.stringify({ campaignId, lang: state.lang })
+      });
+      if (res.state && Array.isArray(res.state.leads)) {
+        state.leads = res.state.leads;
+      }
+      renderAll();
+      if (res.addedCount > 0) {
+        showToast(t('toast_scan_found', { n: res.addedCount }));
+        triggerMissingTranslations();
+      } else {
+        showToast(t('toast_scan_empty'));
+      }
+    } catch (err) {
+      showToast(err.message || t('toast_err_generic'));
+    } finally {
+      btn.disabled = false;
+      btn.textContent = t('btn_scan');
+    }
+  }
+
+  function csvSafeCell(val) {
+    let s = String(val == null ? '' : val).replace(/\r?\n/g, ' ');
+    if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
+    return `"${s.replace(/"/g, '""')}"`;
+  }
+
+  function exportCsv() {
+    const header = ['Platform', 'Community', 'Author', 'IntentScore', 'Product', 'Stage', 'Title', 'URL'];
+    const lines = [header.join(',')];
+    state.leads.forEach(l => {
+      const loc = getLocalizedLead(l);
+      lines.push([
+        csvSafeCell(platformLabel(l.platform)),
+        csvSafeCell(l.community),
+        csvSafeCell(l.author),
+        csvSafeCell(l.intentScore),
+        csvSafeCell(getCampaignName(l.campaignId)),
+        csvSafeCell(l.status),
+        csvSafeCell(loc.title),
+        csvSafeCell(safeUrl(l.url))
+      ].join(','));
+    });
+    const blob = new Blob(['\uFEFF' + lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `customerhunter-leads-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast(t('toast_csv'));
+  }
+
+  // ---------------------------------------------------------------- Olay Dinleyicileri
+  function bindEvents() {
+    document.getElementById('dilTr').addEventListener('click', () => changeLanguage('tr'));
+    document.getElementById('dilEn').addEventListener('click', () => changeLanguage('en'));
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      try {
+        await fetch('/auth/logout', { method: 'POST', credentials: 'same-origin', headers: { 'Accept': 'application/json' } });
+      } catch {}
+      window.location.href = '/giris?cikis=1';
+    });
+
+    document.getElementById('brandLink').addEventListener('click', (e) => {
+      e.preventDefault();
+      switchTab('radar');
+    });
+
+    document.querySelectorAll('[data-tab]').forEach(btn => {
+      btn.addEventListener('click', () => switchTab(btn.getAttribute('data-tab')));
+    });
+
+    document.getElementById('urunSec').addEventListener('change', (e) => {
+      state.activeProduct = e.target.value;
+      renderAll();
+    });
+
+    document.getElementById('sourceFilterGroup').addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-src]');
+      if (!btn) return;
+      state.activeSource = btn.getAttribute('data-src');
+      document.querySelectorAll('#sourceFilterGroup .cip').forEach(b => b.setAttribute('aria-pressed', 'false'));
+      btn.setAttribute('aria-pressed', 'true');
+      renderLeadCards();
+      renderKpisAndCounts();
+    });
+
+    document.getElementById('scanBtn').addEventListener('click', runLiveScan);
+    document.getElementById('resetFilterBtn').addEventListener('click', () => {
+      state.activeSource = 'all';
+      state.activeProduct = 'all';
+      document.querySelectorAll('#sourceFilterGroup .cip').forEach(b => {
+        b.setAttribute('aria-pressed', String(b.getAttribute('data-src') === 'all'));
+      });
+      renderAll();
+    });
+    document.getElementById('retryBtn').addEventListener('click', () => loadState({ showSkeleton: true }));
+    document.getElementById('exportCsvBtn').addEventListener('click', exportCsv);
+
+    // Fırsat kartı içi etkileşimler (delegation)
+    document.getElementById('firsatListe').addEventListener('click', (e) => {
+      const card = e.target.closest('.firsat-kart[data-lead-id]');
+      if (!card) return;
+      const leadId = card.getAttribute('data-lead-id');
+      const ui = getCardUi(leadId);
+
+      const toneBtn = e.target.closest('button[data-tone]');
+      if (toneBtn) {
+        ui.tone = toneBtn.getAttribute('data-tone');
+        renderLeadCards();
+        return;
+      }
+
+      const toggleLangBtn = e.target.closest('button[data-toggle-reply-lang]');
+      if (toggleLangBtn) {
+        ui.replyLang = ui.replyLang === 'en' ? 'tr' : 'en';
+        renderLeadCards();
+        return;
+      }
+
+      const copyBtn = e.target.closest('button[data-copy-open]');
+      if (copyBtn) {
+        const textarea = card.querySelector('textarea[data-reply-textarea]');
+        const text = textarea ? textarea.value : '';
+        if (navigator.clipboard && text) {
+          navigator.clipboard.writeText(text).catch(() => {});
+        }
+        const url = safeUrl(copyBtn.getAttribute('data-copy-open'));
+        if (url) {
+          window.open(url, '_blank', 'noopener,noreferrer');
+          showToast(t('toast_copied'));
+        } else {
+          showToast(t('toast_copied_only'));
+        }
+        return;
+      }
+
+      const statusBtn = e.target.closest('button[data-set-status]');
+      if (statusBtn) {
+        updateLeadStatus(leadId, statusBtn.getAttribute('data-set-status'));
+      }
+    });
+
+    // Müşteri Takibi tablosu durum seçici
+    document.getElementById('trackerTableBody').addEventListener('change', (e) => {
+      const sel = e.target.closest('select[data-tracker-status]');
+      if (!sel) return;
+      updateLeadStatus(sel.getAttribute('data-tracker-status'), sel.value);
+    });
+
+    // Rakip şikayetlerinden ilgili fırsata atla
+    document.getElementById('competitorGrid').addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-jump-lead]');
+      if (!btn) return;
+      const leadId = btn.getAttribute('data-jump-lead');
+      state.activeSource = 'all';
+      document.querySelectorAll('#sourceFilterGroup .cip').forEach(b => {
+        b.setAttribute('aria-pressed', String(b.getAttribute('data-src') === 'all'));
+      });
+      state.highlightedLeadId = leadId;
+      switchTab('radar');
+      renderAll();
+      const targetEl = document.getElementById('lead-card-' + leadId);
+      if (targetEl) {
+        targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      setTimeout(() => {
+        if (state.highlightedLeadId === leadId) {
+          state.highlightedLeadId = null;
+          renderLeadCards();
+        }
+      }, 2600);
+    });
+
+    // Ürün Ekle — URL Analiz
+    document.getElementById('analyzeUrlBtn').addEventListener('click', async () => {
+      const btn = document.getElementById('analyzeUrlBtn');
+      const urlVal = document.getElementById('urlInput').value.trim();
+      btn.disabled = true;
+      btn.textContent = t('btn_analyzing');
+      try {
+        const res = await apiFetch('/api/analyze-url', {
+          method: 'POST',
+          body: JSON.stringify({ url: urlVal })
+        });
+        const a = res.analysis || {};
+        if (a.url) document.getElementById('urlInput').value = a.url;
+        if (a.name) document.getElementById('uAd').value = a.name;
+        if (a.audience) document.getElementById('uMusteri').value = a.audience;
+        if (a.valueProp) document.getElementById('uOzet').value = a.valueProp;
+        if (Array.isArray(a.competitors)) document.getElementById('uRakip').value = a.competitors.join(', ');
+        if (Array.isArray(a.keywords)) document.getElementById('uKelimeler').value = a.keywords.join(', ');
+        if (a.suggestedDealValue) document.getElementById('uDeger').value = String(a.suggestedDealValue);
+        showToast(t('toast_analyzed'));
+      } catch (err) {
+        showToast(err.message || t('toast_err_generic'));
+      } finally {
+        btn.disabled = false;
+        btn.textContent = t('btn_analyze');
+      }
+    });
+
+    // Ürün Ekle — Kaydet
+    document.getElementById('addProductForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('uAd').value.trim();
+      if (!name) {
+        showToast(t('err_name_required'));
+        return;
+      }
+      const btn = document.getElementById('saveProductBtn');
+      btn.disabled = true;
+      btn.textContent = t('btn_saving');
+      try {
+        const res = await apiFetch('/api/campaigns', {
+          method: 'POST',
+          body: JSON.stringify({
+            name,
+            url: document.getElementById('urlInput').value.trim() || 'https://example.com',
+            audience: document.getElementById('uMusteri').value.trim(),
+            valueProp: document.getElementById('uOzet').value.trim(),
+            competitors: document.getElementById('uRakip').value.trim(),
+            keywords: document.getElementById('uKelimeler').value.trim(),
+            dealValue: Number(document.getElementById('uDeger').value) || 490,
+            lang: state.lang
+          })
+        });
+        if (res.state) {
+          state.campaigns = res.state.campaigns || state.campaigns;
+          state.leads = res.state.leads || state.leads;
+        }
+        if (res.campaign && res.campaign.id) {
+          state.activeProduct = res.campaign.id;
+        }
+        switchTab('radar');
+        renderAll();
+        showToast(t('toast_saved_camp'));
+        triggerMissingTranslations();
+      } catch (err) {
+        showToast(err.message || t('toast_err_generic'));
+      } finally {
+        btn.disabled = false;
+        btn.textContent = t('btn_save');
+      }
+    });
+  }
+
+  // ---------------------------------------------------------------- Başlatma
+  function init() {
+    if (i18n) {
+      i18n.applyDom();
+    }
+    document.getElementById('dilTr').setAttribute('aria-pressed', String(state.lang === 'tr'));
+    document.getElementById('dilEn').setAttribute('aria-pressed', String(state.lang === 'en'));
+    bindEvents();
+    loadMe();
+    loadState({ showSkeleton: true });
+  }
+
+  init();
+})();

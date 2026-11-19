@@ -1,0 +1,276 @@
+/* AppCook giriş kiti: oturum açılmamış sayfaları (giriş, başvuru, onay...) appcook.store'daki bento temasıyla çizer.
+   Beş uygulamada (AI-Transcript, AI-Colab, AI-Analysis, AI-Draw, AI-Coach) birebir aynı dosyadır; değiştirirseniz
+   hepsine kopyalayın. Uygulamanın kendi CSS'inden sonra yüklenir; yalnızca body.ac altındaki öğeleri etkiler.
+   Renk: .ac-sahne üzerindeki renk-* sınıfı (AppCook'taki kart rengi). Tema: sistem teması; data-tema="acik"/"koyu"
+   varsa o. Yazı tipi Inter Tight (SIL OFL). */
+@font-face {
+  font-family: "Inter Tight"; font-style: normal; font-display: swap; font-weight: 100 900;
+  src: url("appcook-fonts/inter-tight-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Inter Tight"; font-style: normal; font-display: swap; font-weight: 100 900;
+  src: url("appcook-fonts/inter-tight-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+:root {
+  --ac-zemin: #09090d;
+  --ac-kutu: #121218;
+  --ac-kutu-2: #1a1a22;
+  --ac-cizgi: rgba(255, 255, 255, 0.08);
+  --ac-cizgi-guclu: rgba(255, 255, 255, 0.16);
+  --ac-metin: #f3f2f8;
+  --ac-soluk: #9c9bab;
+  --ac-cok-soluk: #66657a;
+  --ac-isik: rgba(255, 122, 61, 0.16);
+  --ac-isik-2: rgba(124, 92, 255, 0.14);
+  --ac-golge: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 24px 48px -28px rgba(0, 0, 0, 0.8);
+  --ac-egri: cubic-bezier(.2, .8, .2, 1);
+  --r: #ff8a3d; --r-ust: #fff;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-tema="koyu"]) {
+    --ac-zemin: #f4f3f0; --ac-kutu: #ffffff; --ac-kutu-2: #f6f5f2;
+    --ac-cizgi: rgba(20, 18, 40, 0.08); --ac-cizgi-guclu: rgba(20, 18, 40, 0.16);
+    --ac-metin: #16151d; --ac-soluk: #5d5c6c; --ac-cok-soluk: #8f8e9d;
+    --ac-isik: rgba(255, 138, 61, 0.14); --ac-isik-2: rgba(124, 92, 255, 0.10);
+    --ac-golge: 0 1px 2px rgba(30, 20, 60, 0.04), 0 20px 40px -28px rgba(30, 20, 60, 0.22);
+  }
+}
+:root[data-tema="acik"] {
+  --ac-zemin: #f4f3f0; --ac-kutu: #ffffff; --ac-kutu-2: #f6f5f2;
+  --ac-cizgi: rgba(20, 18, 40, 0.08); --ac-cizgi-guclu: rgba(20, 18, 40, 0.16);
+  --ac-metin: #16151d; --ac-soluk: #5d5c6c; --ac-cok-soluk: #8f8e9d;
+  --ac-isik: rgba(255, 138, 61, 0.14); --ac-isik-2: rgba(124, 92, 255, 0.10);
+  --ac-golge: 0 1px 2px rgba(30, 20, 60, 0.04), 0 20px 40px -28px rgba(30, 20, 60, 0.22);
+}
+
+body.ac {
+  display: block !important; min-height: 100vh; margin: 0 !important; padding: 0 !important;
+  color: var(--ac-metin) !important;
+  background:
+    radial-gradient(60vmax 40vmax at 10% -10%, var(--ac-isik), transparent 60%),
+    radial-gradient(50vmax 36vmax at 95% 0%, var(--ac-isik-2), transparent 60%),
+    var(--ac-zemin) !important;
+  background-attachment: fixed !important;
+  font-family: "Inter Tight", "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif !important;
+  -webkit-font-smoothing: antialiased;
+}
+body.ac .arka { display: none; }
+body.ac *, body.ac *::before, body.ac *::after { box-sizing: border-box; }
+
+.renk-turuncu { --r: #ff8a3d; --r-ust: #fff; }
+.renk-mor { --r: #9d6bff; --r-ust: #fff; }
+.renk-mavi { --r: #3d9bff; --r-ust: #fff; }
+.renk-yesil { --r: #2fc17e; --r-ust: #06240f; }
+.renk-pembe { --r: #ec4f8c; --r-ust: #fff; }
+.renk-sari { --r: #f2b230; --r-ust: #2a1d00; }
+
+/* Sahne: solda tanıtım (bento), sağda form */
+.ac-sahne { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); min-height: 100vh; }
+.ac-sol { display: flex; flex-direction: column; gap: 18px; padding: 28px clamp(20px, 3vw, 44px) 28px; min-width: 0; }
+.ac-sag { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px;
+  padding: 40px clamp(16px, 4vw, 56px); min-width: 0; }
+
+/* Logo (uygulamanın kendi işareti) */
+body.ac .ac-marka { display: inline-flex; align-items: center; gap: 10px; align-self: flex-start;
+  color: var(--ac-metin) !important; font-size: 18px; font-weight: 700; letter-spacing: -0.02em; text-decoration: none !important; }
+body.ac .ac-marka svg { flex: none; }
+.ac-marka .ac-isaret, .ac-marka .mark, .ac-marka .isaret, .ac-marka .brand-mark {
+  width: 34px; height: 34px; flex: none; display: grid; place-items: center; border-radius: 10px;
+  background: var(--r); color: var(--r-ust); box-shadow: 0 8px 22px -10px var(--r);
+}
+.ac-marka .ac-isaret svg, .ac-marka .mark svg, .ac-marka .isaret svg, .ac-marka .brand-mark svg { width: 19px; height: 19px; }
+.ac-marka .brand-mark svg { fill: currentColor; }
+.ac-marka b { font-weight: inherit; color: var(--r); background: none; -webkit-text-fill-color: currentColor; }
+.ac-mobil-marka { display: none !important; }
+
+/* Bento */
+.ac-bento { flex: 1; display: grid; gap: 14px; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: 1fr auto; min-height: 0; }
+.ac-kutu {
+  position: relative; border-radius: 24px; border: 1px solid var(--ac-cizgi); background: var(--ac-kutu); box-shadow: var(--ac-golge);
+  overflow: hidden; isolation: isolate; animation: ac-belir .6s var(--gecikme, 0ms) var(--ac-egri) both;
+}
+/* İmleci izleyen ışık ve kenar parıltısı (konum appcook-giris.js'ten --mx/--my) */
+.ac-kutu::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; opacity: 0; transition: opacity .35s ease; pointer-events: none;
+  background: radial-gradient(440px circle at var(--mx, 50%) var(--my, 0%), color-mix(in srgb, var(--r) 14%, transparent), transparent 65%);
+}
+.ac-kutu::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none; opacity: 0;
+  background: radial-gradient(320px circle at var(--mx, 50%) var(--my, 0%), color-mix(in srgb, var(--r) 70%, transparent), transparent 70%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude;
+  transition: opacity .35s ease;
+}
+.ac-kutu:hover::before, .ac-kutu:hover::after, .ac-kutu:focus-within::before, .ac-kutu:focus-within::after { opacity: 1; }
+
+.ac-ana { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); align-items: center; gap: 24px;
+  padding: clamp(24px, 3vw, 40px); min-height: 360px; }
+.ac-ikon { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 13px; color: var(--r); font-size: 19px;
+  background: color-mix(in srgb, var(--r) 14%, transparent); border: 1px solid color-mix(in srgb, var(--r) 28%, transparent); }
+.ac-ikon svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+body.ac .ac-slogan { margin: 18px 0 12px; color: var(--ac-metin); font-size: clamp(28px, 2.7vw, 40px); font-weight: 750; line-height: 1.1; letter-spacing: -0.035em; }
+body.ac .ac-slogan span { color: var(--r); background: none; -webkit-text-fill-color: currentColor; }
+body.ac .ac-on { margin: 0; color: var(--ac-soluk); font-size: 15.5px; line-height: 1.55; max-width: 44ch; }
+body.ac .ac-on li { margin: 4px 0; }
+body.ac ul.ac-on { padding-inline-start: 18px; }
+
+.ac-ozellik { display: flex; flex-direction: column; gap: 6px; padding: 20px; }
+.ac-ozellik .ac-ikon { width: 38px; height: 38px; border-radius: 11px; margin-bottom: 8px; }
+.ac-ozellik .ac-ikon svg { width: 18px; height: 18px; }
+body.ac .ac-ozellik strong { font-size: 15px; font-weight: 650; color: var(--ac-metin); line-height: 1.3; }
+body.ac .ac-ozellik > span:last-child, body.ac .ac-ozellik p { margin: 0; font-size: 13.5px; line-height: 1.5; color: var(--ac-soluk); }
+
+/* Form kutusu */
+.ac-form { width: min(100%, 440px); padding: 30px 28px; animation-delay: 120ms; }
+body.ac .ac-form .card, body.ac .ac-form .panel, body.ac .ac-form .auth-card, body.ac .ac-form .giris-kart {
+  border: 0 !important; box-shadow: none !important; background: transparent !important; padding: 0 !important; margin: 0 !important;
+  max-width: none !important; width: 100% !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+}
+body.ac .ac-form h1 { margin: 0 0 4px; font-size: 27px; font-weight: 750; letter-spacing: -0.03em; color: var(--ac-metin); }
+body.ac .ac-form .muted, body.ac .ac-form .lead, body.ac .ac-form .sub, body.ac .ac-form .alt-baslik { color: var(--ac-soluk); }
+body.ac .ac-form .small { font-size: 13px; }
+body.ac .ac-form label { color: var(--ac-soluk); font-size: 13px; font-weight: 600; }
+body.ac .ac-form input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+body.ac .ac-form select {
+  width: 100%; height: 46px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--ac-cizgi-guclu);
+  background: var(--ac-kutu-2); color: var(--ac-metin); font: inherit; font-size: 15px; box-shadow: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+body.ac .ac-form input:focus, body.ac .ac-form select:focus {
+  outline: none; border-color: var(--r); box-shadow: 0 0 0 3px color-mix(in srgb, var(--r) 22%, transparent);
+}
+/* Birincil düğme: uygulamanın rengi */
+body.ac .ac-form button.primary, body.ac .ac-form .btn.primary, body.ac .ac-form .btn.birincil, body.ac .ac-form button.birincil {
+  height: 46px; border-radius: 12px; border: 0; background: var(--r); color: var(--r-ust); font: inherit; font-size: 15px; font-weight: 650;
+  box-shadow: 0 12px 26px -14px var(--r); cursor: pointer; transition: transform .2s, box-shadow .2s, filter .2s;
+}
+body.ac .ac-form button.primary:hover, body.ac .ac-form .btn.primary:hover, body.ac .ac-form .btn.birincil:hover {
+  transform: translateY(-1px); filter: brightness(1.06); box-shadow: 0 16px 30px -14px var(--r);
+}
+/* İkincil düğmeler (Google, bağlantı gönder...) */
+body.ac .ac-form .sso-btn, body.ac .ac-form .google-btn, body.ac .ac-form .google, body.ac .ac-form .sso .btn,
+body.ac .ac-form button:not(.primary):not(.birincil):not([type="button"]):not(.reveal):not(.link) {
+  display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; height: 46px; padding: 0 16px;
+  border-radius: 12px; border: 1px solid var(--ac-cizgi-guclu); background: var(--ac-kutu-2); color: var(--ac-metin);
+  font: inherit; font-size: 15px; font-weight: 600; text-decoration: none; cursor: pointer; box-shadow: none;
+  transition: border-color .2s, background-color .2s;
+}
+body.ac .ac-form .sso-btn:hover, body.ac .ac-form .google-btn:hover, body.ac .ac-form .google:hover, body.ac .ac-form .sso .btn:hover,
+body.ac .ac-form button:not(.primary):not(.birincil):not([type="button"]):not(.reveal):not(.link):hover {
+  border-color: var(--ac-soluk); text-decoration: none;
+}
+body.ac .ac-form .sso-btn svg, body.ac .ac-form .google-btn svg, body.ac .ac-form .google svg, body.ac .ac-form .sso .btn svg { width: 20px; height: 20px; }
+/* Açılır bölümler (e-posta ile giriş, başvuru, parola) */
+body.ac .ac-form details { border-top: 1px solid var(--ac-cizgi); padding-top: 14px; margin-top: 14px; }
+body.ac .ac-form details > summary { cursor: pointer; color: var(--ac-soluk); font-size: 14.5px; font-weight: 600; list-style: none; }
+body.ac .ac-form details > summary::-webkit-details-marker { display: none; }
+body.ac .ac-form details > summary::before {
+  content: ""; display: inline-block; width: 7px; height: 7px; margin: 0 10px 2px 2px; border: solid currentColor; border-width: 0 2px 2px 0;
+  transform: rotate(-45deg); transition: transform .2s;
+}
+:root[dir="rtl"] body.ac .ac-form details > summary::before { transform: rotate(135deg); }
+body.ac .ac-form details[open] > summary { color: var(--ac-metin); }
+body.ac .ac-form details[open] > summary::before { transform: rotate(45deg); }
+body.ac .ac-form details > summary:hover { color: var(--ac-metin); }
+body.ac .ac-form a:not(.btn):not(.sso-btn):not(.google-btn):not(.google) { color: var(--r); }
+
+/* Sağ sütundaki notlar ve alt bilgi */
+body.ac .ac-not { margin: 0; color: var(--ac-cok-soluk); font-size: 13px; text-align: center; max-width: 440px; }
+body.ac .ac-not a, body.ac .ac-alt a { color: var(--ac-soluk); font-weight: 600; }
+body.ac .ac-alt, body.ac > .site-footer, body.ac > .site-alt, body.ac .ac-sag .site-footer {
+  margin: 0; padding: 0 0 18px; background: none; border: 0; color: var(--ac-cok-soluk); font-size: 12.5px; text-align: center;
+}
+.ac-ust-sag { position: absolute; top: 18px; inset-inline-end: 20px; display: flex; gap: 8px; }
+
+/* Vitrin: uygulamaya özel canlı görsel (appcook-giris.js data-tur'a göre üretir; appcook.store'daki kutularla aynı) */
+.ac-vitrin { position: relative; display: grid; place-items: center; min-height: 240px; color: var(--r); }
+.ac-dalga { display: flex; align-items: center; justify-content: center; gap: 5px; width: 100%; height: 170px; }
+.ac-dalga i { flex: 1 1 0; max-width: 6px; min-width: 2px; height: 100%; border-radius: 3px;
+  background: linear-gradient(var(--r), color-mix(in srgb, var(--r) 40%, transparent)); transform: scaleY(.2); animation: ac-dalga 1.3s ease-in-out infinite; }
+.ac-dalga i:nth-child(2n) { animation-duration: 1.05s; }
+.ac-dalga i:nth-child(3n) { animation-duration: 1.6s; animation-delay: -.4s; }
+.ac-dalga i:nth-child(4n+1) { animation-delay: -.7s; }
+.ac-dalga i:nth-child(5n) { animation-duration: .9s; animation-delay: -.2s; }
+.ac-dalga i:nth-child(7n+2) { animation-delay: -1s; }
+@keyframes ac-dalga { 50% { transform: scaleY(1); } }
+.ac-kayit { position: absolute; top: 0; inset-inline-start: 0; display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600; color: var(--ac-soluk); font-variant-numeric: tabular-nums; }
+.ac-kayit::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #ef4444; animation: ac-yanip 1.2s steps(2) infinite; }
+@keyframes ac-yanip { 50% { opacity: .25; } }
+
+.ac-belge { position: relative; width: min(100%, 340px); padding: 20px; border-radius: 14px; background: var(--ac-kutu-2); border: 1px solid var(--ac-cizgi); }
+.ac-belge i { display: block; height: 8px; border-radius: 4px; background: var(--ac-cizgi-guclu); margin: 11px 0; width: 92%; }
+.ac-belge i:nth-child(1) { width: 55%; height: 11px; background: color-mix(in srgb, var(--r) 55%, transparent); margin-top: 0; }
+.ac-belge i:nth-child(3) { width: 78%; } .ac-belge i:nth-child(4) { width: 86%; } .ac-belge i:nth-child(5) { width: 40%; }
+.ac-belge i:nth-child(7) { width: 66%; }
+.ac-imlec { position: absolute; width: 2px; height: 15px; border-radius: 1px; background: #3d9bff; animation: ac-imlec1 6s ease-in-out infinite; }
+.ac-imlec::after { content: attr(data-ad); position: absolute; bottom: 100%; inset-inline-start: 0; padding: 1px 5px; border-radius: 4px 4px 4px 0;
+  font-size: 10px; font-weight: 700; color: #fff; background: inherit; }
+.ac-imlec.iki { background: #ec4f8c; animation-name: ac-imlec2; animation-duration: 7s; }
+@keyframes ac-imlec1 { 0%, 100% { left: 40%; top: 34px; } 30% { left: 70%; top: 34px; } 55% { left: 30%; top: 72px; } 80% { left: 60%; top: 72px; } }
+@keyframes ac-imlec2 { 0%, 100% { left: 75%; top: 91px; } 35% { left: 25%; top: 91px; } 60% { left: 50%; top: 53px; } }
+
+.ac-tarama { position: relative; width: min(100%, 340px); display: grid; gap: 7px; overflow: hidden; border-radius: 12px; }
+.ac-tarama div { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 13px; border-radius: 10px;
+  background: var(--ac-kutu-2); border: 1px solid var(--ac-cizgi); font-size: 13px; color: var(--ac-soluk); font-variant-numeric: tabular-nums; }
+.ac-tarama span:first-child { flex: 1; }
+.ac-tarama b { width: 8px; height: 8px; border-radius: 50%; background: #2fc17e; }
+.ac-tarama div.riskli b { background: #ef4444; box-shadow: 0 0 0 4px rgba(239, 68, 68, .18); }
+.ac-tarama::after { content: ""; position: absolute; inset-inline: 0; top: 0; height: 30%; pointer-events: none;
+  background: linear-gradient(transparent, color-mix(in srgb, var(--r) 28%, transparent)); border-bottom: 2px solid var(--r);
+  animation: ac-tara 2.8s ease-in-out infinite alternate; }
+@keyframes ac-tara { from { transform: translateY(-100%); } to { transform: translateY(340%); } }
+
+.ac-sema { width: min(100%, 340px); height: auto; overflow: visible; }
+.ac-sema rect { fill: var(--ac-kutu-2); stroke: var(--ac-cizgi-guclu); stroke-width: 1.5; }
+.ac-sema rect.vurgu { stroke: var(--r); fill: color-mix(in srgb, var(--r) 14%, var(--ac-kutu-2)); }
+.ac-sema path { fill: none; stroke: var(--r); stroke-width: 2; stroke-dasharray: 6 6; animation: ac-ak 1.2s linear infinite; }
+@keyframes ac-ak { to { stroke-dashoffset: -24; } }
+
+.ac-ilerleme { width: min(100%, 320px); display: grid; gap: 14px; }
+.ac-ilerleme div { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 5px 10px; font-size: 12.5px; color: var(--ac-soluk); font-variant-numeric: tabular-nums; }
+.ac-ilerleme em { font-style: normal; }
+.ac-ilerleme strong { font-weight: 600; color: var(--ac-metin); }
+.ac-ilerleme span { grid-column: 1 / -1; height: 9px; border-radius: 5px; background: var(--ac-kutu-2); border: 1px solid var(--ac-cizgi); overflow: hidden; }
+.ac-ilerleme span::before { content: ""; display: block; height: 100%; border-radius: inherit; background: var(--r); transform-origin: left; animation: ac-dol 1.6s .3s var(--ac-egri) both; }
+:root[dir="rtl"] .ac-ilerleme span::before { transform-origin: right; }
+.ac-ilerleme div:nth-child(1) span::before { width: 82%; }
+.ac-ilerleme div:nth-child(2) span::before { width: 64%; animation-delay: .45s; }
+.ac-ilerleme div:nth-child(3) span::before { width: 91%; animation-delay: .6s; }
+@keyframes ac-dol { from { transform: scaleX(0); } }
+
+@keyframes ac-belir { from { opacity: 0; transform: translateY(14px) scale(.99); } }
+
+/* Dar ekranlar */
+@media (max-width: 1180px) {
+  .ac-ana { grid-template-columns: minmax(0, 1fr); }
+  .ac-vitrin { min-height: 180px; order: -1; }
+}
+@media (max-width: 920px) {
+  .ac-sahne { grid-template-columns: minmax(0, 1fr); }
+  .ac-sol { display: none; }
+  .ac-sag { justify-content: flex-start; padding-top: 28px; }
+  .ac-mobil-marka { display: inline-flex !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body.ac *, body.ac *::before, body.ac *::after { animation: none !important; transition: none !important; }
+}
+
+/* Uygulamaların kendi kap sınıfları (narrow, container...) sağ sütunu daraltmasın */
+body.ac main.ac-sag { max-width: none !important; width: auto !important; margin: 0 !important; }
+/* Özellik kutusunda metin bir <div> içindeyse (başlık <strong>, açıklama düz metin ya da <span>) */
+body.ac .ac-ozellik > div { font-size: 13.5px; line-height: 1.5; color: var(--ac-soluk); }
+body.ac .ac-ozellik > div strong { display: block; margin-bottom: 4px; }
+body.ac .ac-ozellik > div span { display: block; color: var(--ac-soluk); font-size: 13.5px; }
+body.ac .ac-ozellik > span:last-child { color: var(--ac-metin); font-size: 14.5px; font-weight: 600; line-height: 1.4; }
+/* Kendi zemini olan tam logo (ör. OfficeCollab): olduğu gibi gösterilir */
+.ac-marka .ac-logo-tam { width: 34px; height: 34px; flex: none; display: block; filter: drop-shadow(0 8px 18px color-mix(in srgb, var(--r) 45%, transparent)); }
+.ac-marka .ac-logo-tam svg { width: 100%; height: 100%; }
+/* Form kutusunun doğrudan içeriği (kart sarmalayıcısı olmayan sayfalar) dikey aralıklı dizilir */
+body.ac .ac-form { display: flex; flex-direction: column; gap: 14px; }
+body.ac .ac-form > * { margin-top: 0; margin-bottom: 0; }
+body.ac .ac-form > h1 + p { margin-top: -8px; }
+body.ac .ac-form .sso { display: flex; flex-direction: column; gap: 8px; }
+body.ac .ac-form .sso p { margin: 0; }

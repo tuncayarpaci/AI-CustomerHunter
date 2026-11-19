@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Giriş · AI-CustomerHunter</title>
+  <link rel="stylesheet" href="/appcook-giris.css" />
+  <style>
+    .ac-banner {
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-size: 13.5px;
+      line-height: 1.45;
+      border: 1px solid var(--ac-cizgi-guclu);
+      background: var(--ac-kutu-2);
+      color: var(--ac-metin);
+    }
+    .ac-banner.ok {
+      border-color: rgba(47, 193, 126, 0.4);
+      background: rgba(47, 193, 126, 0.12);
+      color: var(--ac-metin);
+    }
+    .ac-banner.uyari {
+      border-color: rgba(242, 178, 48, 0.45);
+      background: rgba(242, 178, 48, 0.12);
+      color: var(--ac-metin);
+    }
+    .ac-banner.hata {
+      border-color: rgba(239, 68, 68, 0.45);
+      background: rgba(239, 68, 68, 0.12);
+      color: var(--ac-metin);
+    }
+    .ac-alan {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 12px;
+    }
+    .ac-form-ic {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-top: 8px;
+    }
+    .ac-form-ic .primary {
+      margin-top: 12px;
+      width: 100%;
+    }
+    .ac-ust-btn {
+      min-height: 36px;
+      padding: 0 11px;
+      border-radius: 10px;
+      border: 1px solid var(--ac-cizgi-guclu);
+      background: var(--ac-kutu);
+      color: var(--ac-soluk);
+      font: inherit;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .ac-ust-btn:hover { color: var(--ac-metin); }
+    .ac-ust-btn[aria-pressed="true"] {
+      background: var(--r);
+      border-color: var(--r);
+      color: var(--r-ust);
+    }
+    .ac-google-kapali {
+      opacity: 0.55;
+      pointer-events: none;
+    }
+    .ac-radar-vitrin {
+      width: min(100%, 340px);
+      display: grid;
+      gap: 8px;
+    }
+    .ac-radar-satir {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 13px;
+      border-radius: 12px;
+      background: var(--ac-kutu-2);
+      border: 1px solid var(--ac-cizgi);
+      font-size: 13px;
+      color: var(--ac-soluk);
+    }
+    .ac-radar-satir strong { color: var(--ac-metin); font-weight: 650; }
+    .ac-radar-puan {
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 700;
+      background: color-mix(in srgb, var(--r) 16%, transparent);
+      color: var(--r);
+      font-variant-numeric: tabular-nums;
+    }
+  </style>
+</head>
+<body class="ac">
+  <div class="ac-sahne renk-yesil">
+    <!-- SOL: APPCOOK BENTO VİTRİN -->
+    <section class="ac-sol">
+      <a class="ac-marka" href="/giris">
+        <span class="ac-isaret" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <circle cx="12" cy="12" r="9" />
+            <circle cx="12" cy="12" r="4" />
+            <line x1="12" y1="3" x2="12" y2="6" />
+          </svg>
+        </span>
+        <span>AI-<b>CustomerHunter</b></span>
+      </a>
+
+      <div class="ac-bento">
+        <article class="ac-kutu ac-ana">
+          <div>
+            <div class="ac-ikon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+            </div>
+            <h2 class="ac-slogan" data-t="slogan">Ürününüzü arayan <span>gerçek müşterileri</span> yakalayın.</h2>
+            <p class="ac-on" data-t="lead">Reddit, HackerNews ve GitHub üzerindeki alıcı niyetli konuşmaları tek masada görün, Türkçe anlayın ve doğal yanıt taslağıyla ilk teması kurun.</p>
+          </div>
+          <div class="ac-vitrin" aria-hidden="true">
+            <div class="ac-radar-vitrin">
+              <div class="ac-radar-satir">
+                <span><strong>r/projectmanagement</strong> · Jira / Trello</span>
+                <span class="ac-radar-puan">%98</span>
+              </div>
+              <div class="ac-radar-satir">
+                <span><strong>r/productivity</strong> · Otter.ai</span>
+                <span class="ac-radar-puan">%97</span>
+              </div>
+              <div class="ac-radar-satir">
+                <span><strong>Ask HN</strong> · Kanban tool</span>
+                <span class="ac-radar-puan">%94</span>
+              </div>
+              <div class="ac-radar-satir">
+                <span><strong>GitHub Issues</strong> · Workflow</span>
+                <span class="ac-radar-puan">%91</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="ac-kutu ac-ozellik">
+          <div class="ac-ikon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+            </svg>
+          </div>
+          <strong data-t="f1_t">Müşteri Fırsatlarını Yakala</strong>
+          <p data-t="f1_d">Rakipten memnun olmayan ve aktif araç arayan gerçek kişileri canlı taramayla anında listeler.</p>
+        </article>
+
+        <article class="ac-kutu ac-ozellik">
+          <div class="ac-ikon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="2" y1="12" x2="22" y2="12" />
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+            </svg>
+          </div>
+          <strong data-t="f2_t">Türkçe &amp; İngilizce Anında Anla</strong>
+          <p data-t="f2_d">Yabancı topluluk gönderilerini kendi dilinizde okuyun, tek tıkla orijinal metni inceleyin.</p>
+        </article>
+
+        <article class="ac-kutu ac-ozellik">
+          <div class="ac-ikon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
+          </div>
+          <strong data-t="f3_t">Doğal Yanıt Taslağıyla İlk Temas</strong>
+          <p data-t="f3_d">Spam riski düşük 3 farklı tonda hazır yanıtı Türkçe anlam önizlemesiyle kopyalayıp paylaşın.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- SAĞ: GİRİŞ FORMU -->
+    <main class="ac-sag">
+      <div class="ac-ust-sag">
+        <button type="button" class="ac-ust-btn" id="btnTr" aria-pressed="true">TR</button>
+        <button type="button" class="ac-ust-btn" id="btnEn" aria-pressed="false">EN</button>
+        <button type="button" class="ac-ust-btn" id="btnTema" title="Tema değiştir">◐</button>
+      </div>
+
+      <a class="ac-marka ac-mobil-marka" href="/giris">
+        <span class="ac-isaret" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <circle cx="12" cy="12" r="9" />
+            <circle cx="12" cy="12" r="4" />
+            <line x1="12" y1="3" x2="12" y2="6" />
+          </svg>
+        </span>
+        <span>AI-<b>CustomerHunter</b></span>
+      </a>
+
+      <section class="ac-kutu ac-form">
+        <h1 data-t="h1">Giriş yap</h1>
+        <p class="muted" data-t="sub">Ortak müşteri fırsat havuzuna erişmek için hesabınızla devam edin.</p>
+
+        <div id="statusBanner" class="ac-banner" hidden role="status" aria-live="polite"></div>
+
+        <div class="sso">
+          <a id="googleBtn" class="google-btn" href="/auth/google/start">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.55-.2-2.27H12v4.3h6.44a5.5 5.5 0 0 1-2.39 3.61v3h3.87c2.26-2.08 3.57-5.15 3.57-8.64z"/>
+              <path fill="#34A853" d="M12 24c3.24 0 5.95-1.07 7.93-2.91l-3.87-3c-1.07.72-2.44 1.15-4.06 1.15-3.12 0-5.77-2.11-6.72-4.95H1.29v3.1A12 12 0 0 0 12 24z"/>
+              <path fill="#FBBC05" d="M5.28 14.29A7.2 7.2 0 0 1 4.9 12c0-.79.14-1.56.38-2.29v-3.1H1.29A12 12 0 0 0 0 12c0 1.94.46 3.77 1.29 5.39l3.99-3.1z"/>
+              <path fill="#EA4335" d="M12 4.76c1.76 0 3.34.61 4.58 1.8l3.44-3.44C17.95 1.19 15.24 0 12 0A12 12 0 0 0 1.29 6.61l3.99 3.1C6.23 6.87 8.88 4.76 12 4.76z"/>
+            </svg>
+            <span data-t="google_btn">Google ile devam et</span>
+          </a>
+          <p id="googleNote" class="muted small" hidden data-t="google_not_set">Google ile giriş henüz yapılandırılmamış. Yönetici girişiyle oturum açıp Yönetim → Giriş yöntemleri bölümünden etkinleştirebilirsiniz.</p>
+        </div>
+
+        <details id="localDetails">
+          <summary data-t="local_summary">Yönetici / yerel hesap ile giriş</summary>
+          <form id="localForm" class="ac-form-ic" method="post" action="/auth/login">
+            <input type="hidden" name="next" id="nextInput" value="/" />
+            <div class="ac-alan">
+              <label for="username" data-t="lbl_user">Kullanıcı adı veya e-posta</label>
+              <input id="username" name="username" type="text" autocomplete="username" required />
+            </div>
+            <div class="ac-alan">
+              <label for="password" data-t="lbl_pass">Parola</label>
+              <input id="password" name="password" type="password" autocomplete="current-password" required />
+            </div>
+            <button type="submit" class="primary" id="submitBtn" data-t="btn_login">Giriş yap</button>
+          </form>
+        </details>
+      </section>
+
+      <p class="ac-not" data-t="footer_note">Yeni Google başvuruları yönetici onayından sonra etkinleşir ve e-posta ile bilgilendirilirsiniz.</p>
+      <p class="ac-alt"><a href="https://appcook.store" rel="noopener">appcook.store</a> · AI-CustomerHunter</p>
+    </main>
+  </div>
+
+  <script src="/appcook-giris.js"></script>
+  <script>
+    (function () {
+      'use strict';
+      var TEXT = {
+        tr: {
+          title: 'Giriş · AI-CustomerHunter',
+          slogan: 'Ürününüzü arayan <span>gerçek müşterileri</span> yakalayın.',
+          lead: 'Reddit, HackerNews ve GitHub üzerindeki alıcı niyetli konuşmaları tek masada görün, Türkçe anlayın ve doğal yanıt taslağıyla ilk teması kurun.',
+          f1_t: 'Müşteri Fırsatlarını Yakala',
+          f1_d: 'Rakipten memnun olmayan ve aktif araç arayan gerçek kişileri canlı taramayla anında listeler.',
+          f2_t: 'Türkçe & İngilizce Anında Anla',
+          f2_d: 'Yabancı topluluk gönderilerini kendi dilinizde okuyun, tek tıkla orijinal metni inceleyin.',
+          f3_t: 'Doğal Yanıt Taslağıyla İlk Temas',
+          f3_d: 'Spam riski düşük 3 farklı tonda hazır yanıtı Türkçe anlam önizlemesiyle kopyalayıp paylaşın.',
+          h1: 'Giriş yap',
+          sub: 'Ortak müşteri fırsat havuzuna erişmek için hesabınızla devam edin.',
+          google_btn: 'Google ile devam et',
+          google_not_set: 'Google ile giriş henüz yapılandırılmamış. Yönetici girişiyle oturum açıp Yönetim → Giriş yöntemleri bölümünden etkinleştirebilirsiniz.',
+          local_summary: 'Yönetici / yerel hesap ile giriş',
+          lbl_user: 'Kullanıcı adı veya e-posta',
+          lbl_pass: 'Parola',
+          btn_login: 'Giriş yap',
+          btn_logging: 'Giriş yapılıyor…',
+          footer_note: 'Yeni Google başvuruları yönetici onayından sonra etkinleşir ve e-posta ile bilgilendirilirsiniz.',
+          msg_pending: 'Başvurunuz alındı ve yönetici onayı bekliyor. Onaylandığında e-posta ile bilgilendirileceksiniz.',
+          msg_rejected: 'Hesabınız şu an etkin değil. Bir yanlışlık olduğunu düşünüyorsanız yöneticinizle iletişime geçin.',
+          msg_logout: 'Oturumunuz güvenli şekilde kapatıldı.',
+          msg_err_default: 'Giriş yapılamadı. Bilgilerinizi kontrol edip tekrar deneyin.'
+        },
+        en: {
+          title: 'Sign in · AI-CustomerHunter',
+          slogan: 'Catch <span>real customers</span> searching for your product.',
+          lead: 'Monitor buyer-intent threads across Reddit, HackerNews, and GitHub, understand them in TR or EN, and start natural conversations.',
+          f1_t: 'Capture Real Leads',
+          f1_d: 'Discover people actively unhappy with competitors or looking for a tool right now.',
+          f2_t: 'Instant TR & EN Understanding',
+          f2_d: 'Read international threads in your preferred language and inspect the original post in one click.',
+          f3_t: 'Natural Reply Drafts',
+          f3_d: 'Copy low-spam-risk replies in 3 tones with instant meaning preview.',
+          h1: 'Sign in',
+          sub: 'Continue with your account to access the shared customer lead workspace.',
+          google_btn: 'Continue with Google',
+          google_not_set: 'Google sign-in is not configured yet. Sign in as an admin to enable it under Admin → Sign-in methods.',
+          local_summary: 'Sign in with admin / local account',
+          lbl_user: 'Username or email',
+          lbl_pass: 'Password',
+          btn_login: 'Sign in',
+          btn_logging: 'Signing in…',
+          footer_note: 'New Google sign-ups require admin approval; you will be notified by email.',
+          msg_pending: 'Your application is pending admin approval. You will receive an email once approved.',
+          msg_rejected: 'Your account is currently not active. Please contact your administrator.',
+          msg_logout: 'You have been signed out safely.',
+          msg_err_default: 'Sign-in failed. Please check your credentials and try again.'
+        }
+      };
+
+      var lang = 'tr';
+      try {
+        var saved = localStorage.getItem('ch-lang') || localStorage.getItem('appcook_dil');
+        if (saved === 'en' || saved === 'tr') lang = saved;
+      } catch (e) {}
+
+      function applyTheme(t) {
+        if (t === 'acik' || t === 'koyu') {
+          document.documentElement.setAttribute('data-tema', t);
+          try { localStorage.setItem('appcook-tema', t); } catch (e) {}
+        }
+      }
+      try {
+        var savedTema = localStorage.getItem('appcook-tema');
+        if (savedTema === 'acik' || savedTema === 'koyu') {
+          document.documentElement.setAttribute('data-tema', savedTema);
+        }
+      } catch (e) {}
+
+      function showBanner(type, text) {
+        var el = document.getElementById('statusBanner');
+        el.className = 'ac-banner ' + (type || '');
+        el.textContent = text;
+        el.hidden = !text;
+      }
+
+      function applyLang(nextLang) {
+        lang = nextLang === 'en' ? 'en' : 'tr';
+        document.documentElement.lang = lang;
+        document.title = TEXT[lang].title;
+        try { localStorage.setItem('ch-lang', lang); } catch (e) {}
+        document.getElementById('btnTr').setAttribute('aria-pressed', String(lang === 'tr'));
+        document.getElementById('btnEn').setAttribute('aria-pressed', String(lang === 'en'));
+        document.querySelectorAll('[data-t]').forEach(function (el) {
+          var key = el.getAttribute('data-t');
+          if (!TEXT[lang][key]) return;
+          if (key === 'slogan') el.innerHTML = TEXT[lang][key];
+          else el.textContent = TEXT[lang][key];
+        });
+        renderQueryBanner();
+      }
+
+      var params = new URLSearchParams(window.location.search);
+      var nextParam = params.get('next') || '/';
+      if (nextParam.startsWith('/') && !nextParam.startsWith('//')) {
+        document.getElementById('nextInput').value = nextParam;
+        document.getElementById('googleBtn').href = '/auth/google/start?next=' + encodeURIComponent(nextParam);
+      }
+
+      function renderQueryBanner() {
+        var durum = params.get('durum');
+        var hata = params.get('hata');
+        var cikis = params.get('cikis');
+        if (hata) {
+          showBanner('hata', hata);
+          document.getElementById('localDetails').open = true;
+        } else if (durum === 'bekliyor') {
+          showBanner('uyari', TEXT[lang].msg_pending);
+        } else if (durum === 'reddedildi') {
+          showBanner('hata', TEXT[lang].msg_rejected);
+        } else if (cikis === '1') {
+          showBanner('ok', TEXT[lang].msg_logout);
+        } else {
+          showBanner('', '');
+        }
+      }
+
+      document.getElementById('btnTr').addEventListener('click', function () { applyLang('tr'); });
+      document.getElementById('btnEn').addEventListener('click', function () { applyLang('en'); });
+      document.getElementById('btnTema').addEventListener('click', function () {
+        var cur = document.documentElement.getAttribute('data-tema');
+        var isLight = cur === 'acik' || (!cur && window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches);
+        applyTheme(isLight ? 'koyu' : 'acik');
+      });
+
+      // Google OAuth yapılandırma durumunu kontrol et
+      fetch('/api/auth/config', { credentials: 'same-origin' })
+        .then(function (r) { return r.json(); })
+        .then(function (cfg) {
+          if (!cfg || !cfg.googleConfigured) {
+            var gBtn = document.getElementById('googleBtn');
+            gBtn.classList.add('ac-google-kapali');
+            gBtn.setAttribute('aria-disabled', 'true');
+            gBtn.removeAttribute('href');
+            document.getElementById('googleNote').hidden = false;
+            document.getElementById('localDetails').open = true;
+          }
+        })
+        .catch(function () {});
+
+      // Yerel giriş formu (AJAX + fallback)
+      document.getElementById('localForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.textContent = TEXT[lang].btn_logging;
+        showBanner('', '');
+
+        var payload = {
+          username: document.getElementById('username').value.trim(),
+          password: document.getElementById('password').value,
+          next: document.getElementById('nextInput').value || '/'
+        };
+
+        fetch('/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify(payload)
+        })
+          .then(function (res) {
+            return res.json().catch(function () { return {}; }).then(function (data) {
+              return { ok: res.ok, status: res.status, data: data };
+            });
+          })
+          .then(function (res) {
+            if (res.ok && res.data && res.data.ok) {
+              window.location.href = (res.data.next && res.data.next.startsWith('/')) ? res.data.next : '/';
+              return;
+            }
+            showBanner('hata', (res.data && res.data.error) || TEXT[lang].msg_err_default);
+          })
+          .catch(function () {
+            showBanner('hata', TEXT[lang].msg_err_default);
+          })
+          .finally(function () {
+            btn.disabled = false;
+            btn.textContent = TEXT[lang].btn_login;
+          });
+      });
+
+      applyLang(lang);
+    })();
+  </script>
+</body>
+</html>

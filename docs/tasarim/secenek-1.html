@@ -1,0 +1,1441 @@
+<!DOCTYPE html>
+<html lang="tr" data-tema="acik">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Seçenek 1: Sade Kartlı Satış Masası — AI-CustomerHunter</title>
+  <style>
+    /* ========================================================================
+       SEÇENEK 1: SADE KARTLI SATIŞ MASASI (Açık/Aydınlık AppCook v2 Teması)
+       Sıfır dış CDN bağımlılığı · WCAG 2.2 AA · Mobil (390px) + Masaüstü (1440px)
+       ======================================================================== */
+    :root,
+    :root[data-tema="acik"] {
+      --zemin: #f4f3f0;
+      --yuzey: #ffffff;
+      --yuzey-2: #f6f5f2;
+      --yuzey-3: #eeede8;
+      --cizgi: rgba(20, 18, 40, 0.10);
+      --cizgi-guclu: rgba(20, 18, 40, 0.20);
+      --metin: #16151d;
+      --soluk: #504f62;
+      --cok-soluk: #636275;
+      --uygulama: #d95d12;
+      --uygulama-yumusak: rgba(217, 93, 18, 0.10);
+      --vurgu-1: #c7550a;
+      --vurgu-2: #c42f6c;
+      --odak: #b54f0c;
+      --ok: #146c43;
+      --ok-zemin: #dcfce7;
+      --uyari: #925800;
+      --uyari-zemin: #fef3c7;
+      --hata: #c53030;
+      --hata-zemin: #fee2e2;
+      --bilgi: #1d4ed8;
+      --bilgi-zemin: #dbeafe;
+      --golge: 0 1px 2px rgba(20, 18, 40, 0.05), 0 14px 32px -22px rgba(20, 18, 40, 0.18);
+      --r-sm: 8px;
+      --r-md: 12px;
+      --r-lg: 16px;
+      --r-pill: 999px;
+      --ust-yuk: 60px;
+      --font: "Inter Tight", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      --mono: ui-monospace, "Cascadia Code", Consolas, monospace;
+      color-scheme: light;
+    }
+
+    :root[data-tema="koyu"] {
+      --zemin: #0b0b10;
+      --yuzey: #14141c;
+      --yuzey-2: #1c1c26;
+      --yuzey-3: #242432;
+      --cizgi: rgba(255, 255, 255, 0.09);
+      --cizgi-guclu: rgba(255, 255, 255, 0.18);
+      --metin: #f3f2f8;
+      --soluk: #a9a8bc;
+      --cok-soluk: #8b8aa0;
+      --uygulama: #ff7a33;
+      --uygulama-yumusak: rgba(255, 122, 51, 0.14);
+      --vurgu-1: #ff8a3d;
+      --vurgu-2: #e5487a;
+      --odak: #ff8a3d;
+      --ok: #34d399;
+      --ok-zemin: rgba(52, 211, 153, 0.14);
+      --uyari: #fbbf24;
+      --uyari-zemin: rgba(251, 191, 36, 0.14);
+      --hata: #f87171;
+      --hata-zemin: rgba(248, 113, 113, 0.14);
+      --bilgi: #60a5fa;
+      --bilgi-zemin: rgba(96, 165, 250, 0.14);
+      --golge: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 20px 44px -24px rgba(0, 0, 0, 0.75);
+      color-scheme: dark;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 84px;
+      scroll-padding-bottom: 84px;
+    }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--zemin);
+      color: var(--metin);
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+    h1, h2, h3, h4 { margin: 0; letter-spacing: -0.02em; line-height: 1.25; }
+    p { margin: 0; }
+    button, input, select, textarea { font: inherit; color: inherit; }
+    a { color: var(--vurgu-1); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    [hidden] { display: none !important; }
+    :is(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+      outline: 2px solid var(--odak);
+      outline-offset: 2px;
+    }
+
+    /* ÜST ÇUBUK (AppCook v2 Standardı) */
+    .ust {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: color-mix(in srgb, var(--yuzey) 88%, transparent);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--cizgi);
+    }
+    .ust-ic {
+      max-width: 1120px;
+      margin: 0 auto;
+      min-height: var(--ust-yuk);
+      padding: 8px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .ust-sol, .ust-sag {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 750;
+      font-size: 16.5px;
+      color: var(--metin);
+      white-space: nowrap;
+    }
+    .logo:hover { text-decoration: none; }
+    .logo-isaret {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #d95d12, #cf346e);
+      color: #fff;
+      flex: none;
+    }
+    .logo span b { color: var(--uygulama); }
+
+    /* Dil Seçici (Yalnızca TR / EN) */
+    .dil-grup {
+      display: inline-flex;
+      padding: 3px;
+      border-radius: 10px;
+      background: var(--yuzey-2);
+      border: 1px solid var(--cizgi);
+    }
+    .dil-btn {
+      min-width: 38px;
+      min-height: 32px;
+      padding: 0 9px;
+      border: 0;
+      border-radius: 7px;
+      background: transparent;
+      color: var(--soluk);
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .dil-btn[aria-pressed="true"] {
+      background: var(--yuzey);
+      color: var(--metin);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+    }
+
+    /* Araç Butonları */
+    .ikon-btn {
+      min-width: 40px;
+      min-height: 40px;
+      padding: 0 10px;
+      border-radius: 10px;
+      border: 1px solid var(--cizgi);
+      background: var(--yuzey);
+      color: var(--soluk);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .ikon-btn:hover { color: var(--metin); border-color: var(--cizgi-guclu); text-decoration: none; }
+    .kullanici-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 40px;
+      padding: 0 10px 0 6px;
+      border-radius: var(--r-pill);
+      border: 1px solid var(--cizgi);
+      background: var(--yuzey);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--metin);
+    }
+    .avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: #fff;
+      background: linear-gradient(135deg, #d95d12, #cf346e);
+      flex: none;
+    }
+
+    /* 4 ANA SEKME ÇUBUĞU (Masaüstü Üstte) */
+    .sekme-serit {
+      background: var(--yuzey);
+      border-bottom: 1px solid var(--cizgi);
+    }
+    .sekme-ic {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .sekmeler {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .sekme-btn {
+      position: relative;
+      min-height: 48px;
+      padding: 0 14px;
+      border: 0;
+      background: transparent;
+      color: var(--soluk);
+      font-size: 14.5px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .sekme-btn:hover { color: var(--metin); }
+    .sekme-btn[aria-selected="true"] {
+      color: var(--uygulama);
+      font-weight: 700;
+    }
+    .sekme-btn[aria-selected="true"]::after {
+      content: "";
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      bottom: 0;
+      height: 3px;
+      border-radius: 3px 3px 0 0;
+      background: var(--uygulama);
+    }
+    .sayac {
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: var(--r-pill);
+      background: var(--uygulama-yumusak);
+      color: var(--uygulama);
+    }
+
+    /* Aktif Ürün Seçici */
+    .urun-secici-sar {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 0;
+    }
+    .urun-secici-sar label {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--soluk);
+    }
+    .secim {
+      min-height: 38px;
+      padding: 0 12px;
+      border-radius: 10px;
+      border: 1px solid var(--cizgi-guclu);
+      background: var(--yuzey-2);
+      color: var(--metin);
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* ANA İÇERİK */
+    .ana {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 24px 20px 96px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Sayfa Başlığı + Tara Aksiyonu */
+    .baslik-satir {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .baslik-satir h1 { font-size: clamp(22px, 2.6vw, 28px); font-weight: 750; }
+    .baslik-satir p { color: var(--soluk); margin-top: 4px; font-size: 14.5px; }
+
+    /* Butonlar */
+    .btn {
+      min-height: 44px;
+      padding: 0 16px;
+      border-radius: var(--r-md);
+      border: 1px solid var(--cizgi-guclu);
+      background: var(--yuzey);
+      color: var(--metin);
+      font-size: 14px;
+      font-weight: 650;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: transform 0.15s ease, background-color 0.15s ease;
+    }
+    .btn:hover { border-color: var(--soluk); text-decoration: none; }
+    .btn:active { transform: translateY(1px); }
+    .btn.birincil {
+      border-color: transparent;
+      color: #fff;
+      background: linear-gradient(125deg, #d95d12, #cf346e);
+      box-shadow: 0 8px 20px -10px rgba(207, 52, 110, 0.65);
+    }
+    .btn.birincil:hover { filter: brightness(1.05); }
+    .btn.basari {
+      border-color: transparent;
+      color: #fff;
+      background: var(--ok);
+    }
+    .btn.kucuk { min-height: 36px; padding: 0 12px; font-size: 13px; border-radius: 9px; }
+
+    /* 3 Sade KPI Özet Kartı */
+    .ozet-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .ozet-kart {
+      background: var(--yuzey);
+      border: 1px solid var(--cizgi);
+      border-radius: var(--r-lg);
+      padding: 16px 18px;
+      box-shadow: var(--golge);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .ozet-etiket { font-size: 13px; color: var(--soluk); font-weight: 600; }
+    .ozet-deger { font-size: 28px; font-weight: 800; line-height: 1.15; margin-top: 2px; font-variant-numeric: tabular-nums; }
+    .ozet-alt { font-size: 12px; color: var(--cok-soluk); margin-top: 2px; }
+    .ozet-rozet {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      flex: none;
+    }
+
+    /* Filtre Çubuğu */
+    .filtre-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .cip-grup {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .cip {
+      min-height: 36px;
+      padding: 0 12px;
+      border-radius: var(--r-pill);
+      border: 1px solid var(--cizgi-guclu);
+      background: var(--yuzey);
+      color: var(--soluk);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .cip[aria-pressed="true"] {
+      background: var(--metin);
+      color: var(--yuzey);
+      border-color: var(--metin);
+    }
+
+    /* FIRSAT KARTI (Sade, Ferah, Tek Odaklı) */
+    .firsat-liste {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .firsat-kart {
+      background: var(--yuzey);
+      border: 1px solid var(--cizgi);
+      border-radius: var(--r-lg);
+      box-shadow: var(--golge);
+      overflow: hidden;
+    }
+    .firsat-ust {
+      padding: 18px 20px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .firsat-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .meta-sol {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .rozet {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: var(--r-pill);
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .rozet-reddit { background: #ffedd5; color: #9a3412; }
+    .rozet-hn { background: #fef3c7; color: #92400e; }
+    .rozet-github { background: #ede9fe; color: #5b21b6; }
+    :root[data-tema="koyu"] .rozet-reddit { background: rgba(251, 146, 60, 0.16); color: #fdba74; }
+    :root[data-tema="koyu"] .rozet-hn { background: rgba(251, 191, 36, 0.16); color: #fcd34d; }
+    :root[data-tema="koyu"] .rozet-github { background: rgba(167, 139, 250, 0.16); color: #c4b5fd; }
+
+    .rozet-ihtimal-yuksek { background: var(--ok-zemin); color: var(--ok); }
+    .rozet-ihtimal-orta { background: var(--uyari-zemin); color: var(--uyari); }
+    .rozet-urun { background: var(--yuzey-2); color: var(--soluk); border: 1px solid var(--cizgi); }
+
+    .meta-zaman { font-size: 12.5px; color: var(--cok-soluk); }
+    .firsat-baslik { font-size: 18px; font-weight: 750; color: var(--metin); line-height: 1.32; }
+    .firsat-ozet { font-size: 14.5px; color: var(--soluk); line-height: 1.55; }
+
+    /* Neden Bu Kişi Müşteri Olabilir? Kutusu */
+    .neden-kutu {
+      padding: 12px 14px;
+      border-radius: var(--r-md);
+      background: var(--uygulama-yumusak);
+      border-left: 3px solid var(--uygulama);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .neden-baslik {
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--uygulama);
+    }
+    .neden-metin { font-size: 14px; color: var(--metin); font-weight: 500; }
+
+    /* Orijinalini Gör (Betiksiz details/summary) */
+    .orijinal-detay {
+      font-size: 13px;
+      color: var(--soluk);
+    }
+    .orijinal-detay summary {
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--soluk);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 0;
+    }
+    .orijinal-detay summary:hover { color: var(--metin); }
+    .orijinal-kutu {
+      margin-top: 8px;
+      padding: 12px 14px;
+      border-radius: var(--r-sm);
+      background: var(--yuzey-2);
+      border: 1px solid var(--cizgi);
+      font-size: 13.5px;
+      color: var(--soluk);
+    }
+    .orijinal-kutu strong { display: block; color: var(--metin); margin-bottom: 4px; }
+
+    /* HAZIR YANIT TASLAĞI BÖLÜMÜ (Kart Altı) */
+    .yanit-bolum {
+      border-top: 1px solid var(--cizgi);
+      background: var(--yuzey-2);
+      padding: 16px 20px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .yanit-bas {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .yanit-etiket {
+      font-size: 13px;
+      font-weight: 750;
+      color: var(--metin);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .ton-satir {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .ton-btn {
+      min-height: 34px;
+      padding: 0 11px;
+      border-radius: 9px;
+      border: 1px solid var(--cizgi-guclu);
+      background: var(--yuzey);
+      color: var(--soluk);
+      font-size: 12.5px;
+      font-weight: 650;
+      cursor: pointer;
+    }
+    .ton-btn[aria-pressed="true"] {
+      background: var(--uygulama-yumusak);
+      border-color: var(--uygulama);
+      color: var(--uygulama);
+    }
+    .yanit-alan {
+      width: 100%;
+      min-height: 104px;
+      padding: 12px 14px;
+      border-radius: var(--r-md);
+      border: 1px solid var(--cizgi-guclu);
+      background: var(--yuzey);
+      color: var(--metin);
+      font-size: 14px;
+      line-height: 1.5;
+      resize: vertical;
+    }
+    .ceviri-onizleme {
+      padding: 10px 14px;
+      border-radius: var(--r-md);
+      background: var(--yuzey);
+      border: 1px dashed var(--cizgi-guclu);
+      font-size: 13.5px;
+      color: var(--soluk);
+    }
+    .ceviri-onizleme-bas {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 4px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--cok-soluk);
+    }
+    .yanit-alt {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .guven-bilgi {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      font-size: 12.5px;
+      color: var(--soluk);
+    }
+    .guven-bilgi b { color: var(--ok); }
+    .aksiyon-grup {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* DİĞER SEKMELER: TAKİP TABLOSU, RAKİP ŞİKAYETLERİ, ÜRÜN EKLE */
+    .panel {
+      background: var(--yuzey);
+      border: 1px solid var(--cizgi);
+      border-radius: var(--r-lg);
+      padding: 20px;
+      box-shadow: var(--golge);
+    }
+    .tablo-sar { overflow-x: auto; margin-top: 14px; }
+    table { width: 100%; border-collapse: collapse; min-width: 640px; }
+    th, td {
+      padding: 12px 10px;
+      text-align: left;
+      border-bottom: 1px solid var(--cizgi);
+      font-size: 13.5px;
+      vertical-align: middle;
+    }
+    th { font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--cok-soluk); font-weight: 700; }
+    .rakip-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+    .rakip-kart {
+      padding: 16px;
+      border-radius: var(--r-md);
+      border: 1px solid var(--cizgi);
+      background: var(--yuzey-2);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .form-izgara {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+    .alan { display: flex; flex-direction: column; gap: 6px; }
+    .alan.tam { grid-column: 1 / -1; }
+    .alan label { font-size: 13px; font-weight: 650; color: var(--metin); }
+    .girdi {
+      min-height: 44px;
+      padding: 10px 12px;
+      border-radius: var(--r-sm);
+      border: 1px solid var(--cizgi-guclu);
+      background: var(--yuzey-2);
+      color: var(--metin);
+      font-size: 14.5px;
+    }
+
+    /* BOŞ / YÜKLENİYOR / HATA DURUMLARI */
+    .durum-kutu {
+      padding: 36px 20px;
+      text-align: center;
+      background: var(--yuzey);
+      border: 1px dashed var(--cizgi-guclu);
+      border-radius: var(--r-lg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .iskelet {
+      height: 180px;
+      border-radius: var(--r-lg);
+      background: linear-gradient(90deg, var(--yuzey) 25%, var(--yuzey-3) 50%, var(--yuzey) 75%);
+      background-size: 200% 100%;
+      animation: kay 1.2s infinite linear;
+      border: 1px solid var(--cizgi);
+    }
+    @keyframes kay { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      right: 20px;
+      bottom: 24px;
+      z-index: 80;
+      padding: 12px 16px;
+      border-radius: var(--r-md);
+      background: var(--metin);
+      color: var(--yuzey);
+      font-size: 13.5px;
+      font-weight: 650;
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.25);
+      display: none;
+    }
+    .toast.acik { display: block; }
+
+    /* MOBİL ALT GEZİNME (≤ 768px) */
+    .mobil-alt {
+      display: none;
+    }
+
+    @media (max-width: 768px) {
+      .ust-ic { padding: 8px 12px; }
+      .logo-alt-gizle, .kim-ad, .yonetim-yazi { display: none; }
+      .sekme-serit .sekmeler { display: none; }
+      .sekme-ic { padding: 6px 12px; }
+      .urun-secici-sar { width: 100%; justify-content: space-between; }
+      .urun-secici-sar select { flex: 1; max-width: 220px; font-size: 16px; }
+      .ana { padding: 16px 12px 104px; }
+      .ozet-grid { grid-template-columns: 1fr; }
+      .form-izgara { grid-template-columns: 1fr; }
+      .girdi, .yanit-alan { font-size: 16px; }
+      .aksiyon-grup { width: 100%; }
+      .aksiyon-grup .btn.birincil { flex: 1; }
+      .mobil-alt {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 50;
+        background: var(--yuzey);
+        border-top: 1px solid var(--cizgi);
+        padding: 6px 4px calc(6px + env(safe-area-inset-bottom, 0px));
+      }
+      .mobil-sekme {
+        min-height: 48px;
+        border: 0;
+        background: transparent;
+        color: var(--soluk);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        font-size: 11px;
+        font-weight: 650;
+        cursor: pointer;
+        border-radius: 10px;
+      }
+      .mobil-sekme[aria-selected="true"] {
+        color: var(--uygulama);
+        background: var(--uygulama-yumusak);
+      }
+      .toast { bottom: 78px; left: 12px; right: 12px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <!-- ÜST ÇUBUK -->
+  <header class="ust">
+    <div class="ust-ic">
+      <div class="ust-sol">
+        <button class="ikon-btn" title="AppCook Uygulamaları" aria-label="AppCook Uygulamaları" onclick="bildir('AppCook uygulama menüsü açılır')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <circle cx="5" cy="5" r="2"/><circle cx="12" cy="5" r="2"/><circle cx="19" cy="5" r="2"/>
+            <circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/>
+            <circle cx="5" cy="19" r="2"/><circle cx="12" cy="19" r="2"/><circle cx="19" cy="19" r="2"/>
+          </svg>
+        </button>
+        <a href="#firsatlar" class="logo">
+          <span class="logo-isaret" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="3" x2="12" y2="6"/>
+            </svg>
+          </span>
+          <span>AI-<b>CustomerHunter</b></span>
+        </a>
+      </div>
+
+      <div class="ust-sag">
+        <!-- YALNIZCA TR / EN -->
+        <div class="dil-grup" role="group" aria-label="Dil seçimi">
+          <button class="dil-btn" id="dilTr" aria-pressed="true" onclick="dilDegis('tr')">TR</button>
+          <button class="dil-btn" id="dilEn" aria-pressed="false" onclick="dilDegis('en')">EN</button>
+        </div>
+
+        <!-- Yönetici Geçişi -->
+        <a href="/yonetim" class="ikon-btn" onclick="event.preventDefault(); bildir('Yönetici paneline (/yonetim) gidilir')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.09a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+          <span class="yonetim-yazi" data-t="nav_admin">Yönetim</span>
+        </a>
+
+        <!-- Kullanıcı Profili -->
+        <span class="kullanici-chip" title="Selin Yılmaz (Yönetici)">
+          <span class="avatar">SY</span>
+          <span class="kim-ad">Selin Y.</span>
+        </span>
+
+        <!-- Tema Geçişi -->
+        <button class="ikon-btn" id="temaBtn" aria-label="Temayı değiştir" onclick="temaDegis()" title="Açık / Koyu Tema">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+
+        <!-- Çıkış -->
+        <button class="ikon-btn" aria-label="Çıkış yap" onclick="bildir('Oturum kapatılır (/giris)')" title="Çıkış">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 4 ANA SEKME + AKTİF ÜRÜN SEÇİCİ -->
+  <div class="sekme-serit">
+    <div class="sekme-ic">
+      <nav class="sekmeler" role="tablist" aria-label="Ana bölümler">
+        <button class="sekme-btn" role="tab" id="tab-radar" aria-selected="true" onclick="sekmeAc('radar')">
+          <span data-t="tab_radar">Fırsatlar (Radar)</span>
+          <span class="sayac">3</span>
+        </button>
+        <button class="sekme-btn" role="tab" id="tab-takip" aria-selected="false" onclick="sekmeAc('takip')">
+          <span data-t="tab_track">Müşteri Takibi</span>
+        </button>
+        <button class="sekme-btn" role="tab" id="tab-rakip" aria-selected="false" onclick="sekmeAc('rakip')">
+          <span data-t="tab_comp">Rakip Şikayetleri</span>
+        </button>
+        <button class="sekme-btn" role="tab" id="tab-urun" aria-selected="false" onclick="sekmeAc('urun')">
+          <span data-t="tab_add">Ürün Ekle</span>
+        </button>
+      </nav>
+
+      <div class="urun-secici-sar">
+        <label for="urunSec" data-t="active_prod">Ürün:</label>
+        <select id="urunSec" class="secim" onchange="urunFiltrele(this.value)">
+          <option value="all">Tüm Ürünler (8)</option>
+          <option value="AI-Task">AI-Task — Ekip Görev Panosu</option>
+          <option value="AI-Transcript">AI-Transcript — Toplantı Özeti</option>
+          <option value="AI-Draw">AI-Draw — Diyagram Aracı</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- ANA ÇALIŞMA ALANI -->
+  <main class="ana">
+    <!-- SEKME 1: FIRSATLAR (RADAR) -->
+    <section id="panel-radar">
+      <div class="baslik-satir">
+        <div>
+          <h1 data-t="radar_h1">Sıcak Müşteri Fırsatları</h1>
+          <p data-t="radar_sub">Ürününüzün çözdüğü sorunu şu an tartışan gerçek kişiler. Hazır yanıtı kopyalayıp doğrudan yazabilirsiniz.</p>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="btn" onclick="durumGoster('yukleniyor')" data-t="btn_scan">Yeni Fırsatları Tara</button>
+          <button class="btn kucuk" onclick="durumGoster('bos')" title="Boş durum önizlemesi">Boş Durum</button>
+          <button class="btn kucuk" onclick="durumGoster('hata')" title="Hata durumu önizlemesi">Hata Durumu</button>
+        </div>
+      </div>
+
+      <!-- 3 SADE ÖZET -->
+      <div class="ozet-grid" style="margin-top:18px;">
+        <div class="ozet-kart">
+          <div>
+            <div class="ozet-etiket" data-t="kpi_ready">Satın Almaya Hazır</div>
+            <div class="ozet-deger">3</div>
+            <div class="ozet-alt" data-t="kpi_ready_sub">%85+ yüksek ihtimal</div>
+          </div>
+          <div class="ozet-rozet" style="background:var(--ok-zemin); color:var(--ok);" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </div>
+        <div class="ozet-kart">
+          <div>
+            <div class="ozet-etiket" data-t="kpi_comp">Rakip Değiştirmek İsteyen</div>
+            <div class="ozet-deger">2</div>
+            <div class="ozet-alt" data-t="kpi_comp_sub">Jira, Trello, Otter.ai şikayeti</div>
+          </div>
+          <div class="ozet-rozet" style="background:var(--uygulama-yumusak); color:var(--uygulama);" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          </div>
+        </div>
+        <div class="ozet-kart">
+          <div>
+            <div class="ozet-etiket" data-t="kpi_pot">Tahmini Satış Potansiyeli</div>
+            <div class="ozet-deger">1.260 $</div>
+            <div class="ozet-alt" data-t="kpi_pot_sub">Yıllık abonelik tahmini</div>
+          </div>
+          <div class="ozet-rozet" style="background:var(--bilgi-zemin); color:var(--bilgi);" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- KAYNAK FİLTRESİ -->
+      <div class="filtre-bar" style="margin-top:18px;">
+        <div class="cip-grup" role="group" aria-label="Kaynak filtresi">
+          <button class="cip" aria-pressed="true" onclick="kaynakFiltrele('all', this)" data-t="flt_all">Tümü (3)</button>
+          <button class="cip" aria-pressed="false" onclick="kaynakFiltrele('reddit', this)">Reddit</button>
+          <button class="cip" aria-pressed="false" onclick="kaynakFiltrele('hackernews', this)">HackerNews</button>
+          <button class="cip" aria-pressed="false" onclick="kaynakFiltrele('github', this)">GitHub</button>
+        </div>
+      </div>
+
+      <!-- DURUM ALANLARI -->
+      <div id="yukleniyorAlani" hidden style="display:flex; flex-direction:column; gap:14px; margin-top:16px;">
+        <div class="iskelet"></div>
+        <div class="iskelet"></div>
+      </div>
+      <div id="bosAlani" class="durum-kutu" hidden style="margin-top:16px;">
+        <h3 data-t="empty_title">Bu filtreye uygun fırsat bulunamadı</h3>
+        <p style="color:var(--soluk); max-width:420px;" data-t="empty_sub">Farklı bir kaynak seçebilir veya yeni gönderileri bulmak için taramayı başlatabilirsiniz.</p>
+        <button class="btn birincil" onclick="durumGoster('normal')" data-t="empty_btn">Tüm Fırsatları Göster</button>
+      </div>
+      <div id="hataAlani" class="durum-kutu" hidden style="margin-top:16px; border-color:var(--hata);">
+        <h3 style="color:var(--hata);" data-t="err_title">Kaynaklara şu an ulaşılamıyor</h3>
+        <p style="color:var(--soluk); max-width:440px;" data-t="err_sub">Reddit veya HackerNews yanıt vermedi. Kayıtlı fırsatlarınız güvende; birkaç saniye sonra tekrar deneyebilirsiniz.</p>
+        <button class="btn" onclick="durumGoster('normal')" data-t="err_btn">Tekrar Dene</button>
+      </div>
+
+      <!-- FIRSAT KARTLARI -->
+      <div id="firsatListe" class="firsat-liste" style="margin-top:16px;"></div>
+    </section>
+
+    <!-- SEKME 2: MÜŞTERİ TAKİBİ -->
+    <section id="panel-takip" hidden>
+      <div class="panel">
+        <div class="baslik-satir">
+          <div>
+            <h2 data-t="track_h2">Müşteri Takip Listesi</h2>
+            <p data-t="track_sub">Yanıt gönderdiğiniz ve satışa dönen fırsatları buradan takip edin.</p>
+          </div>
+          <button class="btn kucuk" onclick="bildir('CSV listesi indirildi')" data-t="btn_csv">Listeyi İndir (CSV)</button>
+        </div>
+        <div class="tablo-sar">
+          <table>
+            <thead>
+              <tr>
+                <th data-t="th_src">Kaynak</th>
+                <th data-t="th_prob">İhtimal</th>
+                <th data-t="th_topic">Konu</th>
+                <th data-t="th_prod">Ürün</th>
+                <th data-t="th_stage">Durum</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="rozet rozet-reddit">Reddit</span></td>
+                <td><span class="rozet rozet-ihtimal-yuksek">%98 · Çok Yüksek</span></td>
+                <td><strong>Jira çok ağır, Trello 15 kişide dağılıyor — Telegram destekli araç?</strong></td>
+                <td>AI-Task</td>
+                <td><span class="rozet" style="background:var(--bilgi-zemin); color:var(--bilgi);">Yanıtlandı</span></td>
+              </tr>
+              <tr>
+                <td><span class="rozet rozet-reddit">Reddit</span></td>
+                <td><span class="rozet rozet-ihtimal-yuksek">%97 · Çok Yüksek</span></td>
+                <td><strong>20+ dil destekli ve toplantıyı sunuma çeviren Otter.ai alternatifi</strong></td>
+                <td>AI-Transcript</td>
+                <td><span class="rozet rozet-ihtimal-yuksek">Müşteri Oldu</span></td>
+              </tr>
+              <tr>
+                <td><span class="rozet rozet-hn">HackerNews</span></td>
+                <td><span class="rozet rozet-ihtimal-yuksek">%94 · Yüksek</span></td>
+                <td><strong>Trello sonrası küçük ekiplerin kullandığı sade görev panosu?</strong></td>
+                <td>AI-Task</td>
+                <td><span class="rozet" style="background:var(--uyari-zemin); color:var(--uyari);">Yeni</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEKME 3: RAKİP ŞİKAYETLERİ -->
+    <section id="panel-rakip" hidden>
+      <div class="panel">
+        <h2 data-t="comp_h2">Rakipten Memnun Olmayanlar</h2>
+        <p style="color:var(--soluk); margin-top:4px;" data-t="comp_sub">Mevcut aracının fiyatından veya karmaşıklığından şikayet eden kişiler en hızlı müşteriye dönüşür.</p>
+        <div class="rakip-grid">
+          <div class="rakip-kart">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span class="rozet rozet-reddit">Reddit · r/projectmanagement</span>
+              <span class="rozet rozet-ihtimal-yuksek">%98</span>
+            </div>
+            <h3>Jira / Trello Şikayeti</h3>
+            <p style="font-size:14px; color:var(--soluk);">15 kişilik uzaktan çalışan ajans Jira'yı kimse güncellemediği için bırakıyor; Telegram'dan görev atanabilen sade pano arıyor.</p>
+            <button class="btn kucuk birincil" onclick="sekmeAc('radar')">Fırsata Git ve Yanıtla</button>
+          </div>
+          <div class="rakip-kart">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span class="rozet rozet-reddit">Reddit · r/productivity</span>
+              <span class="rozet rozet-ihtimal-yuksek">%97</span>
+            </div>
+            <h3>Otter.ai Kota ve Dil Sorunu</h3>
+            <p style="font-size:14px; color:var(--soluk);">Danışmanlık ekibi aylık dakika sınırına takıldı; çok dilli toplantılardan doğrudan PowerPoint özeti istiyor.</p>
+            <button class="btn kucuk birincil" onclick="sekmeAc('radar')">Fırsata Git ve Yanıtla</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEKME 4: ÜRÜN EKLE -->
+    <section id="panel-urun" hidden>
+      <div class="panel">
+        <h2 data-t="add_h2">Yeni Ürün veya Web Sitesi Ekle</h2>
+        <p style="color:var(--soluk); margin-top:4px;" data-t="add_sub">Web sitenizin adresini yapıştırın; hedef müşterinizi ve rakiplerinizi otomatik çıkaralım.</p>
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:16px;">
+          <input type="url" class="girdi" style="flex:1; min-width:240px;" value="https://task.appcook.store" aria-label="Ürün web adresi" />
+          <button class="btn birincil" onclick="bildir('Web sitesi analiz edildi ve alanlar dolduruldu')" data-t="btn_analyze">Siteyi Analiz Et</button>
+        </div>
+
+        <div class="form-izgara">
+          <div class="alan">
+            <label for="uAd" data-t="f_name">Ürün Adı</label>
+            <input id="uAd" class="girdi" value="AI-Task" />
+          </div>
+          <div class="alan">
+            <label for="uMusteri" data-t="f_aud">Hedef Müşteriniz Kim?</label>
+            <input id="uMusteri" class="girdi" value="Ajanslar, KOBİ ekipleri, uzaktan çalışan takımlar" />
+          </div>
+          <div class="alan tam">
+            <label for="uOzet" data-t="f_val">Ürününüz Ne İşe Yarar? (Kısa Özet)</label>
+            <textarea id="uOzet" class="girdi" rows="2">Telegram üzerinden doğal dille görev atanabilen, karmaşasız ekip Kanban panosu.</textarea>
+          </div>
+          <div class="alan">
+            <label for="uRakip" data-t="f_comp">Rakipleriniz</label>
+            <input id="uRakip" class="girdi" value="Jira, Trello, ClickUp, Monday" />
+          </div>
+          <div class="alan">
+            <label for="uDeger" data-t="f_val_usd">Ortalama Yıllık Müşteri Değeri ($)</label>
+            <input id="uDeger" type="number" class="girdi" value="390" />
+          </div>
+        </div>
+        <div style="margin-top:16px; display:flex; justify-content:flex-end;">
+          <button class="btn basari" onclick="bildir('Ürün kaydedildi ve tarama başlatıldı')" data-t="btn_save">Ürünü Kaydet ve Müşteri Ara</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- MOBİL ALT GEZİNME (4 ANA SEKME) -->
+  <nav class="mobil-alt" role="tablist" aria-label="Mobil gezinme">
+    <button class="mobil-sekme" id="mtab-radar" aria-selected="true" onclick="sekmeAc('radar')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>
+      <span data-t="mtab_radar">Fırsatlar</span>
+    </button>
+    <button class="mobil-sekme" id="mtab-takip" aria-selected="false" onclick="sekmeAc('takip')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      <span data-t="mtab_track">Takip</span>
+    </button>
+    <button class="mobil-sekme" id="mtab-rakip" aria-selected="false" onclick="sekmeAc('rakip')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      <span data-t="mtab_comp">Rakipler</span>
+    </button>
+    <button class="mobil-sekme" id="mtab-urun" aria-selected="false" onclick="sekmeAc('urun')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      <span data-t="mtab_add">Ürün Ekle</span>
+    </button>
+  </nav>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    let aktifDil = 'tr';
+    let aktifKaynak = 'all';
+    let aktifUrun = 'all';
+
+    const METIN = {
+      tr: {
+        nav_admin: 'Yönetim',
+        tab_radar: 'Fırsatlar (Radar)', tab_track: 'Müşteri Takibi', tab_comp: 'Rakip Şikayetleri', tab_add: 'Ürün Ekle',
+        mtab_radar: 'Fırsatlar', mtab_track: 'Takip', mtab_comp: 'Rakipler', mtab_add: 'Ürün Ekle',
+        active_prod: 'Ürün:',
+        radar_h1: 'Sıcak Müşteri Fırsatları',
+        radar_sub: 'Ürününüzün çözdüğü sorunu şu an tartışan gerçek kişiler. Hazır yanıtı kopyalayıp doğrudan yazabilirsiniz.',
+        btn_scan: 'Yeni Fırsatları Tara',
+        kpi_ready: 'Satın Almaya Hazır', kpi_ready_sub: '%85+ yüksek ihtimal',
+        kpi_comp: 'Rakip Değiştirmek İsteyen', kpi_comp_sub: 'Jira, Trello, Otter.ai şikayeti',
+        kpi_pot: 'Tahmini Satış Potansiyeli', kpi_pot_sub: 'Yıllık abonelik tahmini',
+        flt_all: 'Tümü (3)',
+        why_lbl: 'Neden bu kişi müşteri olabilir?',
+        orig_btn: 'Orijinal gönderiyi gör (EN)',
+        reply_title: 'Hazır Yanıt Taslağı (Gönderi Dili: İngilizce)',
+        tr_preview_lbl: 'Türkçe Anlam Önizlemesi (Ne kopyalayacağınızı görün)',
+        copy_btn: 'Yanıtı Kopyala & Gönderiye Git ↗',
+        mark_replied: 'Yanıtlandı',
+        mark_won: 'Müşteri Oldu',
+        spam_lbl: 'Spam Riski:', spam_val: 'Düşük (Güvenli)',
+        val_lbl: 'Tahmini Değer:',
+        tone_helpful: 'Yardımsever', tone_founder: 'Ürün Sahibi', tone_comparison: 'Karşılaştırmalı',
+        empty_title: 'Bu filtreye uygun fırsat bulunamadı', empty_sub: 'Farklı bir kaynak seçebilir veya yeni gönderileri bulmak için taramayı başlatabilirsiniz.', empty_btn: 'Tüm Fırsatları Göster',
+        err_title: 'Kaynaklara şu an ulaşılamıyor', err_sub: 'Reddit veya HackerNews yanıt vermedi. Kayıtlı fırsatlarınız güvende; birkaç saniye sonra tekrar deneyebilirsiniz.', err_btn: 'Tekrar Dene',
+        track_h2: 'Müşteri Takip Listesi', track_sub: 'Yanıt gönderdiğiniz ve satışa dönen fırsatları buradan takip edin.', btn_csv: 'Listeyi İndir (CSV)',
+        th_src: 'Kaynak', th_prob: 'İhtimal', th_topic: 'Konu', th_prod: 'Ürün', th_stage: 'Durum',
+        comp_h2: 'Rakipten Memnun Olmayanlar', comp_sub: 'Mevcut aracının fiyatından veya karmaşıklığından şikayet eden kişiler en hızlı müşteriye dönüşür.',
+        add_h2: 'Yeni Ürün veya Web Sitesi Ekle', add_sub: 'Web sitenizin adresini yapıştırın; hedef müşterinizi ve rakiplerinizi otomatik çıkaralım.', btn_analyze: 'Siteyi Analiz Et',
+        f_name: 'Ürün Adı', f_aud: 'Hedef Müşteriniz Kim?', f_val: 'Ürününüz Ne İşe Yarar? (Kısa Özet)', f_comp: 'Rakipleriniz', f_val_usd: 'Ortalama Yıllık Müşteri Değeri ($)', btn_save: 'Ürünü Kaydet ve Müşteri Ara'
+      },
+      en: {
+        nav_admin: 'Admin',
+        tab_radar: 'Hot Leads (Radar)', tab_track: 'Lead Tracker', tab_comp: 'Competitor Complaints', tab_add: 'Add Product',
+        mtab_radar: 'Leads', mtab_track: 'Tracker', mtab_comp: 'Competitors', mtab_add: 'Add',
+        active_prod: 'Product:',
+        radar_h1: 'Hot Customer Leads',
+        radar_sub: 'Real people currently discussing the problem your product solves. Copy a ready draft and join the thread.',
+        btn_scan: 'Scan for New Leads',
+        kpi_ready: 'Ready-to-Buy Prospects', kpi_ready_sub: '85%+ high likelihood',
+        kpi_comp: 'Looking to Switch', kpi_comp_sub: 'Jira, Trello, Otter.ai complaints',
+        kpi_pot: 'Estimated Sales Potential', kpi_pot_sub: 'Estimated annual value',
+        flt_all: 'All (3)',
+        why_lbl: 'Why could this person buy?',
+        orig_btn: 'View original post',
+        reply_title: 'Reply Draft (Post Language: English)',
+        tr_preview_lbl: 'Turkish Meaning Preview',
+        copy_btn: 'Copy Reply & Open Post ↗',
+        mark_replied: 'Marked Replied',
+        mark_won: 'Won Customer',
+        spam_lbl: 'Spam Risk:', spam_val: 'Low (Safe)',
+        val_lbl: 'Est. Value:',
+        tone_helpful: 'Helpful', tone_founder: 'Founder', tone_comparison: 'Comparison',
+        empty_title: 'No leads match this filter', empty_sub: 'Try another channel or start a fresh scan to discover new threads.', empty_btn: 'Show All Leads',
+        err_title: 'Sources are temporarily unreachable', err_sub: 'Reddit or HackerNews did not respond. Your saved leads are safe; please try again shortly.', err_btn: 'Retry',
+        track_h2: 'Lead Tracker', track_sub: 'Track every conversation from first reply to paying customer.', btn_csv: 'Export CSV',
+        th_src: 'Source', th_prob: 'Likelihood', th_topic: 'Thread', th_prod: 'Product', th_stage: 'Stage',
+        comp_h2: 'Unhappy Competitor Users', comp_sub: 'People complaining about a competitor price hike or complexity convert fastest.',
+        add_h2: 'Add Product or Website', add_sub: 'Paste your website URL to auto-extract target customers and competitors.', btn_analyze: 'Analyze Website',
+        f_name: 'Product Name', f_aud: 'Target Customers', f_val: 'What Does Your Product Do?', f_comp: 'Your Competitors', f_val_usd: 'Average Annual Customer Value ($)', btn_save: 'Save Product & Start Radar'
+      }
+    };
+
+    const FIRSATLAR = [
+      {
+        id: 'f1',
+        platform: 'reddit',
+        platformAd: 'Reddit',
+        topluluk: 'r/projectmanagement',
+        yazar: 'u/agency_ops_lead',
+        urun: 'AI-Task',
+        ihtimal: 98,
+        ihtimalTr: '%98 · Çok Yüksek',
+        ihtimalEn: '98% · Very High',
+        zamanTr: '12 dk önce',
+        zamanEn: '12m ago',
+        deger: '390 $/yıl',
+        url: 'https://www.reddit.com/r/projectmanagement/',
+        tr: {
+          baslik: 'Jira çok ağır geliyor, Trello ise 15 kişide dağılıyor — Telegram ile doğrudan çalışan sade bir görev panosu var mı?',
+          ozet: '15 kişilik uzaktan çalışan ajansımız tüm gün Telegram’da. Kimse Jira açıp görev güncellemiyor. Telegram’dan doğal dille görev atayabileceğimiz, müsait olanın üstüne alabileceği sade bir Kanban panosu arıyoruz.',
+          neden: '15 kişilik ekip Jira/Trello’yu bırakma aşamasında ve doğrudan Telegram görev atama + ekip havuzu istiyor — AI-Task’ın birebir uzmanlık alanı.'
+        },
+        en: {
+          baslik: 'Jira is way too bloated and Trello gets messy with 15 people — lightweight Kanban tool that integrates with Telegram?',
+          ozet: 'Our 15-person remote agency lives in Telegram all day. Nobody opens Jira to update tickets. We want a simple team task pool where we assign tasks from Telegram and view progress on a clean Kanban board.',
+          neden: '15-person remote team actively ditching Jira/Trello specifically asking for Telegram task assignment + team pool Kanban.'
+        },
+        ton: 'helpful',
+        yanitDili: 'en',
+        yanitlar: {
+          helpful: {
+            en: 'We ran into the exact same issue with a 15-person remote crew — nobody wanted to leave chat just to update Jira cards. What helped most was moving to a lightweight Kanban pool where tasks can be created straight from Telegram. If you want to test that workflow, AI-Task (task.appcook.store) was built specifically for Telegram-to-Kanban handoffs.',
+            tr: '15 kişilik uzaktan ekibimizde birebir aynı sorunu yaşadık — kimse Jira kartı güncellemek için sohbetten çıkmak istemiyordu. En çok işe yarayan şey, görevlerin doğrudan Telegram’dan açılabildiği hafif bir Kanban havuzuna geçmek oldu. Bu akışı denemek isterseniz AI-Task (task.appcook.store) tam olarak Telegram-Kanban aktarımı için tasarlandı.'
+          },
+          founder: {
+            en: 'Full disclosure: I built AI-Task (task.appcook.store) because our own team stopped updating Trello and Jira. You can drop a task in plain language inside Telegram, anyone free can claim it from the team pool, and it stays synced on a clean Kanban board. Happy to set up a free workspace for your 15-person team.',
+            tr: 'Açıkça söyleyeyim: Kendi ekibimiz Trello ve Jira’yı güncellemeyi bıraktığı için AI-Task’ı (task.appcook.store) geliştirdim. Telegram’da normal cümleyle görev bırakıyorsunuz, müsait olan havuzdan üstüne alıyor ve sade Kanban panosunda senkron kalıyor. 15 kişilik ekibiniz için ücretsiz alan açabilirim.'
+          },
+          comparison: {
+            en: 'For a 15-person team living in Telegram: Jira is overkill, Trello lacks native Telegram task pools, and ClickUp gets slow. A focused option like AI-Task (task.appcook.store) keeps only Kanban + Telegram natural-language capture so adoption stays high.',
+            tr: 'Telegram’da yaşayan 15 kişilik bir ekip için Jira fazla ağır, Trello’da yerel Telegram görev havuzu yok, ClickUp ise yavaşlıyor. AI-Task (task.appcook.store) gibi odaklı bir araç yalnız Kanban + Telegram doğal dil yakalamayı tuttuğu için ekip kullanımı yüksek kalıyor.'
+          }
+        }
+      },
+      {
+        id: 'f2',
+        platform: 'reddit',
+        platformAd: 'Reddit',
+        topluluk: 'r/productivity',
+        yazar: 'u/exec_consultant_uk',
+        urun: 'AI-Transcript',
+        ihtimal: 97,
+        ihtimalTr: '%97 · Çok Yüksek',
+        ihtimalEn: '97% · Very High',
+        zamanTr: '24 dk önce',
+        zamanEn: '24m ago',
+        deger: '450 $/yıl',
+        url: 'https://www.reddit.com/r/productivity/',
+        tr: {
+          baslik: '20+ dil destekleyen, konuşmacıları ayıran ve toplantı kaydını doğrudan PowerPoint sunumuna çeviren en iyi Otter.ai alternatifi?',
+          ozet: 'Otter aylık dakikamızı kesti ve Avrupalı müşterilerimiz görüşme ortasında dil değiştirince zorlanıyor. Ses dosyasından resmi toplantı tutanağı, aksiyon tablosu ve müşteriye hazır PPTX özeti çıkaran bir araç arıyoruz.',
+          neden: 'Danışmanlık ekibi Otter.ai’ı değiştiriyor; çok dilli konuşmacı ayrımı + otomatik tutanak ve PowerPoint çıktısı talep ediyor.'
+        },
+        en: {
+          baslik: 'Best Otter.ai alternative that supports 20+ languages, speaker separation, and turns meeting transcripts into PowerPoint slides?',
+          ozet: 'Otter cut off our monthly minutes and struggles whenever European clients switch languages mid-call. We need accurate transcription that automatically generates meeting minutes, action tables, and a client-ready PPTX summary.',
+          neden: 'Consulting team replacing Otter.ai, explicitly requesting multi-language diarization + automated minutes & PowerPoint generation.'
+        },
+        ton: 'helpful',
+        yanitDili: 'en',
+        yanitlar: {
+          helpful: {
+            en: 'Multi-language calls are where Otter usually breaks down. Whisper-based diarization handles code-switching much better. You might want to look at AI-Transcript (transkript.appcook.store) — it transcribes 20+ languages, separates speakers, and exports straight to structured minutes and PowerPoint slides.',
+            tr: 'Çok dilli görüşmeler Otter’ın genelde zorlandığı yerdir. Whisper tabanlı konuşmacı ayrımı dil geçişlerini çok daha iyi yönetir. AI-Transcript’e (transkript.appcook.store) bakabilirsiniz — 20+ dilde deşifre eder, konuşmacıları ayırır ve doğrudan düzenli tutanak ile PowerPoint slaytlarına aktarır.'
+          },
+          founder: {
+            en: 'Hi! We built AI-Transcript (transkript.appcook.store) specifically for multilingual consulting calls — upload audio or links, separate speakers in 20+ languages, and generate a client-ready PPTX summary in one click.',
+            tr: 'Merhaba! AI-Transcript’i (transkript.appcook.store) özellikle çok dilli danışmanlık görüşmeleri için geliştirdik — ses veya bağlantı yükleyin, 20+ dilde konuşmacıları ayırın ve tek tıkla müşteriye hazır PPTX özeti alın.'
+          },
+          comparison: {
+            en: 'Compared to Otter.ai (English-first, strict minute caps) and Fireflies (no native PPTX deck export), AI-Transcript focuses on 20+ language accuracy plus direct meeting-minutes and PowerPoint output.',
+            tr: 'Otter.ai (İngilizce odaklı, katı dakika sınırı) ve Fireflies (yerel PPTX çıktısı yok) ile kıyaslandığında AI-Transcript 20+ dil doğruluğu ve doğrudan tutanak + PowerPoint çıktısına odaklanır.'
+          }
+        }
+      },
+      {
+        id: 'f3',
+        platform: 'hackernews',
+        platformAd: 'HackerNews',
+        topluluk: 'Ask HN',
+        yazar: 'dev_founder_berlin',
+        urun: 'AI-Task',
+        ihtimal: 94,
+        ihtimalTr: '%94 · Yüksek',
+        ihtimalEn: '94% · High',
+        zamanTr: '35 dk önce',
+        zamanEn: '35m ago',
+        deger: '390 $/yıl',
+        url: 'https://news.ycombinator.com/',
+        tr: {
+          baslik: 'Ask HN: Küçük yazılım ekipleri Trello’yu aştıktan sonra hangi sade görev takip aracını kullanıyor?',
+          ozet: 'ClickUp ve Monday fazla karmaşık ve yavaş geliyor; Linear ise teknik olmayan operasyon ekibimize uymuyor. Tek tıkla davet bağlantısı, sprint takibi ve anlık sohbet bildirimli hızlı bir Kanban arıyoruz.',
+          neden: 'Kurucu, hem yazılımcıların hem operasyon ekibinin kolayca kullanacağı hızlı bir Kanban panosu arıyor.'
+        },
+        en: {
+          baslik: 'Ask HN: What lightweight task tracker are small engineering teams using after outgrowing Trello?',
+          ozet: 'ClickUp and Monday feel overly complex and slow, while Linear does not fit our non-technical operations folks. Looking for a fast Kanban board with one-click invite links and instant chat notifications.',
+          neden: 'Founder looking for a lightweight cross-functional Kanban tracker with quick onboarding and chat alerts.'
+        },
+        ton: 'helpful',
+        yanitDili: 'en',
+        yanitlar: {
+          helpful: {
+            en: 'Bridging engineering and ops is the hardest part — Linear is great for devs, too rigid for ops. A simple Kanban pool with instant chat alerts (like AI-Task at task.appcook.store) keeps both sides on one board without ClickUp bloat.',
+            tr: 'Yazılım ile operasyonu aynı araçta buluşturmak en zor kısım — Linear geliştiriciler için harika ama operasyon için katı. Anlık sohbet bildirimli sade bir Kanban havuzu (task.appcook.store üzerindeki AI-Task gibi) ClickUp karmaşası olmadan iki tarafı tek panoda tutar.'
+          },
+          founder: {
+            en: 'We built AI-Task (task.appcook.store) for exactly that gap between Trello and Linear — fast Kanban, one-click team invites, and Telegram notifications so non-technical folks never fall behind.',
+            tr: 'AI-Task’ı (task.appcook.store) tam da Trello ile Linear arasındaki o boşluk için yaptık — hızlı Kanban, tek tıkla ekip daveti ve teknik olmayanların geri kalmaması için Telegram bildirimleri.'
+          },
+          comparison: {
+            en: 'Linear excels at issue workflows, ClickUp at all-in-one docs, while AI-Task stays strictly lightweight Kanban + instant chat notifications for mixed tech/ops teams.',
+            tr: 'Linear teknik hata akışında, ClickUp hepsi-bir-arada belgelerde güçlü; AI-Task ise karma teknoloji/operasyon ekipleri için yalnız hafif Kanban + anlık sohbet bildiriminde kalır.'
+          }
+        }
+      }
+    ];
+
+    function rozetSinif(p) {
+      if (p === 'reddit') return 'rozet-reddit';
+      if (p === 'hackernews') return 'rozet-hn';
+      return 'rozet-github';
+    }
+
+    function kartlariCiz() {
+      const kap = document.getElementById('firsatListe');
+      const m = METIN[aktifDil];
+      const suzulen = FIRSATLAR.filter(f =>
+        (aktifKaynak === 'all' || f.platform === aktifKaynak) &&
+        (aktifUrun === 'all' || f.urun === aktifUrun)
+      );
+
+      if (!suzulen.length) {
+        kap.innerHTML = '';
+        document.getElementById('bosAlani').hidden = false;
+        return;
+      }
+      document.getElementById('bosAlani').hidden = true;
+
+      kap.innerHTML = suzulen.map(f => {
+        const ic = f[aktifDil];
+        const yanitMetni = f.yanitlar[f.ton][f.yanitDili];
+        const trOnizleme = f.yanitlar[f.ton].tr;
+        const onizlemeGoster = (aktifDil === 'tr' && f.yanitDili === 'en');
+
+        return `
+        <article class="firsat-kart">
+          <div class="firsat-ust">
+            <div class="firsat-meta">
+              <div class="meta-sol">
+                <span class="rozet ${rozetSinif(f.platform)}">${f.platformAd} · ${f.topluluk}</span>
+                <span class="rozet rozet-ihtimal-yuksek">${aktifDil === 'tr' ? f.ihtimalTr : f.ihtimalEn}</span>
+                <span class="rozet rozet-urun">${f.urun}</span>
+              </div>
+              <span class="meta-zaman">${f.yazar} · ${aktifDil === 'tr' ? f.zamanTr : f.zamanEn}</span>
+            </div>
+
+            <h2 class="firsat-baslik">${ic.baslik}</h2>
+            <p class="firsat-ozet">${ic.ozet}</p>
+
+            <div class="neden-kutu">
+              <span class="neden-baslik">${m.why_lbl}</span>
+              <span class="neden-metin">${ic.neden}</span>
+            </div>
+
+            ${aktifDil === 'tr' ? `
+            <details class="orijinal-detay">
+              <summary>${m.orig_btn}</summary>
+              <div class="orijinal-kutu" lang="en">
+                <strong>${f.en.baslik}</strong>
+                ${f.en.ozet}
+              </div>
+            </details>` : ''}
+          </div>
+
+          <div class="yanit-bolum">
+            <div class="yanit-bas">
+              <span class="yanit-etiket">${m.reply_title}</span>
+              <div class="ton-satir">
+                <button class="ton-btn" aria-pressed="${f.ton === 'helpful'}" onclick="tonSec('${f.id}','helpful')">${m.tone_helpful}</button>
+                <button class="ton-btn" aria-pressed="${f.ton === 'founder'}" onclick="tonSec('${f.id}','founder')">${m.tone_founder}</button>
+                <button class="ton-btn" aria-pressed="${f.ton === 'comparison'}" onclick="tonSec('${f.id}','comparison')">${m.tone_comparison}</button>
+                <button class="ton-btn" onclick="yanitDiliDegis('${f.id}')" title="Yanıt metni dilini değiştir">
+                  ${f.yanitDili === 'en' ? 'EN → TR' : 'TR → EN'}
+                </button>
+              </div>
+            </div>
+
+            <textarea class="yanit-alan" id="txt-${f.id}" aria-label="${m.reply_title}">${yanitMetni}</textarea>
+
+            ${onizlemeGoster ? `
+            <div class="ceviri-onizleme">
+              <div class="ceviri-onizleme-bas">
+                <span>${m.tr_preview_lbl}</span>
+              </div>
+              <div>${trOnizleme}</div>
+            </div>` : ''}
+
+            <div class="yanit-alt">
+              <div class="guven-bilgi">
+                <span>${m.spam_lbl} <b>${m.spam_val}</b></span>
+                <span>${m.val_lbl} <strong>${f.deger}</strong></span>
+              </div>
+              <div class="aksiyon-grup">
+                <button class="btn birincil" onclick="kopyalaVeGit('${f.id}', '${f.url}')">${m.copy_btn}</button>
+                <button class="btn kucuk" onclick="bildir('${m.mark_replied} ✓')">${m.mark_replied}</button>
+                <button class="btn kucuk" onclick="bildir('${m.mark_won} ★')">${m.mark_won}</button>
+              </div>
+            </div>
+          </div>
+        </article>`;
+      }).join('');
+    }
+
+    function tonSec(id, ton) {
+      const f = FIRSATLAR.find(x => x.id === id);
+      if (f) { f.ton = ton; kartlariCiz(); }
+    }
+    function yanitDiliDegis(id) {
+      const f = FIRSATLAR.find(x => x.id === id);
+      if (f) { f.yanitDili = f.yanitDili === 'en' ? 'tr' : 'en'; kartlariCiz(); }
+    }
+    function kopyalaVeGit(id, url) {
+      const el = document.getElementById('txt-' + id);
+      if (el && navigator.clipboard) navigator.clipboard.writeText(el.value).catch(() => {});
+      bildir(aktifDil === 'tr' ? 'Yanıt kopyalandı — gönderi yeni sekmede açılır' : 'Reply copied — opening original post');
+    }
+
+    function dilDegis(dil) {
+      aktifDil = dil;
+      document.documentElement.lang = dil;
+      document.getElementById('dilTr').setAttribute('aria-pressed', String(dil === 'tr'));
+      document.getElementById('dilEn').setAttribute('aria-pressed', String(dil === 'en'));
+      document.querySelectorAll('[data-t]').forEach(el => {
+        const k = el.getAttribute('data-t');
+        if (METIN[dil][k]) el.textContent = METIN[dil][k];
+      });
+      kartlariCiz();
+    }
+
+    function temaDegis() {
+      const root = document.documentElement;
+      const yeni = root.getAttribute('data-tema') === 'acik' ? 'koyu' : 'acik';
+      root.setAttribute('data-tema', yeni);
+    }
+
+    function sekmeAc(ad) {
+      ['radar', 'takip', 'rakip', 'urun'].forEach(s => {
+        document.getElementById('panel-' + s).hidden = (s !== ad);
+        const t = document.getElementById('tab-' + s);
+        const mt = document.getElementById('mtab-' + s);
+        if (t) t.setAttribute('aria-selected', String(s === ad));
+        if (mt) mt.setAttribute('aria-selected', String(s === ad));
+      });
+    }
+
+    function kaynakFiltrele(k, btn) {
+      aktifKaynak = k;
+      btn.parentElement.querySelectorAll('.cip').forEach(b => b.setAttribute('aria-pressed', 'false'));
+      btn.setAttribute('aria-pressed', 'true');
+      durumGoster('normal');
+    }
+
+    function urunFiltrele(v) {
+      aktifUrun = v;
+      durumGoster('normal');
+    }
+
+    function durumGoster(d) {
+      document.getElementById('yukleniyorAlani').hidden = (d !== 'yukleniyor');
+      document.getElementById('bosAlani').hidden = (d !== 'bos');
+      document.getElementById('hataAlani').hidden = (d !== 'hata');
+      document.getElementById('firsatListe').hidden = (d !== 'normal');
+      if (d === 'yukleniyor') {
+        setTimeout(() => durumGoster('normal'), 1100);
+      } else if (d === 'normal') {
+        kartlariCiz();
+      }
+    }
+
+    let toastTimer;
+    function bildir(mesaj) {
+      const t = document.getElementById('toast');
+      t.textContent = mesaj;
+      t.classList.add('acik');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove('acik'), 2400);
+    }
+
+    kartlariCiz();
+  </script>
+</body>
+</html>
