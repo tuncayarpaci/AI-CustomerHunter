@@ -125,8 +125,10 @@ function showToast(msg) {
 
 function setLanguage(lang) {
   CURRENT_LANG = lang === 'tr' ? 'tr' : 'en';
-  document.getElementById('langEn').classList.toggle('active', CURRENT_LANG === 'en');
-  document.getElementById('langTr').classList.toggle('active', CURRENT_LANG === 'tr');
+  const langEnBtn = document.getElementById('langEn');
+  const langTrBtn = document.getElementById('langTr');
+  if (langEnBtn) langEnBtn.classList.toggle('active', CURRENT_LANG === 'en');
+  if (langTrBtn) langTrBtn.classList.toggle('active', CURRENT_LANG === 'tr');
 
   const dict = I18N[CURRENT_LANG];
   document.querySelectorAll('[data-i18n]').forEach(el => {
