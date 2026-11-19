@@ -10,6 +10,7 @@ const { URL } = require('url');
 const store = require('./lib/store');
 const auth = require('./lib/auth');
 const translate = require('./lib/translate');
+const notifier = require('./lib/notifier');
 const yonetim = require('./lib/yonetim');
 const {
   APPCOOK_PORTFOLIO_CAMPAIGNS,
@@ -930,6 +931,8 @@ const server = http.createServer(async (req, res) => {
           await translate.translateLeadsBatch(uniqueNew, lang, { includeReplies: lang === 'tr' });
           db.leads = [...uniqueNew, ...db.leads];
           saveDb(db);
+          notifier.notifyNewLeads(campaign, uniqueNew, { publicUrl: auth.getBaseUrl(req) })
+            .catch(err => console.warn('[telegram] Bildirim gönderilemedi:', err && err.message ? err.message : err));
         }
 
         return sendJson(res, 200, {
