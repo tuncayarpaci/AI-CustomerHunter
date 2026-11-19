@@ -33,7 +33,7 @@
     if (p === '/yonetim/giris') return 'giris';
     if (p === '/yonetim/eposta') return 'eposta';
     if (p === '/yonetim/yapay-zeka') return 'yapay-zeka';
-    if (p === '/yonetim/webhook') return 'webhook';
+    if (p === '/yonetim/bildirimler' || p === '/yonetim/webhook') return 'bildirimler';
     return 'genel';
   }
 
@@ -140,9 +140,9 @@
                 <td style="text-align:right;"><a href="/yonetim/yapay-zeka">Düzenle →</a></td>
               </tr>
               <tr>
-                <td><strong>Bildirimler (Slack / Discord)</strong></td>
-                <td><span class="y-rozet ${data.services.webhookConfigured ? 'ok' : 'notr'}">${data.services.webhookConfigured ? 'Ayarlı' : 'Kapalı'}</span></td>
-                <td style="text-align:right;"><a href="/yonetim/webhook">Düzenle →</a></td>
+                <td><strong>Bildirimler (Telegram)</strong></td>
+                <td><span class="y-rozet ${data.services.telegramConfigured ? 'ok' : 'notr'}">${data.services.telegramConfigured ? 'Aktif' : 'Kapalı'}</span></td>
+                <td style="text-align:right;"><a href="/yonetim/bildirimler">Düzenle →</a></td>
               </tr>
             </tbody>
           </table>
@@ -488,7 +488,7 @@
             </div>
             <div class="y-alan">
               <label for="aiModel">Model Adı (opsiyonel)</label>
-              <input id="aiModel" class="y-girdi" data-ayar="aiModel" value="${esc(s.aiModel.value)}" placeholder="Varsayılan: claude-haiku-4-5 / gpt-4o-mini / gemini-2.5-flash" spellcheck="false" />
+              <input id="aiModel" class="y-girdi" data-ayar="aiModel" value="${esc(s.aiModel.value)}" placeholder="Varsayılan: claude-haiku-4-5 / gpt-4o-mini / gemini-3.5-flash-lite" spellcheck="false" />
             </div>
             <div class="y-alan tam">
               <label for="aiApiKey">API Anahtarı</label>
@@ -556,35 +556,37 @@
     });
   }
 
-  // ---------------------------------------------------------------- 6. Webhook
-  async function renderWebhook(container) {
+  // ---------------------------------------------------------------- 6. Bildirimler (Telegram)
+  async function renderBildirimler(container) {
     const data = await api('/api/yonetim/ayarlar');
     const s = data.settings;
 
     container.innerHTML = `
       <div class="y-baslik">
-        <h1>Bildirimler (Webhook)</h1>
-        <p>Yüksek ihtimalli yeni fırsatlar bulunduğunda Slack veya Discord kanalına bildirim gönderin.</p>
+        <h1>Bildirimler (Telegram)</h1>
+        <p>Canlı taramalarda yüksek satın alma ihtimalli yeni fırsatlar bulunduğunda Telegram botu üzerinden anlık bildirim alın.</p>
       </div>
 
       <section class="y-panel">
-        <form class="y-form" id="webhookForm" autocomplete="off">
+        <form class="y-form" id="telegramForm" autocomplete="off">
           <div class="y-alan-grid">
             <div class="y-alan tam">
-              <label for="slackWebhook">Slack Incoming Webhook URL</label>
+              <label for="telegramBotToken">Telegram Bot Token</label>
               <div class="y-gizli-satir">
-                <input id="slackWebhook" class="y-girdi" type="password" data-ayar="slackWebhook" autocomplete="new-password" placeholder="${s.slackWebhook.set ? esc(s.slackWebhook.value) : 'https://hooks.slack.com/services/...'}" spellcheck="false" />
-                ${s.slackWebhook.source === 'panel' ? '<button type="button" class="y-btn kucuk tehlike" data-sil="slackWebhook">Kaydı sil</button>' : ''}
+                <input id="telegramBotToken" class="y-girdi" type="password" data-ayar="telegramBotToken" autocomplete="new-password" placeholder="${s.telegramBotToken.set ? esc(s.telegramBotToken.value) : '123456789:AAH...'}" spellcheck="false" />
+                ${s.telegramBotToken.source === 'panel' ? '<button type="button" class="y-btn kucuk tehlike" data-sil="telegramBotToken">Kaydı sil</button>' : ''}
               </div>
-              <small class="y-ipucu">${secretHint(s.slackWebhook)}</small>
+              <small class="y-ipucu">${secretHint(s.telegramBotToken)} Bot oluşturmak için Telegram’da <strong>@BotFather → /newbot</strong> komutunu kullanın.</small>
             </div>
-            <div class="y-alan tam">
-              <label for="discordWebhook">Discord Webhook URL</label>
-              <div class="y-gizli-satir">
-                <input id="discordWebhook" class="y-girdi" type="password" data-ayar="discordWebhook" autocomplete="new-password" placeholder="${s.discordWebhook.set ? esc(s.discordWebhook.value) : 'https://discord.com/api/webhooks/...'}" spellcheck="false" />
-                ${s.discordWebhook.source === 'panel' ? '<button type="button" class="y-btn kucuk tehlike" data-sil="discordWebhook">Kaydı sil</button>' : ''}
-              </div>
-              <small class="y-ipucu">${secretHint(s.discordWebhook)}</small>
+            <div class="y-alan">
+              <label for="telegramChatId">Telegram Chat ID</label>
+              <input id="telegramChatId" class="y-girdi" data-ayar="telegramChatId" value="${esc(s.telegramChatId.value)}" placeholder="123456789 veya grup için -100..." spellcheck="false" />
+              <small class="y-ipucu">Kendi ID’nizi öğrenmek için <strong>@userinfobot</strong>’a yazın. Virgülle en fazla 5 sohbet/grup ID’si girebilirsiniz.</small>
+            </div>
+            <div class="y-alan">
+              <label for="telegramMinScore">Minimum Satın Alma İhtimali (%)</label>
+              <input id="telegramMinScore" class="y-girdi" type="number" min="0" max="100" step="1" data-ayar="telegramMinScore" value="${esc(s.telegramMinScore.value || '80')}" placeholder="80" />
+              <small class="y-ipucu">Yalnızca bu puan ve üzerindeki yeni fırsatlar bildirilir (0–100, varsayılan: 80).</small>
             </div>
           </div>
           <div class="y-form-alt">
@@ -593,9 +595,46 @@
           </div>
         </form>
       </section>
+
+      <section class="y-panel">
+        <h3 style="margin:0 0 8px;">Deneme bildirimi gönder</h3>
+        <p style="margin:0 0 12px; color:var(--soluk); font-size:13.5px;">Yukarıdaki bot token ve sohbet ID ayarlarıyla Telegram bağlantısını anlık test edin.</p>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+          <button type="button" class="y-btn" id="sendTestTelegramBtn">Deneme bildirimi gönder</button>
+        </div>
+        <p id="testTelegramStatus" class="y-durum" style="margin-top:10px;" role="status"></p>
+      </section>
     `;
 
-    bindSettingsForm(document.getElementById('webhookForm'), () => renderWebhook(container));
+    const form = document.getElementById('telegramForm');
+    bindSettingsForm(form, () => renderBildirimler(container));
+
+    document.getElementById('sendTestTelegramBtn').addEventListener('click', async () => {
+      const btn = document.getElementById('sendTestTelegramBtn');
+      const status = document.getElementById('testTelegramStatus');
+      const overrides = {};
+      form.querySelectorAll('[data-ayar]').forEach(inp => {
+        const k = inp.getAttribute('data-ayar');
+        if (inp.value.trim() !== '') overrides[k] = inp.value.trim();
+      });
+
+      btn.disabled = true;
+      status.textContent = 'Gönderiliyor…';
+      status.className = 'y-durum';
+      try {
+        const res = await api('/api/yonetim/telegram-test', {
+          method: 'POST',
+          body: JSON.stringify({ overrides })
+        });
+        status.textContent = res.message || 'Deneme bildirimi gönderildi.';
+        status.className = 'y-durum ok';
+      } catch (err) {
+        status.textContent = err.message;
+        status.className = 'y-durum hata';
+      } finally {
+        btn.disabled = false;
+      }
+    });
   }
 
   // ---------------------------------------------------------------- Başlatma
@@ -619,7 +658,7 @@
       else if (key === 'giris') await renderGiris(container);
       else if (key === 'eposta') await renderEposta(container);
       else if (key === 'yapay-zeka') await renderYapayZeka(container);
-      else if (key === 'webhook') await renderWebhook(container);
+      else if (key === 'bildirimler') await renderBildirimler(container);
       else await renderGenel(container);
     } catch (err) {
       container.innerHTML = `<div class="y-panel"><p class="y-durum hata">${esc(err.message)}</p></div>`;
