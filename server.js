@@ -24,183 +24,448 @@ function generateReplies(productName, productUrl, postTitle, competitor) {
   };
 }
 
-const INITIAL_CAMPAIGNS = [
+const APPCOOK_PORTFOLIO_CAMPAIGNS = [
   {
-    id: 'camp-replypulse',
-    name: 'ReplyPulse AI (SaaS Growth Radar)',
-    url: 'https://replypulse.ai',
-    category: 'B2B SaaS / Marketing & Sales',
-    audience: 'SaaS Founders, Indie Hackers, Growth Marketers, B2B Sales Teams',
-    valueProp: 'Autonomous social buyer-intent radar that finds ready-to-buy customers on Reddit, HackerNews, X, and GitHub and drafts human-first replies.',
+    id: 'camp-ai-task',
+    name: 'AI-Task (Telegram & Kanban Team Task Manager)',
+    url: 'https://task.appcook.store',
+    category: 'Project & Task Management / Team Kanban',
+    audience: 'Startup Teams, Agencies, Remote Engineering & Operations Teams, Project Managers',
+    valueProp: 'Assign tasks via Telegram in natural language or drop them into a shared team pool with one-click invite links and person/column Kanban boards',
     keywords: [
-      'find customers on reddit',
-      'social listening alternative',
-      'f5bot alternative',
-      'syften alternative',
-      'how to get first 100 saas customers',
-      'reddit lead generation tool'
+      'trello alternative',
+      'jira too complex',
+      'lightweight kanban tool',
+      'telegram task manager',
+      'team task tracker'
     ],
-    competitors: ['F5Bot', 'Syften', 'GummySearch', 'Brand24', 'Mention'],
-    subreddits: ['r/SaaS', 'r/entrepreneur', 'r/startups', 'r/indiehackers', 'r/growthhacking'],
-    dealValue: 490,
+    competitors: ['Trello', 'Jira', 'Asana', 'ClickUp', 'Monday.com', 'Linear'],
+    subreddits: ['r/projectmanagement', 'r/SaaS', 'r/entrepreneur', 'r/smallbusiness', 'r/productivity'],
+    dealValue: 390,
     active: true,
+    createdAt: new Date(Date.now() - 86400000 * 8).toISOString()
+  },
+  {
+    id: 'camp-ai-transcript',
+    name: 'AI-Transcript (Speech, Video & Meeting Minutes AI)',
+    url: 'https://transkript.appcook.store',
+    category: 'AI Transcription, Meeting Minutes & Presentation Generator',
+    audience: 'Consultants, Executives, Podcasters, Journalists, Remote Teams, Content Creators',
+    valueProp: 'Transcribe audio, video, and YouTube links in 20+ languages with speaker diarization, automated meeting minutes, action tables, and instant PowerPoint deck generation',
+    keywords: [
+      'otter ai alternative',
+      'meeting transcription tool',
+      'speaker diarization whisper',
+      'automated meeting minutes',
+      'audio to text summarize'
+    ],
+    competitors: ['Otter.ai', 'Fireflies.ai', 'Descript', 'Sonix', 'Trint'],
+    subreddits: ['r/productivity', 'r/SaaS', 'r/podcasting', 'r/entrepreneur', 'r/journalism'],
+    dealValue: 450,
+    active: false,
+    createdAt: new Date(Date.now() - 86400000 * 7).toISOString()
+  },
+  {
+    id: 'camp-ai-draw',
+    name: 'AI-Draw (Whiteboard & Natural Language to draw.io)',
+    url: 'https://diyagram.appcook.store',
+    category: 'AI Architecture Diagramming & Visual Documentation',
+    audience: 'Cloud Architects, DevOps Engineers, System Designers, Backend Developers, Technical Writers',
+    valueProp: 'Convert whiteboard photos, legacy screenshots, or plain text prompts directly into editable draw.io architecture and network topology diagrams',
+    keywords: [
+      'lucidchart alternative',
+      'text to architecture diagram',
+      'whiteboard photo to drawio',
+      'ai diagram generator',
+      'network topology tool'
+    ],
+    competitors: ['Lucidchart', 'Miro', 'Microsoft Visio', 'Eraser.io', 'Whimsical'],
+    subreddits: ['r/devops', 'r/softwarearchitecture', 'r/sysadmin', 'r/aws', 'r/webdev'],
+    dealValue: 420,
+    active: false,
+    createdAt: new Date(Date.now() - 86400000 * 6).toISOString()
+  },
+  {
+    id: 'camp-ai-colab',
+    name: 'AI-Colab (Collaborative Office Suite + Document AI & OCR)',
+    url: 'https://office.appcook.store',
+    category: 'Collaborative Document Editing, OCR & AI Knowledge Workspace',
+    audience: 'Law Firms, Operations Teams, Privacy-Conscious Businesses, Research Groups, Enterprises',
+    valueProp: 'Edit Word, Excel, and PowerPoint files collaboratively in the browser with version history, full-text OCR for scanned PDFs, and a built-in AI document assistant',
+    keywords: [
+      'google workspace alternative',
+      'collaborative document editing ai',
+      'chat with pdf and word',
+      'ocr searchable pdf tool',
+      'onlyoffice cloud'
+    ],
+    competitors: ['Google Workspace', 'Microsoft 365', 'Notion', 'Dropbox Paper', 'CryptPad'],
+    subreddits: ['r/selfhosted', 'r/SaaS', 'r/smallbusiness', 'r/productivity', 'r/privacy'],
+    dealValue: 580,
+    active: false,
     createdAt: new Date(Date.now() - 86400000 * 5).toISOString()
   },
   {
-    id: 'camp-devflow',
-    name: 'CloudPulse DevOps Monitor',
-    url: 'https://cloudpulse.dev',
-    category: 'Developer Tools / Observability',
-    audience: 'CTOs, DevOps Engineers, Platform Teams, Full-Stack Developers',
-    valueProp: 'Lightweight Kubernetes & API observability at 80% lower cost than Datadog with zero-config OpenTelemetry.',
+    id: 'camp-ai-analysis',
+    name: 'AI-Analysis (Malware, YARA & Static File Security Scanner)',
+    url: 'https://malware.appcook.store',
+    category: 'Cybersecurity, Malware Triage & Static Threat Analysis',
+    audience: 'SOC Analysts, Blue Teams, CISOs, IT Security Engineers, Incident Responders',
+    valueProp: 'Scan suspicious PE, Office, PDF, and ZIP files with ClamAV, YARA rules, static risk scoring, VirusTotal IOC lookups, and Claude AI threat assessment',
     keywords: [
-      'datadog alternative',
-      'datadog bill too high',
-      'lightweight apm for startup',
-      'best observability tool'
+      'malware analysis tool',
+      'automated yara scanner',
+      'scan suspicious pdf attachment',
+      'static malware triage',
+      'hybrid analysis alternative'
     ],
-    competitors: ['Datadog', 'New Relic', 'Dynatrace'],
-    subreddits: ['r/devops', 'r/selfhosted', 'r/kubernetes', 'r/webdev'],
-    dealValue: 850,
+    competitors: ['VirusTotal Enterprise', 'Hybrid Analysis', 'Any.Run', 'Joe Sandbox', 'Cuckoo'],
+    subreddits: ['r/cybersecurity', 'r/netsec', 'r/BlueTeamSec', 'r/sysadmin', 'r/msp'],
+    dealValue: 690,
+    active: false,
+    createdAt: new Date(Date.now() - 86400000 * 4).toISOString()
+  },
+  {
+    id: 'camp-ai-coach',
+    name: 'AI-Coach (Personalized AI Exam Tutor & Study Planner)',
+    url: 'https://sinavkocu.appcook.store',
+    category: 'EdTech / AI Exam Coaching & Adaptive Study Platform',
+    audience: 'High School Students, Parents, Tutoring Centers, Teachers, Exam Candidates',
+    valueProp: 'Generate personalized study schedules, voice-enabled AI lessons, flashcards and quizzes from photos of handwritten notes, with parent and teacher progress dashboards',
+    keywords: [
+      'ai study planner',
+      'notes photo to flashcards quiz',
+      'ai exam tutor app',
+      'quizlet alternative ai',
+      'student progress tracker'
+    ],
+    competitors: ['Quizlet Plus', 'Khanmigo', 'Duolingo Max', 'AnkiPro', 'StudyFetch'],
+    subreddits: ['r/GetStudying', 'r/studytips', 'r/EdTech', 'r/teachers', 'r/SaaS'],
+    dealValue: 290,
     active: false,
     createdAt: new Date(Date.now() - 86400000 * 3).toISOString()
+  },
+  {
+    id: 'camp-ai-servicedesk',
+    name: 'AI-ServiceDesk (Autonomous IT Helpdesk & Jira/Confluence Agent)',
+    url: 'https://aiassistant.appcook.store',
+    category: 'ITSM / AI Service Desk & Enterprise Knowledge Automation',
+    audience: 'IT Directors, Helpdesk Managers, MSPs, Enterprise Operations Teams',
+    valueProp: 'Resolve employee IT tickets automatically with cited answers from PDF, Office, and Confluence knowledge bases, automated account unlocks, and smart Jira ticket escalation',
+    keywords: [
+      'ai helpdesk automation',
+      'reduce it support tickets',
+      'confluence jira ai bot',
+      'moveworks alternative',
+      'internal it support assistant'
+    ],
+    competitors: ['Moveworks', 'Zendesk AI', 'Intercom Fin', 'Freshservice', 'Jira Service Management'],
+    subreddits: ['r/sysadmin', 'r/ITManagers', 'r/msp', 'r/devops', 'r/SaaS'],
+    dealValue: 790,
+    active: false,
+    createdAt: new Date(Date.now() - 86400000 * 2).toISOString()
+  },
+  {
+    id: 'camp-ai-shop',
+    name: 'AI-Shop (Smart Supermarket Price Comparison & GPS Route Optimizer)',
+    url: 'https://market.appcook.store',
+    category: 'Consumer FinTech & Smart Grocery Basket Optimization',
+    audience: 'Smart Shoppers, Families, Budget-Conscious Households, Retail Analysts',
+    valueProp: 'Compare live prices across major supermarket chains, optimize single-store vs multi-store baskets, and navigate via GPS multi-stop Google Maps routing',
+    keywords: [
+      'grocery price comparison app',
+      'supermarket basket optimizer',
+      'cheapest grocery route planner',
+      'flipp alternative',
+      'smart shopping list app'
+    ],
+    competitors: ['Flipp', 'Instacart', 'Cimri Market', 'Basket Savings', 'TooGoodToGo'],
+    subreddits: ['r/frugal', 'r/apps', 'r/PersonalFinance', 'r/SaaS', 'r/entrepreneur'],
+    dealValue: 240,
+    active: false,
+    createdAt: new Date(Date.now() - 86400000 * 1).toISOString()
   }
 ];
 
+const INITIAL_CAMPAIGNS = APPCOOK_PORTFOLIO_CAMPAIGNS;
+
 const INITIAL_LEADS = [
   {
-    id: 'lead-101',
-    campaignId: 'camp-replypulse',
+    id: 'lead-appcook-task-1',
+    campaignId: 'camp-ai-task',
     platform: 'reddit',
-    community: 'r/SaaS',
-    author: 'u/saas_builder_nyc',
-    title: 'GummySearch shut down and F5Bot sends way too much noise — what are you using to find high-intent leads on Reddit in 2026?',
-    snippet: 'We got our first 40 paying customers ($49/mo plan) purely from answering questions on r/SaaS and r/entrepreneur. Now F5Bot floods my email with 200 irrelevant keyword matches a day. Looking for a smart buyer-intent tool that filters only people asking for tool recommendations or complaining about competitors. Budget ready ($30-$100/mo).',
-    url: 'https://www.reddit.com/r/SaaS/search/?q=find+customers+on+reddit+tool&restrict_sr=1&sort=new',
+    community: 'r/projectmanagement',
+    author: 'u/agency_ops_lead',
+    title: 'Jira is way too bloated and Trello gets messy with 15 people — is there a lightweight Kanban tool that integrates directly with Telegram?',
+    snippet: 'Our 15-person remote agency already lives in Telegram all day. Nobody opens Jira to update tickets. We want a simple team task pool where we can assign tasks in natural language from Telegram, let the first available person claim it, and view progress on a clean Kanban board by person or column.',
+    url: 'https://www.reddit.com/r/projectmanagement/search/?q=lightweight+kanban+trello+alternative&restrict_sr=1&sort=new',
     intentScore: 98,
     intentType: 'competitor_churn',
-    intentLabel: 'Competitor Churn + Budget Ready',
-    matchedKeywords: ['f5bot alternative', 'reddit lead generation tool', 'looking for tool'],
-    competitorMentioned: 'F5Bot / GummySearch',
-    estimatedValue: 588,
-    banRisk: 'Low (4%)',
-    whyHot: 'Explicitly replacing F5Bot/GummySearch, confirmed $30-$100/mo budget, already proved Reddit converts for their SaaS.',
+    intentLabel: 'Jira/Trello Churn + Telegram Workflow',
+    matchedKeywords: ['trello alternative', 'jira too complex', 'telegram task manager'],
+    competitorMentioned: 'Jira / Trello',
+    estimatedValue: 390,
+    banRisk: 'Low (3%)',
+    whyHot: '15-person remote team actively ditching Jira/Trello specifically asking for Telegram task assignment + team pool Kanban.',
     status: 'new',
-    postedAt: '18m ago',
-    createdAt: new Date(Date.now() - 18 * 60000).toISOString(),
-    replies: generateReplies('ReplyPulse AI', 'https://replypulse.ai', 'GummySearch shut down and F5Bot sends way too much noise', 'F5Bot & GummySearch')
+    postedAt: '12m ago',
+    createdAt: new Date(Date.now() - 12 * 60000).toISOString(),
+    replies: generateReplies('AI-Task', 'https://task.appcook.store', 'Jira is way too bloated and Trello gets messy — lightweight Kanban with Telegram?', 'Jira & Trello')
   },
   {
-    id: 'lead-102',
-    campaignId: 'camp-replypulse',
+    id: 'lead-appcook-task-2',
+    campaignId: 'camp-ai-task',
     platform: 'hackernews',
     community: 'Ask HN',
-    author: 'kyle_founder',
-    title: 'Ask HN: Best way to monitor HN, Reddit, and GitHub for people looking for alternatives to our competitors?',
-    snippet: 'We run a bootstrapped B2B SaaS ($18k MRR). Cold email reply rates dropped below 0.8% this year. Meanwhile, every time we catch a live thread where someone asks "best alternative to [Competitor]", our close rate is over 35%. Is there an automated radar that scores buyer intent and drafts non-spammy responses?',
+    author: 'dev_founder_berlin',
+    title: 'Ask HN: What lightweight task tracker are small engineering teams using after outgrowing Trello?',
+    snippet: 'ClickUp and Monday feel overly complex and slow, while Linear does not fit our non-technical operations folks. Looking for a fast Kanban board with one-click invite links, sprint tracking, and instant chat notifications.',
     url: 'https://news.ycombinator.com/from?site=ycombinator.com',
+    intentScore: 94,
+    intentType: 'active_buyer',
+    intentLabel: 'Active Team Kanban Buyer',
+    matchedKeywords: ['lightweight kanban tool', 'team task tracker'],
+    competitorMentioned: 'ClickUp / Linear',
+    estimatedValue: 390,
+    banRisk: 'Low (3%)',
+    whyHot: 'Founder looking for a lightweight cross-functional Kanban tracker with quick onboarding and chat alerts.',
+    status: 'new',
+    postedAt: '35m ago',
+    createdAt: new Date(Date.now() - 35 * 60000).toISOString(),
+    replies: generateReplies('AI-Task', 'https://task.appcook.store', 'Ask HN: What lightweight task tracker are small teams using?', 'ClickUp & Trello')
+  },
+  {
+    id: 'lead-appcook-transcript-1',
+    campaignId: 'camp-ai-transcript',
+    platform: 'reddit',
+    community: 'r/productivity',
+    author: 'u/exec_consultant_uk',
+    title: 'Best Otter.ai alternative that supports 20+ languages, speaker separation, and turns meeting transcripts directly into PowerPoint slides?',
+    snippet: 'Otter cut off our monthly minutes and struggles whenever our European clients switch languages mid-call. We need accurate Whisper-based transcription from files, YouTube links, or live audio that automatically generates formal meeting minutes, action tables, and a client-ready PPTX summary.',
+    url: 'https://www.reddit.com/r/productivity/search/?q=otter+ai+alternative+meeting+minutes&restrict_sr=1&sort=new',
+    intentScore: 97,
+    intentType: 'competitor_churn',
+    intentLabel: 'Otter.ai Switcher + PPTX Need',
+    matchedKeywords: ['otter ai alternative', 'speaker diarization whisper', 'automated meeting minutes'],
+    competitorMentioned: 'Otter.ai / Fireflies.ai',
+    estimatedValue: 450,
+    banRisk: 'Low (3%)',
+    whyHot: 'Consulting team replacing Otter.ai, explicitly requesting multi-language Whisper diarization + automated minutes & PowerPoint generation.',
+    status: 'new',
+    postedAt: '24m ago',
+    createdAt: new Date(Date.now() - 24 * 60000).toISOString(),
+    replies: generateReplies('AI-Transcript', 'https://transkript.appcook.store', 'Best Otter.ai alternative with 20+ languages and PowerPoint export', 'Otter.ai')
+  },
+  {
+    id: 'lead-appcook-draw-1',
+    campaignId: 'camp-ai-draw',
+    platform: 'reddit',
+    community: 'r/softwarearchitecture',
+    author: 'u/cloud_arch_aws',
+    title: 'Tool to convert whiteboard architecture photos or plain text prompts into editable draw.io diagrams?',
+    snippet: 'After every architecture review we waste 2 hours redrawing whiteboard sketches of servers, firewalls, and VPC topologies into draw.io / Lucidchart. Is there an AI tool that recognizes network components from a photo or natural language prompt and opens directly in an embedded draw.io editor?',
+    url: 'https://www.reddit.com/r/softwarearchitecture/search/?q=whiteboard+to+draw.io+ai+diagram&restrict_sr=1&sort=new',
     intentScore: 96,
     intentType: 'active_buyer',
-    intentLabel: 'Active Buyer Request',
-    matchedKeywords: ['social listening alternative', 'alternatives to competitors'],
-    competitorMentioned: 'Manual Cold Email / Syften',
-    estimatedValue: 588,
-    banRisk: 'Low (3%)',
-    whyHot: 'Bootstrapped $18k MRR founder actively seeking multi-channel buyer-intent monitoring across HN, Reddit, and GitHub.',
+    intentLabel: 'Architecture Diagram Buyer',
+    matchedKeywords: ['whiteboard photo to drawio', 'text to architecture diagram', 'lucidchart alternative'],
+    competitorMentioned: 'Lucidchart / Visio',
+    estimatedValue: 420,
+    banRisk: 'Low (2%)',
+    whyHot: 'Cloud architect looking for exact whiteboard photo + natural language to editable draw.io conversion.',
     status: 'new',
-    postedAt: '42m ago',
-    createdAt: new Date(Date.now() - 42 * 60000).toISOString(),
-    replies: generateReplies('ReplyPulse AI', 'https://replypulse.ai', 'Ask HN: Best way to monitor HN, Reddit, and GitHub', 'Syften')
+    postedAt: '48m ago',
+    createdAt: new Date(Date.now() - 48 * 60000).toISOString(),
+    replies: generateReplies('AI-Draw', 'https://diyagram.appcook.store', 'Convert whiteboard architecture photos into editable draw.io diagrams', 'Lucidchart')
   },
   {
-    id: 'lead-103',
-    campaignId: 'camp-replypulse',
-    platform: 'x',
-    community: 'X / Startup BuildInPublic',
-    author: '@marcus_growth',
-    title: 'Brand24 wants $149/mo just to track 5 keywords and still misses half the buying threads on X and Reddit. Any indie-friendly alternative under $50/mo?',
-    snippet: 'I do not need enterprise PDF sentiment charts. I just want a live feed of people saying "I hate [competitor]" or "what tool should I use for [problem]" with AI reply suggestions that do not sound like ChatGPT spam.',
-    url: 'https://x.com/search?q=Brand24%20alternative%20reddit&f=live',
-    intentScore: 94,
-    intentType: 'budget_ready',
-    intentLabel: 'Price Switcher (<$50/mo)',
-    matchedKeywords: ['social listening alternative', 'indie-friendly alternative'],
-    competitorMentioned: 'Brand24',
-    estimatedValue: 588,
-    banRisk: 'Low (2%)',
-    whyHot: 'Churned from Brand24 ($149/mo), explicitly asking for an under-$50/mo buyer-intent + human-reply solution.',
+    id: 'lead-appcook-colab-1',
+    campaignId: 'camp-ai-colab',
+    platform: 'reddit',
+    community: 'r/selfhosted',
+    author: 'u/legal_ops_director',
+    title: 'Looking for a collaborative browser Office suite (Word/Excel/PPT) with built-in OCR for scanned PDFs and an AI document assistant',
+    snippet: 'Our team handles thousands of scanned contracts and Word/Excel files. Switching between Google Docs, standalone OCR tools, and ChatGPT is painful. We want one workspace where we can co-edit Office documents in the browser, run OCR for full-text search, and ask AI questions across our PDFs.',
+    url: 'https://www.reddit.com/r/selfhosted/search/?q=collaborative+office+ocr+ai+pdf&restrict_sr=1&sort=new',
+    intentScore: 95,
+    intentType: 'active_buyer',
+    intentLabel: 'Workspace + Document AI Buyer',
+    matchedKeywords: ['collaborative document editing ai', 'ocr searchable pdf tool', 'chat with pdf and word'],
+    competitorMentioned: 'Google Workspace / Notion',
+    estimatedValue: 580,
+    banRisk: 'Low (3%)',
+    whyHot: 'Operations director seeking browser co-editing for Word/Excel/PPT combined with OCR and AI document Q&A.',
     status: 'saved',
     postedAt: '1h ago',
-    createdAt: new Date(Date.now() - 75 * 60000).toISOString(),
-    replies: generateReplies('ReplyPulse AI', 'https://replypulse.ai', 'Brand24 wants $149/mo just to track 5 keywords', 'Brand24')
+    createdAt: new Date(Date.now() - 65 * 60000).toISOString(),
+    replies: generateReplies('AI-Colab', 'https://office.appcook.store', 'Collaborative browser Office suite with OCR and AI document assistant', 'Google Workspace')
   },
   {
-    id: 'lead-104',
-    campaignId: 'camp-replypulse',
+    id: 'lead-appcook-analysis-1',
+    campaignId: 'camp-ai-analysis',
     platform: 'reddit',
-    community: 'r/entrepreneur',
-    author: 'u/bootstrap_anna',
-    title: 'How are you getting your first 100 SaaS customers without spending $5,000/mo on Meta or Google Ads?',
-    snippet: 'Launched our B2B workflow SaaS 3 weeks ago. Paid ads CPC is $14 per click which is unsustainable for a $29/mo product. Everyone says "find where your customers hang out on Reddit and X", but manually scrolling 15 subreddits every morning takes 3 hours. What is your repeatable workflow or tool stack?',
-    url: 'https://www.reddit.com/r/entrepreneur/search/?q=first+100+saas+customers+reddit&restrict_sr=1&sort=new',
-    intentScore: 91,
-    intentType: 'pain_point',
-    intentLabel: 'Acute Workflow Pain',
-    matchedKeywords: ['how to get first 100 saas customers', 'find customers on reddit'],
-    competitorMentioned: 'Manual Subreddit Scrolling',
-    estimatedValue: 348,
-    banRisk: 'Low (5%)',
-    whyHot: 'Spending 3 hours/day manually scrolling 15 subreddits; ideal fit for automated 24/7 buyer-intent radar.',
+    community: 'r/cybersecurity',
+    author: 'u/soc_analyst_tier2',
+    title: 'Fastest web scanner to triage suspicious PE, Office, and PDF attachments with ClamAV, YARA rules, VirusTotal IOCs, and AI assessment?',
+    snippet: 'Our SOC analysts need a clean triage portal where employees or tier-1 analysts can upload a suspicious attachment, get instant ClamAV + YARA rule hits, static risk scoring, VirusTotal hash reputation, and an AI explanation — with automatic file deletion after scan.',
+    url: 'https://www.reddit.com/r/cybersecurity/search/?q=yara+clamav+malware+triage+scanner&restrict_sr=1&sort=new',
+    intentScore: 96,
+    intentType: 'active_buyer',
+    intentLabel: 'SOC Malware Triage Buyer',
+    matchedKeywords: ['automated yara scanner', 'static malware triage', 'malware analysis tool'],
+    competitorMentioned: 'Hybrid Analysis / Any.Run',
+    estimatedValue: 690,
+    banRisk: 'Low (3%)',
+    whyHot: 'SOC team looking for combined ClamAV + YARA + static analysis + VirusTotal + Claude AI threat triage with zero-retention privacy.',
+    status: 'new',
+    postedAt: '2h ago',
+    createdAt: new Date(Date.now() - 120 * 60000).toISOString(),
+    replies: generateReplies('AI-Analysis', 'https://malware.appcook.store', 'Web scanner to triage suspicious PE, Office, and PDF files with YARA & AI', 'Hybrid Analysis')
+  },
+  {
+    id: 'lead-appcook-coach-1',
+    campaignId: 'camp-ai-coach',
+    platform: 'reddit',
+    community: 'r/GetStudying',
+    author: 'u/exam_prep_parent',
+    title: 'Best AI exam coach app that turns photos of class notes into summaries & quizzes and builds a daily study schedule?',
+    snippet: 'Preparing for national entrance exams (LGS/YKS). Quizlet takes too much manual typing. Looking for an AI study coach that creates a personalized curriculum by grade, lets students listen to voice lessons, generates flashcards from notebook photos, and gives parents/teachers a progress dashboard.',
+    url: 'https://www.reddit.com/r/GetStudying/search/?q=ai+study+planner+notes+photo+quiz&restrict_sr=1&sort=new',
+    intentScore: 93,
+    intentType: 'competitor_churn',
+    intentLabel: 'EdTech Study Coach Buyer',
+    matchedKeywords: ['ai study planner', 'notes photo to flashcards quiz', 'quizlet alternative ai'],
+    competitorMentioned: 'Quizlet Plus',
+    estimatedValue: 290,
+    banRisk: 'Low (2%)',
+    whyHot: 'Parent/student seeking adaptive exam study plan, note-photo to quiz generation, voice AI tutor, and parent dashboard.',
     status: 'replied',
     postedAt: '3h ago',
     createdAt: new Date(Date.now() - 180 * 60000).toISOString(),
-    replies: generateReplies('ReplyPulse AI', 'https://replypulse.ai', 'How are you getting your first 100 SaaS customers', 'Manual Subreddit Scrolling')
+    replies: generateReplies('AI-Coach', 'https://sinavkocu.appcook.store', 'AI exam coach that turns class notes into quizzes and study schedules', 'Quizlet Plus')
   },
   {
-    id: 'lead-105',
-    campaignId: 'camp-replypulse',
-    platform: 'github',
-    community: 'github/discussions',
-    author: '@dev_lukas',
-    title: 'Feature Request / Tool Recommendation: Open-source or affordable webhook radar for GitHub Issues & HN discussions',
-    snippet: 'We build developer tooling and 60% of our best leads come from developers opening issues on competitor repos or complaining on Hacker News. Looking for a tool that aggregates GitHub issues + HN + Reddit into one actionable triage inbox with Slack/Discord webhooks.',
-    url: 'https://github.com/search?q=social+listening+reddit+hackernews&type=issues',
-    intentScore: 89,
-    intentType: 'active_buyer',
-    intentLabel: 'DevTool Buyer Signal',
-    matchedKeywords: ['reddit lead generation tool', 'social listening alternative'],
-    competitorMentioned: 'Custom Scripts',
-    estimatedValue: 1188,
-    banRisk: 'Low (3%)',
-    whyHot: 'Needs GitHub Issues + HN + Reddit aggregation with Slack/Discord alerts — matches Growth/Scale tier.',
-    status: 'converted',
-    postedAt: '6h ago',
-    createdAt: new Date(Date.now() - 360 * 60000).toISOString(),
-    replies: generateReplies('ReplyPulse AI', 'https://replypulse.ai', 'Webhook radar for GitHub Issues & HN discussions', 'Custom Scripts')
-  },
-  {
-    id: 'lead-106',
-    campaignId: 'camp-replypulse',
+    id: 'lead-appcook-servicedesk-1',
+    campaignId: 'camp-ai-servicedesk',
     platform: 'reddit',
-    community: 'r/indiehackers',
-    author: 'u/shipfast_dan',
-    title: 'My Reddit comments keep getting shadowbanned when I mention my SaaS — how do you write replies that actually convert and get upvoted?',
-    snippet: 'Whenever someone asks for a tool in my niche, I drop a link to my landing page and half the time mods remove it or people downvote. How do you structure your replies so communities appreciate your comment AND click through to sign up?',
-    url: 'https://www.reddit.com/r/indiehackers/search/?q=reddit+marketing+saas&restrict_sr=1&sort=new',
-    intentScore: 88,
-    intentType: 'pain_point',
-    intentLabel: 'Anti-Ban Reply Need',
-    matchedKeywords: ['find customers on reddit', 'reddit lead generation tool'],
-    competitorMentioned: 'Generic AI Auto-Reply Bots',
-    estimatedValue: 588,
-    banRisk: 'Low (4%)',
-    whyHot: 'Struggling with Reddit shadowbans; directly solved by ReplyPulse AI 95%-value / 5%-soft-mention Anti-Spam Reply Engine.',
+    community: 'r/sysadmin',
+    author: 'u/it_director_enterprise',
+    title: 'How are you deflecting repetitive Tier-1 IT tickets using Confluence/PDF knowledge bases + automated Jira escalation?',
+    snippet: 'Moveworks quoted us an enterprise contract that is way over budget. We need an AI service desk agent that answers employee IT questions citing our internal PDFs, Office docs, and Confluence pages, runs approved automations like account unlocks, and opens a summarized Jira ticket when human help is needed.',
+    url: 'https://www.reddit.com/r/sysadmin/search/?q=ai+service+desk+confluence+jira+ticket+deflection&restrict_sr=1&sort=new',
+    intentScore: 97,
+    intentType: 'budget_ready',
+    intentLabel: 'Moveworks Alternative Buyer',
+    matchedKeywords: ['moveworks alternative', 'confluence jira ai bot', 'ai helpdesk automation'],
+    competitorMentioned: 'Moveworks / Zendesk AI',
+    estimatedValue: 790,
+    banRisk: 'Low (3%)',
+    whyHot: 'IT Director priced out of Moveworks, looking for RAG knowledge base answers + account unlock automation + Jira integration.',
     status: 'converted',
-    postedAt: '9h ago',
-    createdAt: new Date(Date.now() - 540 * 60000).toISOString(),
-    replies: generateReplies('ReplyPulse AI', 'https://replypulse.ai', 'My Reddit comments keep getting shadowbanned', 'Spammy Auto-Bots')
+    postedAt: '4h ago',
+    createdAt: new Date(Date.now() - 240 * 60000).toISOString(),
+    replies: generateReplies('AI-ServiceDesk', 'https://aiassistant.appcook.store', 'Deflecting Tier-1 IT tickets with Confluence/PDF RAG and Jira automation', 'Moveworks')
+  },
+  {
+    id: 'lead-appcook-shop-1',
+    campaignId: 'camp-ai-shop',
+    platform: 'reddit',
+    community: 'r/frugal',
+    author: 'u/smart_family_budget',
+    title: 'Is there an app that compares live grocery prices across supermarkets and calculates the cheapest single-store vs multi-store GPS route?',
+    snippet: 'Grocery prices vary by 30% between chains in the same neighborhood. I want to build my weekly shopping basket once, see which single supermarket is cheapest overall OR split the basket across 2 nearby stores with a multi-stop Google Maps GPS route.',
+    url: 'https://www.reddit.com/r/frugal/search/?q=grocery+price+comparison+basket+optimizer+app&restrict_sr=1&sort=new',
+    intentScore: 92,
+    intentType: 'active_buyer',
+    intentLabel: 'Smart Grocery Optimizer User',
+    matchedKeywords: ['grocery price comparison app', 'supermarket basket optimizer', 'cheapest grocery route planner'],
+    competitorMentioned: 'Flipp / Manual Flyers',
+    estimatedValue: 240,
+    banRisk: 'Low (2%)',
+    whyHot: 'High-engagement consumer request for multi-store supermarket basket comparison + GPS route optimization.',
+    status: 'new',
+    postedAt: '5h ago',
+    createdAt: new Date(Date.now() - 300 * 60000).toISOString(),
+    replies: generateReplies('AI-Shop', 'https://market.appcook.store', 'Compare live grocery prices across supermarkets with GPS route optimization', 'Flipp')
   }
 ];
+
+function syncPortfolioDb(db) {
+  let changed = false;
+
+  // 1. Remove corrupted "Linear" campaign or outdated task.appcook.store entries with wrong metadata
+  const beforeCampCount = db.campaigns.length;
+  db.campaigns = db.campaigns.filter(c => {
+    const isCorruptedLinear = (c.name && c.name.includes('Linear – The system for product development')) ||
+      (c.url && c.url.includes('task.appcook.store') && c.id !== 'camp-ai-task');
+    return !isCorruptedLinear;
+  });
+  if (db.campaigns.length !== beforeCampCount) {
+    changed = true;
+  }
+
+  // 2. Upsert all 8 APPCOOK_PORTFOLIO_CAMPAIGNS so the full portfolio is always present and accurate
+  for (let i = APPCOOK_PORTFOLIO_CAMPAIGNS.length - 1; i >= 0; i--) {
+    const target = APPCOOK_PORTFOLIO_CAMPAIGNS[i];
+    const existingIdx = db.campaigns.findIndex(c =>
+      c.id === target.id ||
+      (c.url && c.url.toLowerCase().replace(/\/+$/, '') === target.url.toLowerCase().replace(/\/+$/, ''))
+    );
+    if (existingIdx === -1) {
+      db.campaigns.unshift({ ...target, active: false });
+      changed = true;
+    } else {
+      const existing = db.campaigns[existingIdx];
+      if (
+        existing.name !== target.name ||
+        existing.category !== target.category ||
+        JSON.stringify(existing.competitors) !== JSON.stringify(target.competitors) ||
+        JSON.stringify(existing.keywords) !== JSON.stringify(target.keywords)
+      ) {
+        db.campaigns[existingIdx] = {
+          ...target,
+          active: existing.active,
+          createdAt: existing.createdAt || target.createdAt
+        };
+        changed = true;
+      }
+    }
+  }
+
+  // Ensure at least one campaign is active (default to camp-ai-task)
+  if (!db.campaigns.some(c => c.active)) {
+    const aiTask = db.campaigns.find(c => c.id === 'camp-ai-task') || db.campaigns[0];
+    if (aiTask) {
+      aiTask.active = true;
+      changed = true;
+    }
+  }
+
+  // 3. Remove wrong "Datadog" / "Linear" leads associated with task.appcook.store
+  const validCampIds = new Set(db.campaigns.map(c => c.id));
+  const beforeLeadCount = db.leads.length;
+  db.leads = db.leads.filter(l => {
+    const text = `${l.title || ''} ${l.snippet || ''} ${l.competitorMentioned || ''}`;
+    const isWrongDatadogLead = (text.includes('Linear – The system for product development')) ||
+      (l.campaignId !== 'camp-devflow' && text.includes('Datadog') && (text.includes('Project & Task') || text.includes('task.appcook.store') || !validCampIds.has(l.campaignId)));
+    return !isWrongDatadogLead;
+  });
+  if (db.leads.length !== beforeLeadCount) {
+    changed = true;
+  }
+
+  // 4. Ensure INITIAL_LEADS for all 8 AppCook portfolio apps exist
+  const existingLeadIds = new Set(db.leads.map(l => l.id));
+  for (let i = INITIAL_LEADS.length - 1; i >= 0; i--) {
+    const seedLead = INITIAL_LEADS[i];
+    if (!existingLeadIds.has(seedLead.id)) {
+      db.leads.unshift(seedLead);
+      changed = true;
+    }
+  }
+
+  return changed;
+}
 
 function loadDb() {
   try {
@@ -208,6 +473,9 @@ function loadDb() {
       const raw = fs.readFileSync(DB_FILE, 'utf8');
       const parsed = JSON.parse(raw);
       if (parsed && Array.isArray(parsed.campaigns) && Array.isArray(parsed.leads)) {
+        if (syncPortfolioDb(parsed)) {
+          saveDb(parsed);
+        }
         return parsed;
       }
     }
@@ -468,7 +736,7 @@ async function scanLiveSources(campaign) {
 async function analyzeWebsiteUrl(rawUrl) {
   let normalizedUrl = (rawUrl || '').trim();
   if (!normalizedUrl) {
-    normalizedUrl = 'https://replypulse.ai';
+    normalizedUrl = 'https://task.appcook.store';
   }
   if (!/^https?:\/\//i.test(normalizedUrl)) {
     normalizedUrl = 'https://' + normalizedUrl;
@@ -477,9 +745,33 @@ async function analyzeWebsiteUrl(rawUrl) {
   let hostname = 'yourproduct.com';
   try {
     const u = new URL(normalizedUrl);
-    hostname = u.hostname.replace(/^www\./, '');
+    hostname = u.hostname.replace(/^www\./, '').toLowerCase();
   } catch (e) {
     hostname = 'yourproduct.com';
+  }
+
+  // Direct match for any of the 8 AppCook Portfolio apps
+  const portfolioMatch = APPCOOK_PORTFOLIO_CAMPAIGNS.find(c => {
+    try {
+      return new URL(c.url).hostname.toLowerCase() === hostname || normalizedUrl.toLowerCase().includes(new URL(c.url).hostname.toLowerCase());
+    } catch (e) {
+      return false;
+    }
+  });
+
+  if (portfolioMatch) {
+    return {
+      url: portfolioMatch.url,
+      liveFetched: true,
+      name: portfolioMatch.name,
+      category: portfolioMatch.category,
+      audience: portfolioMatch.audience,
+      valueProp: portfolioMatch.valueProp,
+      keywords: portfolioMatch.keywords,
+      competitors: portfolioMatch.competitors,
+      subreddits: portfolioMatch.subreddits,
+      suggestedDealValue: portfolioMatch.dealValue
+    };
   }
 
   const brandBase = hostname.split('.')[0] || 'Product';
@@ -519,7 +811,19 @@ async function analyzeWebsiteUrl(rawUrl) {
     'automate workflow for startup'
   ];
 
-  if (lowerContext.includes('dev') || lowerContext.includes('api') || lowerContext.includes('cloud') || lowerContext.includes('git') || lowerContext.includes('supabase') || lowerContext.includes('vercel')) {
+  if (lowerContext.includes('task') || lowerContext.includes('kanban') || lowerContext.includes('todo') || lowerContext.includes('project') || lowerContext.includes('sprint') || lowerContext.includes('trello')) {
+    category = 'Project & Task Management / Team Kanban';
+    audience = 'Startup Teams, Agencies, Remote Engineering & Operations Teams, Project Managers';
+    competitors = ['Trello', 'Jira', 'Asana', 'ClickUp', 'Monday.com', 'Linear'];
+    subreddits = ['r/projectmanagement', 'r/SaaS', 'r/entrepreneur', 'r/smallbusiness', 'r/productivity'];
+    keywords = [
+      'trello alternative',
+      'jira too complex',
+      'lightweight kanban tool',
+      'telegram task manager',
+      'team task tracker'
+    ];
+  } else if (lowerContext.includes('dev') || lowerContext.includes('api') || lowerContext.includes('cloud') || lowerContext.includes('git') || lowerContext.includes('supabase') || lowerContext.includes('vercel')) {
     category = 'Developer Tools & Cloud Infrastructure';
     audience = 'Software Engineers, CTOs, DevOps Teams, Indie Developers';
     competitors = ['Datadog', 'Vercel', 'Firebase', 'AWS Amplify'];
