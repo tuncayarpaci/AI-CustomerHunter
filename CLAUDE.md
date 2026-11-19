@@ -5,14 +5,15 @@
 - **Port & Kalıcı Veri:** Varsayılan port `3090`, kalıcı veri dizini `DATA_DIR` (`/data`):
   - `db.json` — ortak ekip kampanya ve fırsat havuzu (atomik yazım, maks 300 lead budaması; `replied`/`converted` korunur).
   - `auth.json` (`0600`) — kullanıcı hesapları ve tek kullanımlık onay `jti` kayıtları.
-  - `settings.json` (`0600`) — yönetim paneli ayarları (Google OAuth, SMTP, LLM/Çeviri, Webhook); `.env` değerlerine baskın gelir, gizli alanlar maskeli döner.
+  - `settings.json` (`0600`) — yönetim paneli ayarları (Google OAuth, SMTP, LLM/Çeviri, Telegram bildirimleri); `.env` değerlerine baskın gelir, gizli alanlar maskeli döner.
   - `secret.key` (`0600`) — `SECRET_KEY` verilmemişse otomatik üretilen HS256 oturum anahtarı.
 - **Modüller (`lib/`):**
   - `lib/store.js` — atomik JSON depolama, kullanıcı/ayar yönetimi, gizli alan maskeleme ve hedef değişikliği koruması.
   - `lib/auth.js` — PBKDF2-HMAC-SHA256 yerel yönetici girişi (2FA yok), HS256 JWT çerez (`__Host-customerhunter_oturum` HTTPS'te), kaba kuvvet koruması, Google OAuth 2.0 (PKCE + OIDC), tek kullanımlık `/onay` akışı.
   - `lib/mailer.js` — `nodemailer` ile STARTTLS/SSL e-posta gönderimi (başvuru bildirimi, onay/ret e-postası, deneme e-postası).
+  - `lib/notifier.js` — Telegram Bot API ile yüksek ihtimalli yeni fırsat bildirimleri (`/yonetim/bildirimler`, minimum ihtimal eşiği, en fazla 5 sohbet hedefi ve deneme bildirimi).
   - `lib/yonetim.js` — yalnızca `role === "admin"` erişimli sol yönetim menüsü (`/yonetim/*`) ve `/api/yonetim/*` uçları.
-  - `lib/translate.js` — 2 dilli (`tr`/`en`) içerik çeviri zinciri: `lead.i18n` kalıcı önbellek → LLM API (Anthropic / OpenAI / Gemini) → MyMemory resmi ücretsiz API (450 bayt parçalama) → Orijinal metin (resmi olmayan `gtx` kullanılmaz).
+  - `lib/translate.js` — 2 dilli (`tr`/`en`) içerik çeviri zinciri: `lead.i18n` kalıcı önbellek → LLM API (Gemini varsayılan `gemini-3.5-flash-lite` / Anthropic / OpenAI) → MyMemory resmi ücretsiz API (450 bayt parçalama) → Orijinal metin (resmi olmayan `gtx` kullanılmaz).
   - `lib/portfolio.js` — 8 AppCook portföy ürünü ve statik TR/EN çevirili 9 örnek başlangıç fırsatı.
 - **Ön Yüz (`public/`):**
   - AppCook giriş kiti (`/giris`, `giris.html`, `appcook-giris.css/js`, `appcook-fonts/*`) ve AppCook v2 teması (`appcook-tema.css`, `appcook-kabuk.js`).
