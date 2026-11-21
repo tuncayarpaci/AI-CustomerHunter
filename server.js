@@ -938,7 +938,19 @@ function createServer(options = {}) {
             ? body.keywords.split(',').map(s => s.trim()).filter(Boolean)
             : []);
         const limit = body.limit !== undefined ? body.limit : 3;
-        const result = await ossSuggestionsService.fetchOssSuggestions({ query, keywords, limit });
+        const lead_id = typeof body.lead_id === 'string'
+          ? body.lead_id.trim()
+          : (typeof body.lead_id === 'number' && Number.isFinite(body.lead_id) ? String(body.lead_id) : '');
+        const lead_title = typeof body.lead_title === 'string' ? body.lead_title.trim() : '';
+        const source_platform = typeof body.source_platform === 'string' ? body.source_platform.trim() : '';
+        const result = await ossSuggestionsService.fetchOssSuggestions({
+          query,
+          keywords,
+          limit,
+          lead_id,
+          lead_title,
+          source_platform
+        });
         return sendJson(res, 200, result);
       }
 

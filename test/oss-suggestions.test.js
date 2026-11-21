@@ -264,3 +264,118 @@ test('POST /api/oss-suggestions returns graceful fallback when token is empty or
     await stopTestServer(srv2.server);
   }
 });
+
+test('POST /api/oss-suggestions forwards sanitized lead metadata and isolates LRU cache per lead_id', async () => {
+  const token = 'reporadar-meta-token';
+  const cookie = getActiveSessionCookie();
+  const capturedBodies = [];
+
+  const mockFetch = async (_url, init) => {
+    capturedBodies.push(JSON.parse(init.body));
+    return makeMockJsonResponse({
+      ok: true,
+      items: [
+        {
+          full_name: 'acme/selfhost-crm',
+          spdx_license: 'MIT',
+          total_commercial_score: 84,
+          summary_tr: 'Açık kaynak CRM alternatifi.',
+          repo_url: 'https://radar.appcook.store/repo/acme/selfhost-crm'
+        }
+      ]
+    });
+  };
+
+  const ossService = createOssSuggestionsService({
+    fetchImpl: mockFetch,
+    getInternalToken: () => token,
+    getBaseUrl: () => 'http://ai-reporadar:8070',
+    getPublicUrl: () => 'https://radar.appcook.store'
+  });
+
+  const { server, baseUrl } = await startTestServer({
+    getInternalToken: () => token,
+    ossSuggestionsService: ossService
+  });
+
+  try {
+    const longTitle = 'A'.repeat(250);
+    const baseQuery = {
+      title: 'Looking for HubSpot alternative',
+      query: 'Looking for HubSpot alternative',
+      keywords: ['crm', 'hubspot alternative'],
+      limit: 3
+    };
+
+    // 1) First lead with metadata (oversized lead_title, mixed-case source_platform, control chars)
+    const res1 = await fetch(`${baseUrl}/api/oss-suggestions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': cookie,
+        'Origin': baseUrl
+      },
+      body: JSON.stringify({
+        ...baseQuery,
+        lead_id: 'lead-101\n',
+        lead_title: `\t${longTitle}`,
+        source_platform: 'Reddit'
+      })
+    });
+    assert.equal(res1.status, 200);
+    const data1 = await res1.json();
+    assert.equal(data1.ok, true);
+    assert.equal(data1.cached, false);
+    assert.equal(capturedBodies.length, 1);
+    assert.equal(capturedBodies[0].lead_id, 'lead-101');
+    assert.equal(capturedBodies[0].lead_title.length, 200);
+    assert.equal(capturedBodies[0].source_platform, 'reddit');
+
+    // 2) Same lead_id + same query -> cache hit (no duplicate RepoRadar call)
+    const res2 = await fetch(`${baseUrl}/api/oss-suggestions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': cookie,
+        'Origin': baseUrl
+      },
+      body: JSON.stringify({
+        ...baseQuery,
+        lead_id: 'lead-101',
+        lead_title: 'Looking for HubSpot alternative',
+        source_platform: 'reddit'
+      })
+    });
+    assert.equal(res2.status, 200);
+    const data2 = await res2.json();
+    assert.equal(data2.ok, true);
+    assert.equal(data2.cached, true);
+    assert.equal(capturedBodies.length, 1);
+
+    // 3) Different lead_id + same query -> separate RepoRadar call for stats
+    const res3 = await fetch(`${baseUrl}/api/oss-suggestions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': cookie,
+        'Origin': baseUrl
+      },
+      body: JSON.stringify({
+        ...baseQuery,
+        lead_id: 'lead-202',
+        lead_title: 'Second lead asking for HubSpot alternative',
+        source_platform: 'HackerNews'
+      })
+    });
+    assert.equal(res3.status, 200);
+    const data3 = await res3.json();
+    assert.equal(data3.ok, true);
+    assert.equal(data3.cached, false);
+    assert.equal(capturedBodies.length, 2);
+    assert.equal(capturedBodies[1].lead_id, 'lead-202');
+    assert.equal(capturedBodies[1].lead_title, 'Second lead asking for HubSpot alternative');
+    assert.equal(capturedBodies[1].source_platform, 'hackernews');
+  } finally {
+    await stopTestServer(server);
+  }
+});

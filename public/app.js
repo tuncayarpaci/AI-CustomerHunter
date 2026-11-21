@@ -492,6 +492,19 @@
     const panelEl = cardEl ? cardEl.querySelector('[data-oss-panel]') : null;
     if (panelEl) renderOssPanel(panelEl, loadingState);
 
+    const leadIdValue = String(lead.id || lead.url || title || '').trim().slice(0, 120);
+    const leadTitleValue = title.slice(0, 200);
+    const sourcePlatformValue = String(lead.platform || lead.source || '').trim().toLowerCase().slice(0, 48);
+    const requestPayload = {
+      title,
+      query: title,
+      keywords: kwSet.slice(0, 8),
+      limit: 3
+    };
+    if (leadIdValue) requestPayload.lead_id = leadIdValue;
+    if (leadTitleValue) requestPayload.lead_title = leadTitleValue;
+    if (sourcePlatformValue) requestPayload.source_platform = sourcePlatformValue;
+
     try {
       const res = await fetch('/api/oss-suggestions', {
         method: 'POST',
@@ -500,12 +513,7 @@
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
-        body: JSON.stringify({
-          title,
-          query: title,
-          keywords: kwSet.slice(0, 8),
-          limit: 3
-        })
+        body: JSON.stringify(requestPayload)
       });
 
       if (res.status === 401) {
