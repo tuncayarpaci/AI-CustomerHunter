@@ -24,6 +24,12 @@ const { fetchAppStoreSignals } = require('./lib/sources/appstore');
 const { fetchRssSourceSignals } = require('./lib/sources/rss-feeds');
 const { fetchBlueskySignals } = require('./lib/sources/bluesky');
 const {
+  fetchGooglePlaySignals,
+  fetchGooglePlayTopCharts,
+  DEFAULT_GPLAY_TIMEOUT_MS
+} = require('./lib/sources/googleplay');
+const { searchDevTo, searchLobsters } = require('./lib/sources/devto-lobsters');
+const {
   createOssSuggestionsService
 } = require('./lib/oss-suggestions');
 const {
@@ -242,10 +248,14 @@ const SOURCE_DISPLAY_NAMES = {
   stackexchange: 'StackExchange API v2.3',
   appstore_tr: 'Apple App Store TR (1-3★)',
   appstore_us: 'Apple App Store US (1-3★)',
+  googleplay_tr: 'Google Play Store TR (1-3★)',
+  googleplay_us: 'Google Play Store US (1-3★)',
   producthunt: 'Product Hunt RSS',
   webrazzi_tr: 'Webrazzi TR RSS',
   technopat_tr: 'Technopat Sosyal TR RSS',
-  bluesky: 'Bluesky Search API'
+  bluesky: 'Bluesky Search API',
+  devto: 'Dev.to Articles API',
+  lobsters: 'Lobste.rs JSON'
 };
 
 function makeDeterministicLeadId(prefix, seed) {
@@ -279,7 +289,9 @@ function buildLeadFromExtraSource(item, sourceKey, campaign, query) {
     ? `StackExchange (${item.site || 'softwarerecs'})`
     : (sourceKey === 'appstore_tr' || sourceKey === 'appstore_us')
       ? `${item.appName || 'App Store'} (${item.country || ''})`
-      : label;
+      : (sourceKey === 'googleplay_tr' || sourceKey === 'googleplay_us')
+        ? `${item.appName || 'Google Play'} (${item.country || ''})`
+        : label;
 
   return {
     id: makeDeterministicLeadId(sourceKey.slice(0, 6), `${item.url}|${item.title}`),
@@ -317,8 +329,10 @@ async function scanLiveSourcesDetailed(campaign, options = {}) {
   };
 
   const fetchImpl = options.fetchImpl || fetch;
+  const gplay = options.gplay;
   const timeoutMs = options.timeoutMs || 4000;
-  const overallBudgetMs = options.overallBudgetMs || 7800;
+  const gplayTimeoutMs = options.timeoutMs || DEFAULT_GPLAY_TIMEOUT_MS;
+  const overallBudgetMs = options.overallBudgetMs || 8200;
 
   const runTask = async (sourceKey) => {
     if (sourceKey === 'hackernews') {
@@ -432,6 +446,7 @@ async function scanLiveSourcesDetailed(campaign, options = {}) {
     }
 
     const srcOpts = { timeoutMs, fetchImpl };
+    const gpOpts = { timeoutMs: gplayTimeoutMs, fetchImpl, gplay };
     let res;
     if (sourceKey === 'stackexchange') {
       res = await fetchStackExchangeSignals(spec, srcOpts);
@@ -439,6 +454,10 @@ async function scanLiveSourcesDetailed(campaign, options = {}) {
       res = await fetchAppStoreSignals(spec, 'tr', srcOpts);
     } else if (sourceKey === 'appstore_us') {
       res = await fetchAppStoreSignals(spec, 'us', srcOpts);
+    } else if (sourceKey === 'googleplay_tr') {
+      res = await fetchGooglePlaySignals(spec, 'tr', gpOpts);
+    } else if (sourceKey === 'googleplay_us') {
+      res = await fetchGooglePlaySignals(spec, 'us', gpOpts);
     } else if (sourceKey === 'producthunt' || sourceKey === 'webrazzi_tr' || sourceKey === 'technopat_tr') {
       res = await fetchRssSourceSignals(sourceKey, spec, srcOpts);
     } else if (sourceKey === 'bluesky') {
@@ -446,6 +465,10 @@ async function scanLiveSourcesDetailed(campaign, options = {}) {
       if (res.status === 'unconfigured') {
         return { status: 'unconfigured', leads: [] };
       }
+    } else if (sourceKey === 'devto') {
+      res = await searchDevTo(spec, srcOpts);
+    } else if (sourceKey === 'lobsters') {
+      res = await searchLobsters(spec, srcOpts);
     } else {
       return { status: 'error', leads: [] };
     }
@@ -944,6 +967,9 @@ function createServer(options = {}) {
   const getInternalToken = typeof options.getInternalToken === 'function'
     ? options.getInternalToken
     : () => process.env.INTERNAL_API_TOKEN || '';
+  const fetchPlayTrends = typeof options.fetchPlayTrends === 'function'
+    ? options.fetchPlayTrends
+    : (opts) => fetchGooglePlayTopCharts(opts);
   const ossSuggestionsService = options.ossSuggestionsService || createOssSuggestionsService({
     getInternalToken
   });
@@ -989,6 +1015,27 @@ function createServer(options = {}) {
         return sendJson(res, 200, result);
       } catch (err) {
         return sendJson(res, 502, { ok: false, error: 'Failed to collect demand signals' });
+      }
+    }
+
+    // 1.6. Dahili Google Play Top Charts Ucu (X-Internal-Token korumalı, oturum duvarından önce)
+    if (pathname === '/api/internal/play-trends') {
+      if (req.method !== 'GET') {
+        return sendJson(res, 405, { ok: false, error: 'Method Not Allowed' });
+      }
+      const authCheck = verifyInternalToken(req.headers['x-internal-token'], getInternalToken());
+      if (!authCheck.ok) {
+        return sendJson(res, authCheck.status, { ok: false, error: authCheck.error });
+      }
+
+      const refreshParam = (parsedUrl.searchParams.get('refresh') || '').trim().toLowerCase();
+      const refresh = refreshParam === '1' || refreshParam === 'true';
+
+      try {
+        const result = await fetchPlayTrends({ refresh });
+        return sendJson(res, 200, result);
+      } catch (err) {
+        return sendJson(res, 502, { ok: false, error: 'Failed to collect Google Play trends' });
       }
     }
 
