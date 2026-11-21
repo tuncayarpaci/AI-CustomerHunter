@@ -639,6 +639,116 @@ a:hover { text-decoration: underline; }
   flex-wrap: wrap;
 }
 
+/* AI-REPORADAR OSS ÇÖZÜM ÖNERİLERİ (CH-09) */
+.oss-btn {
+  border-color: var(--uygulama);
+  color: var(--uygulama);
+  background: var(--uygulama-yumusak);
+  font-weight: 650;
+}
+.oss-btn:hover {
+  filter: brightness(0.96);
+}
+.oss-panel {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: var(--r-md);
+  background: var(--yuzey);
+  border: 1px solid var(--cizgi-guclu);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.oss-panel[hidden] { display: none; }
+.oss-panel-bas {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.oss-panel-baslik {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--uygulama);
+  letter-spacing: 0.01em;
+}
+.oss-kapat {
+  border: 1px solid var(--cizgi);
+  background: transparent;
+  color: var(--soluk);
+  border-radius: var(--r-sm);
+  width: 26px;
+  height: 26px;
+  line-height: 1;
+  font-size: 16px;
+  cursor: pointer;
+}
+.oss-kapat:hover {
+  color: var(--metin);
+  border-color: var(--cizgi-guclu);
+}
+.oss-durum {
+  margin: 0;
+  font-size: 13px;
+  color: var(--soluk);
+}
+.oss-liste {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+}
+.oss-kart {
+  padding: 12px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--cizgi);
+  background: var(--yuzey-2);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.oss-kart-ust {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.oss-repo-ad {
+  font-size: 13.5px;
+  color: var(--metin);
+  word-break: break-word;
+}
+.oss-rozetler {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.rozet-oss-lisans {
+  background: var(--uygulama-yumusak);
+  color: var(--uygulama);
+  border: 1px solid var(--cizgi);
+}
+.oss-ozet {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--soluk);
+}
+.oss-kart-alt {
+  margin-top: auto;
+  padding-top: 4px;
+}
+.oss-link {
+  font-size: 12.5px;
+  font-weight: 650;
+  color: var(--uygulama);
+  text-decoration: none;
+}
+.oss-link:hover {
+  text-decoration: underline;
+}
+
 /* DİĞER SEKMELER */
 .panel {
   background: var(--yuzey);

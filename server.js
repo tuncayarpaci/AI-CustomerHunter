@@ -18,6 +18,9 @@ const {
   createDemandSignalService
 } = require('./lib/demand-signal');
 const {
+  createOssSuggestionsService
+} = require('./lib/oss-suggestions');
+const {
   APPCOOK_PORTFOLIO_CAMPAIGNS,
   INITIAL_LEADS,
   generateReplies
@@ -786,6 +789,9 @@ function createServer(options = {}) {
   const getInternalToken = typeof options.getInternalToken === 'function'
     ? options.getInternalToken
     : () => process.env.INTERNAL_API_TOKEN || '';
+  const ossSuggestionsService = options.ossSuggestionsService || createOssSuggestionsService({
+    getInternalToken
+  });
 
   return http.createServer(async (req, res) => {
   try {
@@ -917,6 +923,23 @@ function createServer(options = {}) {
             i18n: r.entry
           }))
         });
+      }
+
+      if (pathname === '/api/oss-suggestions' && req.method === 'POST') {
+        const user = auth.requireAuth(req, res);
+        if (!user) return;
+        const body = await parseBody(req);
+        const title = typeof body.title === 'string' ? body.title.trim() : '';
+        const rawQuery = typeof body.query === 'string' ? body.query.trim() : '';
+        const query = rawQuery || title;
+        const keywords = Array.isArray(body.keywords)
+          ? body.keywords
+          : (typeof body.keywords === 'string'
+            ? body.keywords.split(',').map(s => s.trim()).filter(Boolean)
+            : []);
+        const limit = body.limit !== undefined ? body.limit : 3;
+        const result = await ossSuggestionsService.fetchOssSuggestions({ query, keywords, limit });
+        return sendJson(res, 200, result);
       }
 
       if (pathname === '/api/analyze-url' && req.method === 'POST') {

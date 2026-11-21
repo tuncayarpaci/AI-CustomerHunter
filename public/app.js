@@ -13,6 +13,7 @@
     activeSource: 'all',
     lang: i18n ? i18n.getLang() : 'tr',
     cardUi: new Map(), // leadId -> { tone: 'helpful', replyLang: 'en' }
+    ossResults: new Map(), // leadId -> { loading, ok, items, reason }
     translatingIds: new Set(),
     highlightedLeadId: null,
     loading: false
@@ -31,6 +32,16 @@
     try {
       const u = new URL(String(raw || '').trim());
       if (u.protocol === 'http:' || u.protocol === 'https:') {
+        return u.href;
+      }
+    } catch {}
+    return '';
+  }
+
+  function safeHttpsUrl(raw) {
+    try {
+      const u = new URL(String(raw || '').trim());
+      if (u.protocol === 'https:') {
         return u.href;
       }
     } catch {}
@@ -313,16 +324,217 @@
               </div>
               <div class="aksiyon-grup">
                 <button type="button" class="btn birincil" data-copy-open="${escapeHtml(postUrl)}">${escapeHtml(t('copy_btn'))}</button>
+                <button type="button" class="btn kucuk oss-btn" data-oss-suggest="1">Hazır OSS Çözüm Öner (AI-RepoRadar)</button>
                 <button type="button" class="btn kucuk ${lead.status === 'new' ? 'aktif-durum' : ''}" data-set-status="new">${escapeHtml(t('stage_new'))}</button>
                 <button type="button" class="btn kucuk ${lead.status === 'replied' ? 'aktif-durum' : ''}" data-set-status="replied">${escapeHtml(t('stage_replied'))}</button>
                 <button type="button" class="btn kucuk ${lead.status === 'converted' ? 'aktif-durum' : ''}" data-set-status="converted">${escapeHtml(t('stage_converted'))}</button>
                 <button type="button" class="btn kucuk ${lead.status === 'ignored' ? 'aktif-durum' : ''}" data-set-status="ignored">${escapeHtml(t('stage_ignored'))}</button>
               </div>
             </div>
+            <div class="oss-panel" data-oss-panel="1" hidden></div>
           </div>
         </article>
       `;
     }).join('');
+
+    listEl.querySelectorAll('.firsat-kart[data-lead-id]').forEach(card => {
+      const leadId = card.getAttribute('data-lead-id');
+      const entry = state.ossResults.get(leadId);
+      if (entry) {
+        const panel = card.querySelector('[data-oss-panel]');
+        if (panel) renderOssPanel(panel, entry);
+      }
+    });
+  }
+
+  function renderOssPanel(panelEl, entry) {
+    if (!panelEl) return;
+    panelEl.replaceChildren();
+    if (!entry) {
+      panelEl.hidden = true;
+      return;
+    }
+    panelEl.hidden = false;
+
+    const header = document.createElement('div');
+    header.className = 'oss-panel-bas';
+
+    const titleEl = document.createElement('span');
+    titleEl.className = 'oss-panel-baslik';
+    titleEl.textContent = 'AI-RepoRadar · Hazır Açık Kaynak Çözüm Önerileri';
+    header.appendChild(titleEl);
+
+    const closeBtn = document.createElement('button');
+    closeBtn.type = 'button';
+    closeBtn.className = 'oss-kapat';
+    closeBtn.setAttribute('data-oss-close', '1');
+    closeBtn.setAttribute('aria-label', 'Kapat');
+    closeBtn.textContent = '×';
+    header.appendChild(closeBtn);
+
+    panelEl.appendChild(header);
+
+    if (entry.loading) {
+      const loadingP = document.createElement('p');
+      loadingP.className = 'oss-durum';
+      loadingP.textContent = 'AI-RepoRadar taranıyor...';
+      panelEl.appendChild(loadingP);
+      return;
+    }
+
+    if (!entry.ok) {
+      const errP = document.createElement('p');
+      errP.className = 'oss-durum';
+      errP.textContent = 'AI-RepoRadar öneri servisi şu an yanıt vermiyor. Kısa süre sonra tekrar deneyebilirsiniz.';
+      panelEl.appendChild(errP);
+      return;
+    }
+
+    const items = Array.isArray(entry.items) ? entry.items.slice(0, 3) : [];
+    if (items.length === 0) {
+      const emptyP = document.createElement('p');
+      emptyP.className = 'oss-durum';
+      emptyP.textContent = "Bu acı noktası için AI-RepoRadar'da eşleşen izin verici lisanslı açık kaynak proje bulunamadı.";
+      panelEl.appendChild(emptyP);
+      return;
+    }
+
+    const list = document.createElement('div');
+    list.className = 'oss-liste';
+
+    items.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'oss-kart';
+
+      const top = document.createElement('div');
+      top.className = 'oss-kart-ust';
+
+      const nameEl = document.createElement('strong');
+      nameEl.className = 'oss-repo-ad';
+      nameEl.textContent = String(item.full_name || '');
+      top.appendChild(nameEl);
+
+      const badges = document.createElement('div');
+      badges.className = 'oss-rozetler';
+
+      const licBadge = document.createElement('span');
+      licBadge.className = 'rozet rozet-oss-lisans';
+      licBadge.textContent = String(item.spdx_license || 'OSS');
+      badges.appendChild(licBadge);
+
+      if (typeof item.total_commercial_score === 'number' && Number.isFinite(item.total_commercial_score)) {
+        const scoreVal = Math.max(0, Math.min(100, Math.round(item.total_commercial_score)));
+        const scoreBadge = document.createElement('span');
+        scoreBadge.className = 'rozet ' + (scoreVal >= 75 ? 'rozet-ihtimal-yuksek' : 'rozet-ihtimal-orta');
+        scoreBadge.textContent = `Skor: ${scoreVal}/100`;
+        badges.appendChild(scoreBadge);
+      }
+
+      top.appendChild(badges);
+      card.appendChild(top);
+
+      if (item.summary_tr) {
+        const summaryEl = document.createElement('p');
+        summaryEl.className = 'oss-ozet';
+        summaryEl.textContent = String(item.summary_tr);
+        card.appendChild(summaryEl);
+      }
+
+      const repoHref = safeHttpsUrl(item.repo_url);
+      const githubHref = safeHttpsUrl(item.github_url);
+      const targetHref = repoHref || githubHref;
+
+      if (targetHref) {
+        const footer = document.createElement('div');
+        footer.className = 'oss-kart-alt';
+
+        const link = document.createElement('a');
+        link.className = 'oss-link';
+        link.href = targetHref;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.textContent = repoHref ? "AI-RepoRadar'da Aç →" : "GitHub'da Aç →";
+        footer.appendChild(link);
+
+        card.appendChild(footer);
+      }
+
+      list.appendChild(card);
+    });
+
+    panelEl.appendChild(list);
+  }
+
+  async function requestOssSuggestions(leadId) {
+    const lead = state.leads.find(l => l.id === leadId);
+    if (!lead) return;
+
+    const existing = state.ossResults.get(leadId);
+    if (existing && existing.loading) return;
+
+    const campaign = state.campaigns.find(c => c.id === lead.campaignId);
+    const loc = getLocalizedLead(lead);
+    const title = String(lead.title || loc.title || '').trim();
+
+    const kwSet = [];
+    if (campaign && Array.isArray(campaign.keywords)) {
+      campaign.keywords.forEach(k => {
+        if (typeof k === 'string' && k.trim()) kwSet.push(k.trim());
+      });
+    }
+    if (lead.competitorMentioned && lead.competitorMentioned !== 'Manual Process') {
+      kwSet.push(String(lead.competitorMentioned).trim());
+    }
+
+    const loadingState = { loading: true, ok: true, items: [], reason: '' };
+    state.ossResults.set(leadId, loadingState);
+    const cardEl = document.getElementById('lead-card-' + leadId);
+    const panelEl = cardEl ? cardEl.querySelector('[data-oss-panel]') : null;
+    if (panelEl) renderOssPanel(panelEl, loadingState);
+
+    try {
+      const res = await fetch('/api/oss-suggestions', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          title,
+          query: title,
+          keywords: kwSet.slice(0, 8),
+          limit: 3
+        })
+      });
+
+      if (res.status === 401) {
+        window.location.href = '/giris';
+        return;
+      }
+
+      const data = await res.json().catch(() => ({}));
+      const nextState = {
+        loading: false,
+        ok: Boolean(res.ok && data && data.ok === true),
+        items: Array.isArray(data && data.items) ? data.items.slice(0, 3) : [],
+        reason: (data && typeof data.reason === 'string') ? data.reason : ''
+      };
+      state.ossResults.set(leadId, nextState);
+    } catch {
+      state.ossResults.set(leadId, {
+        loading: false,
+        ok: false,
+        items: [],
+        reason: 'network_error'
+      });
+    }
+
+    const latestCard = document.getElementById('lead-card-' + leadId);
+    const latestPanel = latestCard ? latestCard.querySelector('[data-oss-panel]') : null;
+    if (latestPanel) {
+      renderOssPanel(latestPanel, state.ossResults.get(leadId));
+    }
   }
 
   // ---------------------------------------------------------------- Sekme 2: Müşteri Takibi
@@ -668,6 +880,20 @@
         } else {
           showToast(t('toast_copied_only'));
         }
+        return;
+      }
+
+      const ossBtn = e.target.closest('button[data-oss-suggest]');
+      if (ossBtn) {
+        requestOssSuggestions(leadId);
+        return;
+      }
+
+      const ossCloseBtn = e.target.closest('button[data-oss-close]');
+      if (ossCloseBtn) {
+        state.ossResults.delete(leadId);
+        const panel = card.querySelector('[data-oss-panel]');
+        if (panel) renderOssPanel(panel, null);
         return;
       }
 
