@@ -781,6 +781,95 @@
     });
   }
 
+  // ---------------------------------------------------------------- URL Ön-Doldurma (CH-01)
+  function sanitizeQueryText(raw, maxLen) {
+    if (typeof raw !== 'string') return '';
+    return raw.replace(/[\u0000-\u001F\u007F]/g, ' ').trim().slice(0, maxLen);
+  }
+
+  function sanitizeQueryList(raw, maxItems = 8, maxItemLen = 64, maxTotalLen = 300) {
+    if (typeof raw !== 'string') return '';
+    const items = raw
+      .split(',')
+      .map(item => sanitizeQueryText(item, maxItemLen))
+      .filter(Boolean)
+      .slice(0, maxItems);
+    return items.join(', ').slice(0, maxTotalLen);
+  }
+
+  function sanitizeGithubRepoUrl(raw) {
+    const cleaned = sanitizeQueryText(raw, 300);
+    if (!cleaned) return '';
+    try {
+      const parsed = new URL(cleaned);
+      if (parsed.protocol !== 'https:') return '';
+      if (parsed.hostname.toLowerCase() !== 'github.com') return '';
+      if (!parsed.pathname || parsed.pathname === '/') return '';
+      return parsed.href;
+    } catch (e) {
+      return '';
+    }
+  }
+
+  function applyUrlPrefillFromQuery() {
+    const params = new URLSearchParams(window.location.search);
+    const source = sanitizeQueryText(params.get('source') || '', 40).toLowerCase();
+    const hasPrefillParams =
+      source === 'reporadar' ||
+      params.has('keywords') ||
+      params.has('product') ||
+      params.has('name') ||
+      params.has('competitors') ||
+      params.has('url');
+
+    if (!hasPrefillParams) {
+      return false;
+    }
+
+    const safeUrl = sanitizeGithubRepoUrl(params.get('url') || '');
+    const safeName = sanitizeQueryText(params.get('name') || params.get('product') || '', 120);
+    const safeAudience = sanitizeQueryText(params.get('audience') || '', 300);
+    const safeValueProp = sanitizeQueryText(params.get('valueProp') || '', 300);
+    const safeKeywords = sanitizeQueryList(params.get('keywords') || '', 8, 64, 300);
+    const safeCompetitors = sanitizeQueryList(params.get('competitors') || '', 8, 64, 300);
+    const rawDealValue = Number(params.get('dealValue'));
+    const safeDealValue = Number.isFinite(rawDealValue) && rawDealValue >= 1 && rawDealValue <= 1000000
+      ? Math.round(rawDealValue)
+      : 490;
+
+    const setInputVal = (id, val) => {
+      const el = document.getElementById(id);
+      if (el) el.value = val;
+    };
+
+    setInputVal('urlInput', safeUrl);
+    setInputVal('uAd', safeName);
+    setInputVal('uMusteri', safeAudience);
+    setInputVal('uOzet', safeValueProp);
+    setInputVal('uRakip', safeCompetitors);
+    setInputVal('uKelimeler', safeKeywords);
+    setInputVal('uDeger', String(safeDealValue));
+
+    switchTab('urun');
+
+    const noticeText = source === 'reporadar'
+      ? "AI-RepoRadar'dan aktarıldı — inceleyip Ürünü Kaydet ve Müşteri Ara'ya tıklayın."
+      : "Kampanya alanları ön-dolduruldu — inceleyip Ürünü Kaydet ve Müşteri Ara'ya tıklayın.";
+
+    const bannerEl = document.getElementById('reporadarPrefillBanner');
+    if (bannerEl) {
+      bannerEl.textContent = noticeText;
+      bannerEl.hidden = false;
+    }
+    showToast(noticeText);
+
+    if (window.history && typeof window.history.replaceState === 'function') {
+      window.history.replaceState(null, '', window.location.pathname);
+    }
+
+    return true;
+  }
+
   // ---------------------------------------------------------------- Başlatma
   function init() {
     if (i18n) {
@@ -789,6 +878,7 @@
     document.getElementById('dilTr').setAttribute('aria-pressed', String(state.lang === 'tr'));
     document.getElementById('dilEn').setAttribute('aria-pressed', String(state.lang === 'en'));
     bindEvents();
+    applyUrlPrefillFromQuery();
     loadMe();
     loadState({ showSkeleton: true });
   }

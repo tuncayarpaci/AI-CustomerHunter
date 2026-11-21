@@ -23,6 +23,7 @@ services:
       NODE_ENV: "production"
       TZ: "Europe/Istanbul"
       PUBLIC_URL: "${PUBLIC_URL:-https://customerhunter.appcook.store}"
+      INTERNAL_API_TOKEN: "${INTERNAL_API_TOKEN:-}"
     volumes:
       - veri:/data
     expose:

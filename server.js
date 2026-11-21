@@ -13,6 +13,11 @@ const translate = require('./lib/translate');
 const notifier = require('./lib/notifier');
 const yonetim = require('./lib/yonetim');
 const {
+  verifyInternalToken,
+  validateDemandSignalInput,
+  createDemandSignalService
+} = require('./lib/demand-signal');
+const {
   APPCOOK_PORTFOLIO_CAMPAIGNS,
   INITIAL_LEADS,
   generateReplies
@@ -746,7 +751,43 @@ function renderFallbackLoginHtml() {
   return `<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Giriş · AI-CustomerHunter</title></head><body style="font-family:sans-serif;max-width:420px;margin:60px auto;padding:20px"><h1>AI-CustomerHunter Giriş</h1><form method="post" action="/auth/login"><p><label>Kullanıcı adı<br><input name="username" required></label></p><p><label>Parola<br><input name="password" type="password" required></label></p><button type="submit">Giriş yap</button></form></body></html>`;
 }
 
-const server = http.createServer(async (req, res) => {
+function parseBodyStrict(req, maxBytes = 64 * 1024) {
+  return new Promise((resolve) => {
+    let body = '';
+    let tooLarge = false;
+    req.on('data', chunk => {
+      if (tooLarge) return;
+      body += chunk;
+      if (Buffer.byteLength(body, 'utf8') > maxBytes) {
+        tooLarge = true;
+      }
+    });
+    req.on('end', () => {
+      if (tooLarge) {
+        return resolve({ ok: false, status: 413, error: 'Payload too large' });
+      }
+      if (!body.trim()) {
+        return resolve({ ok: false, status: 400, error: 'Request body is required' });
+      }
+      try {
+        return resolve({ ok: true, data: JSON.parse(body) });
+      } catch (e) {
+        return resolve({ ok: false, status: 400, error: 'Invalid JSON body' });
+      }
+    });
+    req.on('error', () => {
+      resolve({ ok: false, status: 400, error: 'Request stream error' });
+    });
+  });
+}
+
+function createServer(options = {}) {
+  const demandSignalService = options.demandSignalService || createDemandSignalService();
+  const getInternalToken = typeof options.getInternalToken === 'function'
+    ? options.getInternalToken
+    : () => process.env.INTERNAL_API_TOKEN || '';
+
+  return http.createServer(async (req, res) => {
   try {
     const parsedUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
     const pathname = parsedUrl.pathname;
@@ -760,6 +801,34 @@ const server = http.createServer(async (req, res) => {
     // 1. Sağlık kontrolü (oturumsuz açık)
     if (pathname === '/api/health' && req.method === 'GET') {
       return sendJson(res, 200, { ok: true, status: 'healthy' });
+    }
+
+    // 1.5. Dahili Talep Sinyali Ucu (X-Internal-Token korumalı, oturum duvarından önce)
+    if (pathname === '/api/internal/demand-signal') {
+      if (req.method !== 'POST') {
+        return sendJson(res, 405, { ok: false, error: 'Method Not Allowed' });
+      }
+      const authCheck = verifyInternalToken(req.headers['x-internal-token'], getInternalToken());
+      if (!authCheck.ok) {
+        return sendJson(res, authCheck.status, { ok: false, error: authCheck.error });
+      }
+
+      const parsedBody = await parseBodyStrict(req);
+      if (!parsedBody.ok) {
+        return sendJson(res, parsedBody.status, { ok: false, error: parsedBody.error });
+      }
+
+      const validated = validateDemandSignalInput(parsedBody.data);
+      if (!validated.ok) {
+        return sendJson(res, 400, { ok: false, error: validated.error });
+      }
+
+      try {
+        const result = await demandSignalService.getDemandSignal(validated.value);
+        return sendJson(res, 200, result);
+      } catch (err) {
+        return sendJson(res, 502, { ok: false, error: 'Failed to collect demand signals' });
+      }
     }
 
     // 2. Kimlik doğrulama ve onay rotaları (/auth/*, /api/me, /api/auth/*, /onay, POST /giris, POST /cikis)
@@ -1014,7 +1083,10 @@ const server = http.createServer(async (req, res) => {
       sendJson(res, 500, { ok: false, error: 'Sunucu hatası.' });
     }
   }
-});
+  });
+}
+
+const server = createServer();
 
 if (require.main === module) {
   server.listen(PORT, '0.0.0.0', () => {
@@ -1028,6 +1100,7 @@ if (require.main === module) {
 
 module.exports = {
   server,
+  createServer,
   loadDb,
   saveDb,
   scanLiveSources,
