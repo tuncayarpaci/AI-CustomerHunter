@@ -26,6 +26,9 @@ services:
       INTERNAL_API_TOKEN: "${INTERNAL_API_TOKEN:-}"
       REPORADAR_INTERNAL_URL: "${REPORADAR_INTERNAL_URL:-http://ai-reporadar:8070}"
       REPORADAR_PUBLIC_URL: "${REPORADAR_PUBLIC_URL:-https://radar.appcook.store}"
+      STACKEXCHANGE_API_KEY: "${STACKEXCHANGE_API_KEY:-}"
+      BLUESKY_HANDLE: "${BLUESKY_HANDLE:-}"
+      BLUESKY_APP_PASSWORD: "${BLUESKY_APP_PASSWORD:-}"
     volumes:
       - veri:/data
     expose:

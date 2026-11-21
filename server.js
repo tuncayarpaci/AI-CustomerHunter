@@ -15,8 +15,14 @@ const yonetim = require('./lib/yonetim');
 const {
   verifyInternalToken,
   validateDemandSignalInput,
-  createDemandSignalService
+  createDemandSignalService,
+  ALL_SOURCE_KEYS,
+  SOURCE_REGIONS
 } = require('./lib/demand-signal');
+const { fetchStackExchangeSignals } = require('./lib/sources/stackexchange');
+const { fetchAppStoreSignals } = require('./lib/sources/appstore');
+const { fetchRssSourceSignals } = require('./lib/sources/rss-feeds');
+const { fetchBlueskySignals } = require('./lib/sources/bluesky');
 const {
   createOssSuggestionsService
 } = require('./lib/oss-suggestions');
@@ -229,21 +235,103 @@ async function fetchWithTimeout(url, options = {}, timeoutMs = 4500) {
   }
 }
 
-async function scanLiveSources(campaign) {
-  const query = (campaign.keywords && campaign.keywords[0]) ? campaign.keywords[0] : `${campaign.name} alternative`;
-  const discovered = [];
+const SOURCE_DISPLAY_NAMES = {
+  reddit: 'Reddit JSON API',
+  hackernews: 'HackerNews Algolia API',
+  github: 'GitHub Issues API',
+  stackexchange: 'StackExchange API v2.3',
+  appstore_tr: 'Apple App Store TR (1-3★)',
+  appstore_us: 'Apple App Store US (1-3★)',
+  producthunt: 'Product Hunt RSS',
+  webrazzi_tr: 'Webrazzi TR RSS',
+  technopat_tr: 'Technopat Sosyal TR RSS',
+  bluesky: 'Bluesky Search API'
+};
 
-  // 1. HackerNews Algolia Live Search
-  try {
-    const hnQuery = encodeURIComponent(query.split(' ').slice(0, 3).join(' '));
-    const hnRes = await fetchWithTimeout(`https://hn.algolia.com/api/v1/search_by_date?query=${hnQuery}&tags=story&hitsPerPage=4`);
-    if (hnRes.ok) {
+function makeDeterministicLeadId(prefix, seed) {
+  let hash = 2166136261;
+  const text = String(seed || '');
+  for (let i = 0; i < text.length; i++) {
+    hash ^= text.charCodeAt(i);
+    hash = Math.imul(hash, 16777619);
+  }
+  return `lead-${prefix}-${(hash >>> 0).toString(36)}`;
+}
+
+function resolveScanSourceKeys(options = {}) {
+  const region = typeof options.region === 'string' && ['all', 'tr', 'global'].includes(options.region.toLowerCase())
+    ? options.region.toLowerCase()
+    : 'all';
+  const validSet = new Set(ALL_SOURCE_KEYS);
+  const base = Array.isArray(options.sources) && options.sources.length > 0
+    ? options.sources.map(s => String(s).trim().toLowerCase()).filter(s => validSet.has(s))
+    : ALL_SOURCE_KEYS;
+  const list = base.length > 0 ? Array.from(new Set(base)) : ALL_SOURCE_KEYS;
+  if (region === 'all') return list;
+  return list.filter(k => SOURCE_REGIONS[k] === region);
+}
+
+function buildLeadFromExtraSource(item, sourceKey, campaign, query) {
+  const text = `${item.title} ${item.snippet || ''}`;
+  const analysis = computeIntentAnalysis(text, campaign);
+  const label = SOURCE_DISPLAY_NAMES[sourceKey] || sourceKey;
+  const community = sourceKey === 'stackexchange'
+    ? `StackExchange (${item.site || 'softwarerecs'})`
+    : (sourceKey === 'appstore_tr' || sourceKey === 'appstore_us')
+      ? `${item.appName || 'App Store'} (${item.country || ''})`
+      : label;
+
+  return {
+    id: makeDeterministicLeadId(sourceKey.slice(0, 6), `${item.url}|${item.title}`),
+    campaignId: campaign.id,
+    platform: sourceKey,
+    community,
+    // KVKK: Yeni kaynaklardan gelen fırsatlarda yazar adı/profili ASLA saklanmaz
+    author: 'Anonim',
+    title: item.title,
+    snippet: item.snippet || item.title,
+    url: item.url,
+    intentScore: analysis.intentScore,
+    intentType: analysis.intentType,
+    intentLabel: analysis.intentLabel,
+    matchedKeywords: analysis.matchedKeywords,
+    competitorMentioned: analysis.competitorMentioned,
+    estimatedValue: campaign.dealValue || 490,
+    banRisk: 'Low (2%)',
+    whyHot: `${label} kaynağında "${query}" ile eşleşen gerçek talep sinyali.`,
+    status: 'new',
+    postedAt: `Live (${label})`,
+    createdAt: item.created_at || new Date().toISOString(),
+    replies: generateReplies(campaign.name, campaign.url, item.title, analysis.competitorMentioned)
+  };
+}
+
+async function scanLiveSourcesDetailed(campaign, options = {}) {
+  const query = (campaign.keywords && campaign.keywords[0]) ? campaign.keywords[0] : `${campaign.name} alternative`;
+  const selectedKeys = resolveScanSourceKeys(options);
+  const spec = {
+    repo_name: campaign.name || '',
+    keywords: Array.isArray(campaign.keywords) && campaign.keywords.length > 0 ? campaign.keywords.slice(0, 6) : [query],
+    competitors: Array.isArray(campaign.competitors) ? campaign.competitors.slice(0, 4) : [],
+    category: campaign.category || ''
+  };
+
+  const fetchImpl = options.fetchImpl || fetch;
+  const timeoutMs = options.timeoutMs || 4000;
+  const overallBudgetMs = options.overallBudgetMs || 7800;
+
+  const runTask = async (sourceKey) => {
+    if (sourceKey === 'hackernews') {
+      const hnQuery = encodeURIComponent(query.split(' ').slice(0, 3).join(' '));
+      const hnRes = await fetchWithTimeout(`https://hn.algolia.com/api/v1/search_by_date?query=${hnQuery}&tags=story&hitsPerPage=4`, {}, timeoutMs);
+      if (!hnRes.ok) throw new Error(`HN HTTP ${hnRes.status}`);
       const hnData = await hnRes.json();
+      const leads = [];
       for (const hit of (hnData.hits || [])) {
         if (!hit.title) continue;
         const text = `${hit.title} ${hit.story_text || ''}`.replace(/<[^>]+>/g, ' ');
         const analysis = computeIntentAnalysis(text, campaign);
-        discovered.push({
+        leads.push({
           id: `lead-hn-${hit.objectID || Date.now()}`,
           campaignId: campaign.id,
           platform: 'hackernews',
@@ -266,24 +354,22 @@ async function scanLiveSources(campaign) {
           replies: generateReplies(campaign.name, campaign.url, hit.title, analysis.competitorMentioned)
         });
       }
+      return { status: 'ok', leads };
     }
-  } catch {
-    // Dış kaynak geçici olarak erişilemeyebilir
-  }
 
-  // 2. Reddit Public JSON Search
-  try {
-    const redditQuery = encodeURIComponent(`${query} OR alternative`);
-    const redRes = await fetchWithTimeout(`https://www.reddit.com/search.json?q=${redditQuery}&sort=new&limit=4`);
-    if (redRes.ok) {
+    if (sourceKey === 'reddit') {
+      const redditQuery = encodeURIComponent(`${query} OR alternative`);
+      const redRes = await fetchWithTimeout(`https://www.reddit.com/search.json?q=${redditQuery}&sort=new&limit=4`, {}, timeoutMs);
+      if (!redRes.ok) throw new Error(`Reddit HTTP ${redRes.status}`);
       const redData = await redRes.json();
       const children = (redData && redData.data && redData.data.children) ? redData.data.children : [];
+      const leads = [];
       for (const item of children) {
         const post = item.data;
         if (!post || !post.title) continue;
         const text = `${post.title} ${post.selftext || ''}`;
         const analysis = computeIntentAnalysis(text, campaign);
-        discovered.push({
+        leads.push({
           id: `lead-rd-${post.id || Date.now()}`,
           campaignId: campaign.id,
           platform: 'reddit',
@@ -306,22 +392,20 @@ async function scanLiveSources(campaign) {
           replies: generateReplies(campaign.name, campaign.url, post.title, analysis.competitorMentioned)
         });
       }
+      return { status: 'ok', leads };
     }
-  } catch {
-    // Dış kaynak geçici olarak erişilemeyebilir
-  }
 
-  // 3. GitHub Issues Public Search
-  try {
-    const ghQuery = encodeURIComponent(query.split(' ').slice(0, 2).join(' '));
-    const ghRes = await fetchWithTimeout(`https://api.github.com/search/issues?q=${ghQuery}+in:title,body&sort=updated&per_page=2`);
-    if (ghRes.ok) {
+    if (sourceKey === 'github') {
+      const ghQuery = encodeURIComponent(query.split(' ').slice(0, 2).join(' '));
+      const ghRes = await fetchWithTimeout(`https://api.github.com/search/issues?q=${ghQuery}+in:title,body&sort=updated&per_page=2`, {}, timeoutMs);
+      if (!ghRes.ok) throw new Error(`GitHub HTTP ${ghRes.status}`);
       const ghData = await ghRes.json();
+      const leads = [];
       for (const issue of (ghData.items || [])) {
         if (!issue.title) continue;
         const text = `${issue.title} ${issue.body || ''}`;
         const analysis = computeIntentAnalysis(text, campaign);
-        discovered.push({
+        leads.push({
           id: `lead-gh-${issue.id || Date.now()}`,
           campaignId: campaign.id,
           platform: 'github',
@@ -344,12 +428,83 @@ async function scanLiveSources(campaign) {
           replies: generateReplies(campaign.name, campaign.url, issue.title, analysis.competitorMentioned)
         });
       }
+      return { status: 'ok', leads };
     }
-  } catch {
-    // Dış kaynak geçici olarak erişilemeyebilir
+
+    const srcOpts = { timeoutMs, fetchImpl };
+    let res;
+    if (sourceKey === 'stackexchange') {
+      res = await fetchStackExchangeSignals(spec, srcOpts);
+    } else if (sourceKey === 'appstore_tr') {
+      res = await fetchAppStoreSignals(spec, 'tr', srcOpts);
+    } else if (sourceKey === 'appstore_us') {
+      res = await fetchAppStoreSignals(spec, 'us', srcOpts);
+    } else if (sourceKey === 'producthunt' || sourceKey === 'webrazzi_tr' || sourceKey === 'technopat_tr') {
+      res = await fetchRssSourceSignals(sourceKey, spec, srcOpts);
+    } else if (sourceKey === 'bluesky') {
+      res = await fetchBlueskySignals(spec, srcOpts);
+      if (res.status === 'unconfigured') {
+        return { status: 'unconfigured', leads: [] };
+      }
+    } else {
+      return { status: 'error', leads: [] };
+    }
+
+    const leads = (res.items || []).slice(0, 3).map(item =>
+      buildLeadFromExtraSource(item, sourceKey, campaign, query)
+    );
+    return { status: res.status || 'ok', leads };
+  };
+
+  const withBudget = (promise) => {
+    let timer;
+    const timeout = new Promise((_, reject) => {
+      timer = setTimeout(() => reject(new Error('Scan budget exceeded')), overallBudgetMs);
+    });
+    return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+  };
+
+  const settled = await Promise.allSettled(selectedKeys.map(k => withBudget(runTask(k))));
+  const discovered = [];
+  const sourceSummary = {};
+  const seenUrls = new Set();
+
+  for (let i = 0; i < selectedKeys.length; i++) {
+    const key = selectedKeys[i];
+    const outcome = settled[i];
+    if (outcome.status === 'fulfilled' && outcome.value) {
+      if (outcome.value.status === 'unconfigured') {
+        sourceSummary[key] = { status: 'unconfigured', count: 0 };
+        continue;
+      }
+      const uniqueLeads = [];
+      for (const lead of (outcome.value.leads || [])) {
+        if (!lead || !lead.url || seenUrls.has(lead.url)) continue;
+        seenUrls.add(lead.url);
+        uniqueLeads.push(lead);
+      }
+      sourceSummary[key] = { status: 'ok', count: uniqueLeads.length };
+      discovered.push(...uniqueLeads);
+    } else {
+      sourceSummary[key] = { status: 'error', count: 0 };
+    }
   }
 
-  return discovered.slice(0, 8);
+  discovered.sort((a, b) => (b.intentScore || 0) - (a.intentScore || 0));
+  const scannedSources = selectedKeys
+    .filter(k => sourceSummary[k] && sourceSummary[k].status !== 'unconfigured')
+    .map(k => SOURCE_DISPLAY_NAMES[k] || k);
+
+  return {
+    leads: discovered.slice(0, 12),
+    scannedSources,
+    sourceSummary
+  };
+}
+
+async function scanLiveSources(campaign, options = {}) {
+  const result = await scanLiveSourcesDetailed(campaign, options);
+  return result.leads;
 }
 
 function isPrivateIpv4(ip) {
@@ -1019,7 +1174,11 @@ function createServer(options = {}) {
           return sendJson(res, 400, { ok: false, error: 'Kampanya bulunamadı.' });
         }
 
-        const freshLeads = await scanLiveSources(campaign);
+        const scanResult = await scanLiveSourcesDetailed(campaign, {
+          region: body.region,
+          sources: body.sources
+        });
+        const freshLeads = scanResult.leads;
         const existingIds = new Set(db.leads.map(l => l.id));
         const existingUrls = new Set(db.leads.map(l => l.url).filter(Boolean));
         const existingTitles = new Set(db.leads.map(l => l.title).filter(Boolean));
@@ -1041,7 +1200,8 @@ function createServer(options = {}) {
 
         return sendJson(res, 200, {
           ok: true,
-          scannedSources: ['Reddit JSON API', 'HackerNews Algolia API', 'GitHub Issues API'],
+          scannedSources: scanResult.scannedSources,
+          sourceSummary: scanResult.sourceSummary,
           addedCount: uniqueNew.length,
           message: uniqueNew.length > 0
             ? `${uniqueNew.length} yeni gerçek fırsat bulundu.`
@@ -1139,6 +1299,7 @@ module.exports = {
   loadDb,
   saveDb,
   scanLiveSources,
+  scanLiveSourcesDetailed,
   syncPortfolioDb,
   analyzeWebsiteUrl,
   isPrivateIp,
